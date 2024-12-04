@@ -1,23 +1,11 @@
-import { Box, Card, Flex, Grid, Image, Paper, Text, Badge, Title } from "@mantine/core";
+import { Box, Flex, Text, Title, Paper, Badge, Popover } from "@mantine/core";
+import { AlertCircle, ChevronRight } from "lucide-react";
 
-const SlideNode = ({ data }: { data: any }) => {
+const SlideNode = ({ data, onClick }: { data: any; onClick: () => void }) => {
   const getHeatColor = (issues: number) => {
     if (issues === 0) return { bg: "var(--mantine-color-green-1)", border: "var(--mantine-color-green-2)" };
     if (issues <= 2) return { bg: "var(--mantine-color-yellow-1)", border: "var(--mantine-color-yellow-2)" };
     return { bg: "var(--mantine-color-red-1)", border: "var(--mantine-color-red-2)" };
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "red";
-      case "medium":
-        return "yellow";
-      case "low":
-        return "blue";
-      default:
-        return "gray";
-    }
   };
 
   const heatColor = getHeatColor(data.issues);
@@ -25,58 +13,41 @@ const SlideNode = ({ data }: { data: any }) => {
   return (
     <Paper
       p="md"
-      w={256}
+      w={200}
       radius="lg"
       style={{
         backgroundColor: heatColor.bg,
         borderColor: heatColor.border,
         borderWidth: 2,
         borderStyle: "solid",
-        minWidth: 256,
+        cursor: "pointer",
+        transition: "transform 0.2s",
+        "&:hover": {
+          transform: "translateY(-2px)",
+        },
       }}
+      onClick={onClick}
     >
-      <Flex direction="column" gap="sm">
-        <Box style={{ aspectRatio: "16/9", overflow: "hidden", borderRadius: "var(--mantine-radius-md)" }}>
-          <Image src={`https://placehold.co/320x180`} alt={`スライド ${data.id} のプレビュー`} h="100%" w="100%" />
-        </Box>
-
-        <Text size="sm" c="dimmed">
-          スライド {data.id}
-        </Text>
-        <Text fw={500}>{data.title}</Text>
-        <Flex align="center" gap="sm">
-          <Badge color={getPriorityColor(data.priority)} variant="light">
-            {data.priority === "high" ? "高" : data.priority === "medium" ? "中" : "低"}
-          </Badge>
-          <Text size="sm" c="dimmed">
-            改善点: {data.issues}
-          </Text>
-        </Flex>
+      <Flex direction="column" gap="xs">
+        <Text size="sm" c="dimmed">スライド {data.id}</Text>
+        <Text fw={500} lineClamp={2}>{data.title}</Text>
+        <Badge color={data.issues > 0 ? "red" : "green"} variant="light">
+          改善点: {data.issues}
+        </Badge>
       </Flex>
     </Paper>
   );
 };
 
-const SequenceIssue = ({ data }: { data: any }) => (
-  <Paper p="md" radius="lg" withBorder>
-    <Text size="sm" fw={500} c="dimmed" mb="xs">
-      {data.location}
-    </Text>
-    <Flex direction="column" gap="sm">
-      <Box>
-        <Text size="sm" fw={500} c="red" mb="xs">
-          問題点
-        </Text>
-        <Text size="sm">{data.issue}</Text>
-      </Box>
-      <Box>
-        <Text size="sm" fw={500} c="green" mb="xs">
-          改善案
-        </Text>
-        <Text size="sm">{data.suggestion}</Text>
-      </Box>
-    </Flex>
-  </Paper>
+const FlowArrow = ({ hasIssue, onClick }: { hasIssue: boolean; onClick?: () => void }) => (
+  <Flex align="center" mx="xs" style={{ cursor: hasIssue ? "pointer" : "default" }}>
+    <ChevronRight 
+      size={24} 
+      color={hasIssue ? "var(--mantine-color-red-6)" : "var(--mantine-color-gray-6)"}
+      style={{ opacity: hasIssue ? 1 : 0.5 }}
+      onClick={onClick}
+    />
+  </Flex>
 );
 
 export const Flow = () => {
@@ -111,53 +82,72 @@ export const Flow = () => {
     },
   ];
 
+  // スライド間の問題を特定する関数
+  const getFlowIssue = (currentIndex: number) => {
+    return sequenceIssues.find(issue => 
+      issue.location.includes(slides[currentIndex].title) || 
+      issue.location.includes(slides[currentIndex + 1]?.title)
+    );
+  };
+
   return (
-    <Box p="md">
+    <Box>
       <Box mb="xl">
-        <Title order={2} mb="sm">
-          スライドヒートマップ
-        </Title>
-        <Flex gap="md">
-          {[
-            { color: "green", label: "問題なし" },
-            { color: "yellow", label: "軽度の改善点" },
-            { color: "red", label: "重要な改善点" },
-          ].map((item) => (
-            <Flex key={item.color} align="center" gap="xs">
-              <Box
-                w={16}
-                h={16}
-                style={{
-                  backgroundColor: `var(--mantine-color-${item.color}-1)`,
-                  border: `1px solid var(--mantine-color-${item.color}-2)`,
-                  borderRadius: "var(--mantine-radius-sm)",
-                }}
-              />
-              <Text size="sm">{item.label}</Text>
-            </Flex>
-          ))}
+        <Flex direction="column-reverse" gap="xs">
+          <Title order={2} mb="lg" c="#228be6">プレゼンテーションフロー分析</Title>
+          <Text size="sm" c="#228be6" fw={700} tt="uppercase">Flow Analysis</Text>
         </Flex>
       </Box>
 
       <Box style={{ overflowX: "auto" }}>
-        <Flex gap="md" pb="md">
-          {slides.map((slide) => (
-            <SlideNode key={slide.id} data={slide} />
+        <Flex align="center" pb="md" style={{ minWidth: 'max-content' }}>
+          {slides.map((slide, index) => (
+            <Flex key={slide.id} align="center">
+              <Popover width={300} position="bottom" withArrow shadow="md">
+                <Popover.Target>
+                  <Box>
+                    <SlideNode 
+                      data={slide} 
+                      onClick={() => {}} // ポップオーバーが自動で開閉を制御
+                    />
+                  </Box>
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <Text fw={500} mb="xs">改善点</Text>
+                  {slide.issues > 0 ? (
+                    <Text size="sm">
+                      このスライドには{slide.issues}個の改善点があります。
+                      {/* 実際の改善点の詳細をここに表示 */}
+                    </Text>
+                  ) : (
+                    <Text size="sm" c="green">問題点はありません</Text>
+                  )}
+                </Popover.Dropdown>
+              </Popover>
+
+              {index < slides.length - 1 && (
+                <Popover width={300} position="bottom" withArrow shadow="md">
+                  <Popover.Target>
+                    <Box>
+                      <FlowArrow 
+                        hasIssue={!!getFlowIssue(index)}
+                        onClick={() => {}} // ポップオーバーが自動で開閉を制御
+                      />
+                    </Box>
+                  </Popover.Target>
+                  {getFlowIssue(index) && (
+                    <Popover.Dropdown>
+                      <Text fw={500} mb="xs">フローの問題点</Text>
+                      <Text size="sm">{getFlowIssue(index)?.issue}</Text>
+                      <Text fw={500} mt="sm" mb="xs" c="green">改善案</Text>
+                      <Text size="sm">{getFlowIssue(index)?.suggestion}</Text>
+                    </Popover.Dropdown>
+                  )}
+                </Popover>
+              )}
+            </Flex>
           ))}
         </Flex>
-      </Box>
-
-      <Box mt="xl">
-        <Title order={3} mb="md">
-          ロジックフローの問題点
-        </Title>
-        <Grid>
-          {sequenceIssues.map((issue, index) => (
-            <Grid.Col key={index} span={12}>
-              <SequenceIssue data={issue} />
-            </Grid.Col>
-          ))}
-        </Grid>
       </Box>
     </Box>
   );
