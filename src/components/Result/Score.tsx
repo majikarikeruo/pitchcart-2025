@@ -1,4 +1,4 @@
-import { Transition, Grid, Progress, Stack, SimpleGrid, ThemeIcon, RingProgress, Card, Text, Title, Flex, Button, ListItem, Box } from "@mantine/core";
+import { Transition, Grid, Progress, Stack, SimpleGrid, ThemeIcon, RingProgress, Card, Text, Title, Flex, Box } from "@mantine/core";
 import { useState } from "react";
 import { Info, Check, X } from "lucide-react";
 

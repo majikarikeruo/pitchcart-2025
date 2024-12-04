@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Title, Paper, Badge, Popover } from "@mantine/core";
-import { AlertCircle, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const SlideNode = ({ data, onClick }: { data: any; onClick: () => void }) => {
   const getHeatColor = (issues: number) => {
@@ -29,8 +29,12 @@ const SlideNode = ({ data, onClick }: { data: any; onClick: () => void }) => {
       onClick={onClick}
     >
       <Flex direction="column" gap="xs">
-        <Text size="sm" c="dimmed">スライド {data.id}</Text>
-        <Text fw={500} lineClamp={2}>{data.title}</Text>
+        <Text size="sm" c="dimmed">
+          スライド {data.id}
+        </Text>
+        <Text fw={500} lineClamp={2}>
+          {data.title}
+        </Text>
         <Badge color={data.issues > 0 ? "red" : "green"} variant="light">
           改善点: {data.issues}
         </Badge>
@@ -41,8 +45,8 @@ const SlideNode = ({ data, onClick }: { data: any; onClick: () => void }) => {
 
 const FlowArrow = ({ hasIssue, onClick }: { hasIssue: boolean; onClick?: () => void }) => (
   <Flex align="center" mx="xs" style={{ cursor: hasIssue ? "pointer" : "default" }}>
-    <ChevronRight 
-      size={24} 
+    <ChevronRight
+      size={24}
       color={hasIssue ? "var(--mantine-color-red-6)" : "var(--mantine-color-gray-6)"}
       style={{ opacity: hasIssue ? 1 : 0.5 }}
       onClick={onClick}
@@ -84,43 +88,48 @@ export const Flow = () => {
 
   // スライド間の問題を特定する関数
   const getFlowIssue = (currentIndex: number) => {
-    return sequenceIssues.find(issue => 
-      issue.location.includes(slides[currentIndex].title) || 
-      issue.location.includes(slides[currentIndex + 1]?.title)
-    );
+    return sequenceIssues.find((issue) => issue.location.includes(slides[currentIndex].title) || issue.location.includes(slides[currentIndex + 1]?.title));
   };
 
   return (
     <Box>
       <Box mb="xl">
         <Flex direction="column-reverse" gap="xs">
-          <Title order={2} mb="lg" c="#228be6">プレゼンテーションフロー分析</Title>
-          <Text size="sm" c="#228be6" fw={700} tt="uppercase">Flow Analysis</Text>
+          <Title order={2} mb="lg" c="#228be6">
+            プレゼンテーションフロー分析
+          </Title>
+          <Text size="sm" c="#228be6" fw={700} tt="uppercase">
+            Flow Analysis
+          </Text>
         </Flex>
       </Box>
 
       <Box style={{ overflowX: "auto" }}>
-        <Flex align="center" pb="md" style={{ minWidth: 'max-content' }}>
+        <Flex align="center" pb="md" style={{ minWidth: "max-content" }}>
           {slides.map((slide, index) => (
             <Flex key={slide.id} align="center">
               <Popover width={300} position="bottom" withArrow shadow="md">
                 <Popover.Target>
                   <Box>
-                    <SlideNode 
-                      data={slide} 
+                    <SlideNode
+                      data={slide}
                       onClick={() => {}} // ポップオーバーが自動で開閉を制御
                     />
                   </Box>
                 </Popover.Target>
                 <Popover.Dropdown>
-                  <Text fw={500} mb="xs">改善点</Text>
+                  <Text fw={500} mb="xs">
+                    改善点
+                  </Text>
                   {slide.issues > 0 ? (
                     <Text size="sm">
                       このスライドには{slide.issues}個の改善点があります。
                       {/* 実際の改善点の詳細をここに表示 */}
                     </Text>
                   ) : (
-                    <Text size="sm" c="green">問題点はありません</Text>
+                    <Text size="sm" c="green">
+                      問題点はありません
+                    </Text>
                   )}
                 </Popover.Dropdown>
               </Popover>
@@ -129,7 +138,7 @@ export const Flow = () => {
                 <Popover width={300} position="bottom" withArrow shadow="md">
                   <Popover.Target>
                     <Box>
-                      <FlowArrow 
+                      <FlowArrow
                         hasIssue={!!getFlowIssue(index)}
                         onClick={() => {}} // ポップオーバーが自動で開閉を制御
                       />
@@ -137,9 +146,13 @@ export const Flow = () => {
                   </Popover.Target>
                   {getFlowIssue(index) && (
                     <Popover.Dropdown>
-                      <Text fw={500} mb="xs">フローの問題点</Text>
+                      <Text fw={500} mb="xs">
+                        フローの問題点
+                      </Text>
                       <Text size="sm">{getFlowIssue(index)?.issue}</Text>
-                      <Text fw={500} mt="sm" mb="xs" c="green">改善案</Text>
+                      <Text fw={500} mt="sm" mb="xs" c="green">
+                        改善案
+                      </Text>
                       <Text size="sm">{getFlowIssue(index)?.suggestion}</Text>
                     </Popover.Dropdown>
                   )}

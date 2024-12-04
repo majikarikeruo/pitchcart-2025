@@ -4,9 +4,9 @@ export default function Entry() {
   return (
     <Stack py={40}>
       <Flex direction="column" align="center" justify="center" gap="md" mb={16}>
-        <Text align="center">オーディエンスの反応を予測するプレゼン作成支援ツール🎨</Text>
-        <Title align="center">Pitch Cart</Title>
-        <Text align="center">ステークホルダーに あなたの思いが的確に伝わる</Text>
+        <Text ta="center">オーディエンスの反応を予測するプレゼン作成支援ツール🎨</Text>
+        <Title ta="center">Pitch Cart</Title>
+        <Text ta="center">ステークホルダーに あなたの思いが的確に伝わる</Text>
       </Flex>
 
       <Container size="sm" style={{ backgroundColor: "white", borderRadius: 16 }} px={16} pt={8} py={24}>
@@ -40,10 +40,10 @@ export default function Entry() {
             </Group>
           </Tabs.Panel>
           <Tabs.Panel value="rehearsal">
-            <Text align="center">リハーサルモード</Text>
+            <Text ta="center">リハーサルモード</Text>
           </Tabs.Panel>
           <Tabs.Panel value="simulation">
-            <Text align="center">シミュレーションモード</Text>
+            <Text ta="center">シミュレーションモード</Text>
           </Tabs.Panel>
         </Tabs>
       </Container>

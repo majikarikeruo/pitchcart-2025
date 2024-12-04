@@ -1,4 +1,4 @@
-import { Tabs, Title, Text, Container, Pill, Flex, FileInput, Input, Stack, Button, Group } from "@mantine/core";
+import { Title, Text, Container, Flex, Stack } from "@mantine/core";
 
 import { Score } from "@/components/Result/Score";
 import { Question } from "@/components/Result/Question";
