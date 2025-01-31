@@ -1,0 +1,53 @@
+{
+  "name": "SlideHeatmapSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "slide_heatmap": {
+        "type": "object",
+        "properties": {
+          "slides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "number",
+                  "description": "スライド番号"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "スライドのタイトル"
+                },
+                "improvement_count": {
+                  "type": "number",
+                  "description": "改善点の数"
+                },
+                "priority": {
+                  "type": "string",
+                  "description": "スライドの優先度"
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "改善点のリスト"
+                }
+              },
+              "required": [
+                "number",
+                "title",
+                "improvement_count",
+                "priority",
+                "issues"
+              ]
+            }
+          }
+        },
+        "required": ["slides"]
+      }
+    },
+    "required": ["slide_heatmap"]
+  }
+}

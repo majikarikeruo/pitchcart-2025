@@ -1,4 +1,5 @@
-import { Tabs, Title, Text, Container, Flex, FileInput, Input, Stack, Button, Group } from "@mantine/core";
+import { Box, Tabs, Title, Text, Container, Flex, Stack } from "@mantine/core";
+import { PresentationCheck } from "@/components/Entry/PresentationCheck";
 
 export default function Entry() {
   return (
@@ -18,26 +19,7 @@ export default function Entry() {
           </Tabs.List>
 
           <Tabs.Panel value="pitch">
-            <Stack my={16}>
-              <Input.Wrapper label="オーディエンス相手は誰ですか？">
-                <Input placeholder="例）Tech系VC" />
-              </Input.Wrapper>
-              <Input.Wrapper label="プレゼンの目的は何ですか？">
-                <Input placeholder="例）シリーズA資金調達" />
-              </Input.Wrapper>
-
-              <FileInput
-                label="プレゼン資料をアップロードしてください"
-                placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
-              />
-              <FileInput
-                label="プレゼン原稿をアップロードしてください"
-                placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
-              />
-            </Stack>
-            <Group justify="center">
-              <Button>分析を開始する</Button>
-            </Group>
+            <PresentationCheck />
           </Tabs.Panel>
           <Tabs.Panel value="rehearsal">
             <Text ta="center">リハーサルモード</Text>
