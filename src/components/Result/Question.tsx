@@ -1,4 +1,13 @@
-import { Stack, Box, Title, Text, Pill, Flex, ThemeIcon } from "@mantine/core";
+import {
+  Stack,
+  Box,
+  Title,
+  Text,
+  Flex,
+  ThemeIcon,
+  Paper,
+  Divider,
+} from "@mantine/core";
 import { Bot, User2 } from "lucide-react";
 
 import { QuestionHeading } from "@/components/Result/Question/QuestionHeading";
@@ -17,10 +26,6 @@ interface QuestionItem {
   background: string;
   source: string;
   priority: StyleLevel;
-}
-
-interface PredictedQuestions {
-  question_items: QuestionItem[];
 }
 
 const styles: Record<StyleLevel, StyleConfig> = {
@@ -52,12 +57,12 @@ const stackStyle = (color: string): React.CSSProperties => {
 };
 
 export const Question = ({
-  predicted_questions: { question_items },
+  question_items,
 }: {
-  predicted_questions: PredictedQuestions;
+  question_items: QuestionItem[];
 }) => {
   return (
-    <Flex align="start">
+    <Paper p={40} shadow="md">
       <QuestionHeading />
       <Box>
         {question_items.map((question: QuestionItem, index: number) => (
@@ -78,7 +83,7 @@ export const Question = ({
               </Box>
               <Title order={4}>{question.question}</Title>
             </Flex>
-
+            <Divider />
             <Flex align="start" mt={8}>
               <Box style={{ minWidth: 80 }} ta="center">
                 <ThemeIcon radius="xl" color="blue">
@@ -91,6 +96,6 @@ export const Question = ({
           </Stack>
         ))}
       </Box>
-    </Flex>
+    </Paper>
   );
 };

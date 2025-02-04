@@ -1,0 +1,170 @@
+{
+  "name": "PrerequisiteCheckSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "prerequisite_check": {
+        "type": "object",
+        "properties": {
+          "missing_prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "description": "不足している前提条件のトピック"
+                },
+                "slide_number": {
+                  "type": "number",
+                  "description": "該当するスライドの枚数番号"
+                },
+                "current_state": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "現状の説明内容"
+                    },
+                    "missing_elements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "具体的に不足している要素"
+                    }
+                  },
+                  "required": ["description", "missing_elements"]
+                },
+                "impact": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "description": "この不足が与える影響"
+                    },
+                    "audience_perspective": {
+                      "type": "string",
+                      "description": "聴衆の視点からの問題点"
+                    }
+                  },
+                  "required": ["description", "audience_perspective"]
+                },
+                "importance": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"],
+                  "description": "重要度"
+                },
+                "recommendation": {
+                  "type": "object",
+                  "properties": {
+                    "what_to_add": {
+                      "type": "string",
+                      "description": "追加すべき内容"
+                    },
+                    "why_needed": {
+                      "type": "string",
+                      "description": "なぜ必要か"
+                    }
+                  },
+                  "required": ["what_to_add", "why_needed"]
+                }
+              },
+              "required": [
+                "topic",
+                "current_state",
+                "impact",
+                "importance",
+                "recommendation"
+              ]
+            },
+            "minItems": 1
+          },
+          "sequence_issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["overall_structure", "transition"],
+                  "description": "シーケンス問題のタイプ（全体構造か移行部分か）"
+                },
+                "location": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "description": "全体構造に関する問題の場合の説明"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "from_page": {
+                          "type": "number",
+                          "description": "移行元のページ番号"
+                        },
+                        "to_page": {
+                          "type": "number",
+                          "description": "移行先のページ番号"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "移行部分の説明"
+                        }
+                      },
+                      "required": ["from_page", "to_page", "description"]
+                    }
+                  ]
+                },
+                "issue": {
+                  "type": "string",
+                  "description": "説明の順序や前提の問題点"
+                },
+                "suggestion": {
+                  "type": "string",
+                  "description": "改善案"
+                },
+                "affected_sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "section": {
+                        "type": "string",
+                        "description": "影響を受けるセクション名"
+                      },
+                      "current_slide": {
+                        "type": "number",
+                        "description": "現在のスライド位置"
+                      },
+                      "suggested_position": {
+                        "type": "string",
+                        "description": "推奨される位置"
+                      }
+                    },
+                    "required": [
+                      "section",
+                      "current_slide",
+                      "suggested_position"
+                    ]
+                  },
+                  "description": "全体構造の問題の場合の影響を受けるセクション一覧"
+                }
+              },
+              "required": ["type", "location", "issue", "suggestion"],
+              "if": {
+                "properties": { "type": { "const": "overall_structure" } }
+              },
+              "then": {
+                "required": ["affected_sections"]
+              }
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["missing_prerequisites", "sequence_issues"]
+      }
+    },
+    "required": ["prerequisite_check"]
+  }
+}

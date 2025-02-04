@@ -1,0 +1,114 @@
+{
+  "analysis": {
+    "impact_score": {
+      "total": 76,
+      "breakdown": {
+        "market_alignment": 70,
+        "value_proposition": 80,
+        "competitive_advantage": 70
+      }
+    },
+    "feasibility_score": {
+      "total": 74,
+      "breakdown": {
+        "technical_viability": 75,
+        "resource_availability": 70,
+        "execution_capability": 80
+      }
+    },
+    "presentation_score": {
+      "total": 78,
+      "breakdown": {
+        "clarity": 80,
+        "structure": 75,
+        "engagement": 75
+      }
+    }
+  },
+  "score_explanation": {
+    "impact_score": {
+      "total_explanation": {
+        "score": 76,
+        "summary": "プレゼンテーションは市場ニーズにある程度適合しているが、データの裏付けがやや不足している。",
+        "key_factors": [
+          "市場ニーズが理解できるが、データ裏付けが限定的",
+          "価値提案が明確で、ある程度の差別化がある",
+          "競争優位性はあるが、持続可能性に懸念"
+        ]
+      },
+      "components": {
+        "market_alignment": {
+          "score": 70,
+          "explanation": "市場ニーズは理解できるが、明確なデータに裏付けられていないためスコアが低い。",
+          "evidence": "提案サービスの市場に対するニーズについて具体的なデータが不足。"
+        },
+        "value_proposition": {
+          "score": 80,
+          "explanation": "価値提案は明確で、競合との差別化ができている点が評価された。",
+          "evidence": "Pitch Cartのユニークな機能が述べられている。"
+        },
+        "competitive_advantage": {
+          "score": 70,
+          "explanation": "競争優位性はあるが、持続可能性に関する具体的な証拠が不足。",
+          "evidence": "競合優位性を示す具体的なデータが不足している。"
+        }
+      }
+    },
+    "feasibility_score": {
+      "total_explanation": {
+        "score": 74,
+        "summary": "技術的実現可能性は高いが、リソースの確保に若干の懸念がある。",
+        "key_factors": [
+          "技術的な裏付けはあるが、一部不明確",
+          "リソースは確保されているが一部不足",
+          "実行体制が整っている"
+        ]
+      },
+      "components": {
+        "technical_viability": {
+          "score": 75,
+          "explanation": "技術面での実現可能性は高いが、実装例が少ないためスコアが中程度。",
+          "evidence": "Python-pptxライブラリを使用しているが、過去の実績が不明。"
+        },
+        "resource_availability": {
+          "score": 70,
+          "explanation": "リソースは確保されているが、特に人材の確保に関して不安要素がある。",
+          "evidence": "必要なリソースの確保が限定的である可能性。"
+        },
+        "execution_capability": {
+          "score": 80,
+          "explanation": "実行体制が整っており、過去の経験から信頼性が高いと評価される。",
+          "evidence": "チームメンバーの経験が豊富であることが示されている。"
+        }
+      }
+    },
+    "presentation_score": {
+      "total_explanation": {
+        "score": 78,
+        "summary": "説明は明確で構造も良好だが、聴衆の関心を引くための工夫が必要。",
+        "key_factors": [
+          "ほとんどの要素が明確",
+          "構造は理解できるが改善の余地あり",
+          "ある程度の興味は引き付ける"
+        ]
+      },
+      "components": {
+        "clarity": {
+          "score": 80,
+          "explanation": "説明の明確さは高く、聴衆が理解しやすい内容である。",
+          "evidence": "全体の流れや用語が明確に説明されている。"
+        },
+        "structure": {
+          "score": 75,
+          "explanation": "論理的な構造はあるが、より強い流れが必要。",
+          "evidence": "各ページの接続がやや弱く、改善の余地がある。"
+        },
+        "engagement": {
+          "score": 75,
+          "explanation": "聴衆の興味を引くために、よりインタラクティブな要素が必要。",
+          "evidence": "聴衆の関心を引き付ける工夫が不足している。"
+        }
+      }
+    }
+  }
+}

@@ -6,33 +6,27 @@ import { Improvement } from "@/components/Result/Improvement";
 import { Flow } from "@/components/Result/Flow";
 
 import {
-  text,
+  prerequisiteCheck,
   analysisWithScore,
-  predicted_questions,
-  text4,
-  text5,
+  predictedQuestions,
+  improvement,
   heatmapFlow,
   structureFlow,
   input,
 } from "@/testdata.json";
 
 export default function Result() {
-  console.log(text);
   return (
     <Stack>
       <Container py={48} size="xl">
-        <Flex direction="column-reverse" align="start">
-          <Title mb={40} fw={700} fz={64} c="#228be6">
-            分析結果
-          </Title>
-          <Text mb={4} fw={500} c="#228be6" tt="uppercase">
-            Analysis Result
-          </Text>
-        </Flex>
         <Score analysisWithScore={analysisWithScore} input={input} />
-        <Flow heatmapFlow={heatmapFlow} />
-        {/* <Improvement text5={text5} /> */}
-        <Question predicted_questions={predicted_questions} />
+        <Flow
+          heatmapFlow={heatmapFlow}
+          structureFlow={structureFlow}
+          prerequisiteCheck={prerequisiteCheck}
+        />
+        <Improvement improvement={improvement} />
+        <Question question_items={predictedQuestions.question_items} />
       </Container>
     </Stack>
   );

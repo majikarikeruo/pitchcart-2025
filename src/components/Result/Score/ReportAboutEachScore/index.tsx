@@ -6,11 +6,11 @@ import {
   SimpleGrid,
   ThemeIcon,
   RingProgress,
-  Card,
   Text,
   Title,
   Flex,
   Box,
+  Paper,
 } from "@mantine/core";
 
 import { SummarySection } from "@/components/Result/Score/ReportAboutEachScore/SummarySection";
@@ -38,7 +38,7 @@ export const ReportAboutEachScore = ({
   //   console.log(explanationByScore, subCategoryKeys);
 
   return (
-    <Card>
+    <Paper shadow="md">
       <SummarySection
         mainCategories={mainCategories}
         selectedMainCategory={selectedMainCategory}
@@ -104,6 +104,6 @@ export const ReportAboutEachScore = ({
           </Stack>
         ))}
       </SimpleGrid>
-    </Card>
+    </Paper>
   );
 };

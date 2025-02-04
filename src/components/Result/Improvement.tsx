@@ -1,152 +1,142 @@
 import {
-  Pill,
-  Grid,
-  Timeline,
+  Card,
   Stack,
   Title,
   Text,
   Box,
-  Flex,
   ThemeIcon,
-  Modal,
-  Button,
+  Stepper,
+  Grid,
+  Paper,
+  List,
+  Badge,
+  Timeline,
+  Flex,
 } from "@mantine/core";
-import { AlertCircle, AlertTriangle, Info } from "lucide-react";
-import { useState } from "react";
+import {
+  IconRoadSign,
+  IconAlertCircle,
+  IconBulb,
+  IconTarget,
+  IconListCheck,
+} from "@tabler/icons-react";
 
-export const Improvement = ({ text5 }) => {
-  const [opened, setOpened] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-
+export const Improvement = ({ improvement }) => {
   const {
-    improvements: { slide_specific },
-  } = text5;
-  console.log(slide_specific);
-
-  const items = slide_specific;
-
-  // [
-  //   {
-  //     value: "1",
-  //     title: (
-  //       <Pill
-  //         defaultChecked
-  //         styles={{
-  //           root: {
-  //             backgroundColor: "#f8d7da",
-  //             borderRadius: 8,
-  //             color: "#b91c1c",
-  //             fontSize: 12,
-  //           },
-  //         }}
-  //       >
-  //         優先度・高
-  //       </Pill>
-  //     ),
-  //     icon: <AlertCircle style={{ marginRight: 8 }} color="red" size={80} />,
-  //     description: (
-  //       <>
-  //         <Title order={5} mt={16}>
-  //           競合分析を明示する
-  //         </Title>
-  //         <Timeline
-  //           bulletSize={24}
-  //           lineWidth={2}
-  //           p={16}
-  //           ml={16}
-  //           styles={{ itemTitle: { fontWeight: 700, marginBottom: 16 } }}
-  //         >
-  //           <Timeline.Item title="現状" fw={500}>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               競合との違いが不明瞭
-  //             </Text>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               競合優位性が伝わりにくい
-  //             </Text>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               投資家の信頼を得られない可能性がある
-  //             </Text>
-  //           </Timeline.Item>
-  //           <Timeline.Item title="改善案">
-  //             <Text mb={12} fz={14} mt={8}>
-  //               競合調査を行う (2週間)
-  //             </Text>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               競合との差別化ポイントをスライドに追加 (3日)
-  //             </Text>
-  //           </Timeline.Item>
-  //           <Timeline.Item title="期待される結果">
-  //             <Text mb={12} fz={14} mt={8}>
-  //               投資家からの信頼度が向上
-  //             </Text>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               市場での位置づけが明確になる
-  //             </Text>
-  //             <Text mb={12} fz={14} mt={8}>
-  //               投資家からの信頼度が15%向上
-  //             </Text>
-  //           </Timeline.Item>
-  //         </Timeline>
-  //       </>
-  //     ),
-  //   },
-  // ];
+    improvements: { overall },
+  } = improvement;
 
   return (
-    <Stack my={100}>
-      <Flex direction="column-reverse" gap="xs">
-        <Title order={2} fz={40} mb="lg" c="#228be6">
-          改善提案
-        </Title>
-        <Text size="sm" c="#228be6" fw={700} tt="uppercase">
-          Improvement
-        </Text>
-      </Flex>
+    <Card p="40" radius="md" withBorder mb="xl">
+      <Stack>
+        {/* ヘッダー - 既存のデザインパターンを踏襲 */}
+        <Flex direction={"column-reverse"} justify={"center"} align={"center"}>
+          <Title order={1} mb={16} p={8} px={12} ta={"center"} c="#228be6">
+            改善計画
+          </Title>
+          <Text size="sm" c="#228be6" fw={700} tt={"uppercase"}>
+            Improvement Plan
+          </Text>
+          <ThemeIcon variant="white">
+            <IconRoadSign size={24} />
+          </ThemeIcon>
+        </Flex>
 
-      <Grid>
-        {items.map((item) => (
-          <Grid.Col span={4} key={item.value}>
-            <Box
-              bg={"white"}
-              p={16}
-              style={{ border: "1px solid #E9ECEF" }}
-              pos="relative"
-            >
-              <ThemeIcon size={80} radius="xl" variant="white" color="#228be6">
-                {item.icon}
-              </ThemeIcon>
-              <Text size="sm" c="#228be6" fw={700} tt="uppercase">
-                {item.title}{" "}
-              </Text>
+        {/* 改善項目 */}
+        <Grid>
+          {overall.map((item, index) => (
+            <Grid.Col span={6}>
+              <Paper key={index} shadow="md" p="xl" radius="md">
+                <Badge size="lg" mb={24}>
+                  {item.category}
+                </Badge>
 
-              <Title order={4} mt={16}>
-                {item.description.props.children[0].props.children}
-              </Title>
-              <Button
-                variant="light"
-                color="blue"
-                fullWidth
-                mt="md"
-                onClick={() => {
-                  setSelectedItem(item);
-                  setOpened(true);
-                }}
-              >
-                詳細を見る
-              </Button>
-            </Box>
-          </Grid.Col>
-        ))}
-      </Grid>
+                {/* ステップ形式での表示 */}
+                <Stepper
+                  active={-1}
+                  orientation="vertical"
+                  allowNextStepsSelect={false}
+                >
+                  <Stepper.Step
+                    label="現状の課題"
+                    description={item.issue}
+                    icon={<IconAlertCircle size={18} />}
+                    fz={24}
+                    allowStepClick={false}
+                    allowStepSelect={false}
+                  >
+                    <Box ml={54} mt="xs">
+                      <List c="dimmed">
+                        {item.current_state?.points?.map((point, i) => (
+                          <List.Item key={i}>{point}</List.Item>
+                        ))}
+                      </List>
+                    </Box>
+                  </Stepper.Step>
 
-      <Modal
-        opened={opened}
-        onClose={() => setOpened(false)}
-        title={selectedItem?.description.props.children[0]}
-        size="lg"
-      >
-        {selectedItem?.description.props.children[1]}
-      </Modal>
-    </Stack>
+                  <Stepper.Step
+                    label="改善案"
+                    description={item.improvement.action}
+                    icon={<IconBulb size={18} />}
+                  />
+
+                  <Stepper.Step
+                    label="期待される効果"
+                    description={item.improvement.expected_result}
+                    icon={<IconTarget size={18} />}
+                  />
+                  {item.improvement.implementation_steps && (
+                    <Box mt="md">
+                      <Flex align="center" mb="md">
+                        <ThemeIcon variant="light" size="lg" mr="md">
+                          <IconListCheck size={20} />
+                        </ThemeIcon>
+                        <Title order={3}>改善計画ステップ</Title>
+                      </Flex>
+                      <Box>
+                        {item.improvement.implementation_steps.map(
+                          (step, i) => (
+                            <Flex bg={"#f8f9fa"} align={"start"} p={16}>
+                              <ThemeIcon
+                                display={"block"}
+                                radius={"50%"}
+                                size={64}
+                                variant="light"
+                                ta={"center"}
+                                fz={14}
+                                lh={1.25}
+                                mr={16}
+                                p={12}
+                                fw={"bold"}
+                              >
+                                <Box>Step</Box>
+
+                                <Box fz={21}>{i + 1}</Box>
+                              </ThemeIcon>
+                              <Box
+                                key={step.step}
+                                title={`Step ${step.step}`}
+                                color="blue"
+                              >
+                                <Text size="md" fw={500}>
+                                  {step.description}
+                                </Text>
+                                <Text size="xs" c="dimmed" mt={4}>
+                                  予定期間: {step.estimated_time}
+                                </Text>
+                              </Box>
+                            </Flex>
+                          )
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                </Stepper>
+              </Paper>
+            </Grid.Col>
+          ))}
+        </Grid>
+      </Stack>
+    </Card>
   );
 };

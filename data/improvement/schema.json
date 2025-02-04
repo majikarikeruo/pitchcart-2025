@@ -13,14 +13,7 @@
               "properties": {
                 "category": {
                   "type": "string",
-                  "enum": [
-                    "structure",
-                    "timing",
-                    "story",
-                    "visual",
-                    "audience"
-                  ],
-                  "description": "改善のカテゴリ"
+                  "description": "全体的な改善のカテゴリ"
                 },
                 "issue": {
                   "type": "string",
@@ -31,20 +24,18 @@
                   "properties": {
                     "action": {
                       "type": "string",
-                      "description": "改善のための具体的なアクション"
+                      "description": "改善のための行動"
                     },
                     "expected_result": {
                       "type": "string",
-                      "description": "改善後に期待される具体的な効果"
+                      "description": "改善後に期待される結果"
                     },
                     "priority": {
                       "type": "string",
-                      "enum": ["High", "Medium", "Low"],
                       "description": "改善の優先度"
                     },
                     "implementation_steps": {
                       "type": "array",
-                      "maxItems": 3,
                       "items": {
                         "type": "object",
                         "properties": {
@@ -54,11 +45,10 @@
                           },
                           "description": {
                             "type": "string",
-                            "description": "実装ステップの具体的な内容"
+                            "description": "実装ステップの詳細"
                           },
                           "estimated_time": {
                             "type": "string",
-                            "pattern": "^[0-9]+(.[0-9]+)?時間$",
                             "description": "実装に要する推定時間"
                           }
                         },
@@ -75,9 +65,7 @@
                 }
               },
               "required": ["category", "issue", "improvement"]
-            },
-            "maxItems": 6,
-            "minItems": 5
+            }
           }
         },
         "required": ["overall"]

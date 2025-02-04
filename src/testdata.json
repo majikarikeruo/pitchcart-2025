@@ -5,108 +5,120 @@
     "industry": "Saas業界",
     "summary": "資金調達に向けて明確なビジョンと収益モデルが求められています。競争が激しいSaaS業界での成長性を示し、リスクを管理する戦略が必要です。"
   },
-  "text": {
+  "prerequisiteCheck": {
     "prerequisite_check": {
       "missing_prerequisites": [
         {
-          "topic": "プロダクトの説明",
+          "topic": "機能や使用方法",
+          "slide_number": 7,
           "current_state": {
-            "description": "Pitch Cartの概要は説明されているが、具体的な機能や使用方法についての詳細が不足している。",
+            "description": "Pitch Cartの機能について説明しているが、具体的な使用方法が示されていない。",
             "missing_elements": [
-              "具体的な機能のリスト",
-              "ユーザーがどのように使用するかの具体例",
-              "効果を数値で示すデータ"
+              "具体的な操作手順",
+              "ユーザーインターフェースの説明"
             ]
           },
           "impact": {
-            "description": "具体的な機能や効果が不明なため、オーディエンスがサービスの価値を理解しづらい。",
-            "audience_perspective": "オーディエンスはPitch Cartの具体的な利点を理解できず、導入への関心が薄れる可能性がある。"
+            "description": "使用方法が不明なため、オーディエンスがツールを使いたいと思うかどうかの判断に影響する。",
+            "audience_perspective": "オーディエンスは実際にツールを使えるか不安を感じる可能性がある。"
           },
           "importance": "high",
           "recommendation": {
-            "what_to_add": "Pitch Cartの機能一覧と使用方法の具体例を追加すること。",
-            "why_needed": "これにより、オーディエンスはサービスの実用性と価値をより明確に理解できる。"
+            "what_to_add": "具体的な操作手順やユーザーインターフェースの説明を追加すること。",
+            "why_needed": "利用者がPitch Cartを実際にどのように活用できるか理解できるようにするため。"
           }
         },
         {
-          "topic": "市場分析",
+          "topic": "市場規模",
+          "slide_number": 10,
           "current_state": {
-            "description": "市場規模や競合状況についての情報が不足している。",
-            "missing_elements": [
-              "ターゲット市場の規模",
-              "成長予測データ",
-              "主要競合他社とその特徴"
-            ]
+            "description": "ビジネスモデルについて触れているが、市場規模についての情報は一切提供されていない。",
+            "missing_elements": ["ターゲット市場の規模", "潜在顧客数"]
           },
           "impact": {
-            "description": "市場分析が不十分なため、ビジネスモデルの信頼性や成長可能性について疑問を持たれる。",
-            "audience_perspective": "オーディエンスはPitch Cartがどれだけ需要があるかを評価できず、投資や支援を検討する際に不安を感じる可能性がある。"
+            "description": "市場規模が不明なため、投資家はこのプロダクトの成長可能性を評価しづらくなる。",
+            "audience_perspective": "投資家は市場での競争力や成長性を判断できず、投資意欲が低下する可能性がある。"
           },
           "importance": "high",
           "recommendation": {
-            "what_to_add": "市場規模、成長予測、競合状況について具体的なデータを追加すること。",
-            "why_needed": "これにより、Pitch Cartが市場でどれだけ有望かを示し、オーディエンスに安心感を与えることができる。"
+            "what_to_add": "ターゲット市場の規模や潜在顧客数について具体的なデータを追加すること。",
+            "why_needed": "市場でのニーズとビジネスチャンスを示すことで、投資家に魅力を伝えるため。"
           }
         },
         {
-          "topic": "技術的な詳細",
+          "topic": "収益構造",
+          "slide_number": 10,
           "current_state": {
-            "description": "使用技術については言及されているものの、実現方法や開発体制について詳しく説明されていない。",
-            "missing_elements": [
-              "開発チームの構成や役割",
-              "技術スタック全体の概要"
-            ]
+            "description": "ビジネスモデルについて言及しているが、収益構造について詳細な説明が不足している。",
+            "missing_elements": ["具体的な価格設定戦略", "収益源の多様性"]
           },
           "impact": {
-            "description": "技術的な詳細が不足しているため、信頼性や実行可能性に対する疑念が生じる。",
-            "audience_perspective": "オーディエンスはPitch Cartの技術的基盤に対する信頼感を持ちづらくなる。"
+            "description": "収益構造が不明確であると、投資家は事業の持続可能性を疑問視する可能性が高い。",
+            "audience_perspective": "オーディエンスはプロダクトがどれだけ収益化できるか理解できず、不安を感じることになる。"
           },
           "importance": "medium",
           "recommendation": {
-            "what_to_add": "開発体制や技術スタック全体について詳しい情報を追加すること。",
-            "why_needed": "これにより、オーディエンスはプロダクトの信頼性と実現可能性を理解しやすくなる。"
+            "what_to_add": "価格設定戦略や収益源の多様性について具体的な情報を追加すること。",
+            "why_needed": "事業計画の信頼性を高め、投資家に安心感を与えるため。"
           }
         },
         {
-          "topic": "ビジネスモデル",
+          "topic": "業界特有の用語",
+          "slide_number": 6,
           "current_state": {
-            "description": "収益構造については触れられているものの、成長戦略やコスト構造については説明されていない。",
-            "missing_elements": [
-              "収益モデル詳細（価格設定戦略）",
-              "コスト構造（固定費・変動費）"
-            ]
+            "description": "Pitch Cartの目的について述べているが、業界特有の用語（例：MVP, GGAなど）が説明されていない。",
+            "missing_elements": ["MVPとは何かの説明", "GGAとは何かの説明"]
           },
           "impact": {
-            "description": "ビジネスモデル全体像が不明瞭であるため、投資家から見た魅力が低下する可能性がある。",
-            "audience_perspective": "オーディエンスはPitch Cartによる収益化計画や持続可能性について疑問を持つかもしれない。"
+            "description": "専門用語が理解されないと、聴衆はプレゼンテーション全体を追うことが難しくなる。",
+            "audience_perspective": "聴衆は内容に共感しづらくなり、興味を失う恐れがある。"
           },
           "importance": "medium",
           "recommendation": {
-            "what_to_add": "成長戦略とコスト構造について具体的な情報を追加すること。",
-            "why_needed": "これにより、ビジネスモデル全体への理解と信頼感を高めることができる。"
+            "what_to_add": "MVPやGGAといった専門用語について簡潔に説明すること。",
+            "why_needed": "聴衆全体への理解度向上と共感度向上につながるため。"
           }
         }
       ],
       "sequence_issues": [
         {
-          "location": "Page 2-3間でプレゼン内容への問題提起への移行時期.",
-          "issue": "良い事業アイデアにも関わらず伝わらない理由への移行が突然であり、その背景説明不足であるため流れとして不自然である.",
-          "suggestion": "最初に成功した事業アイデアとは何か、それによって得た教訓など背景情報から始め、その後に問題提起へ移行することで文脈を整えるべきだ。"
+          "type": "overall_structure",
+          "location": {
+            "from_page": 1,
+            "to_page": 14,
+            "description": "プレゼンテーション全体でPitch Cartの価値提案から具体的な機能まで流れるように構成されていないため、一貫したメッセージになっていない。"
+          },
+          "issue": "Pitch Cartの紹介から問題提起、解決策提示までの流れが不自然であり、聴衆には混乱を招く可能性があります。特に問題提起後すぐに解決策に移行しており、その間に必要な情報（市場分析など）が欠けています。",
+          "suggestion": "問題提起→市場分析→解決策提示→プロダクト紹介という流れに再構成することによって論理的な展開を強化するべきです。",
+          "affected_sections": [
+            {
+              "section": "全体構成",
+              "current_slide": 1,
+              "suggested_position": "最初から再構築"
+            },
+            {
+              "section": "問題提起と解決策提示間の論理展開",
+              "current_slide": 4,
+              "suggested_position": "問題提起後、まず市場分析へ移行すべきです。"
+            }
+          ]
         },
         {
-          "location": "Page 4-5間で課題認識から解決策へ移行時期.",
-          "issue": "課題認識から解決策提示までの流れが急激であり、一貫した論理展開になっていない.",
-          "suggestion": "課題認識後にさらに深掘りし、課題解決への必要性とその重要性を強調した後で解決策提示へ進むことで論理展開を強化すべきだ。"
-        },
-        {
-          "location": "Page 11-12間でロードマップ提示時期.",
-          "issue": "ロードマップ提示時期が早すぎており、その前段階となるユーザーヒアリング結果や改善内容なども触れる必要があります.",
-          "suggestion": "ユーザーヒアリング結果とそれに基づく改善内容について先に述べ、その上でロードマップへ進む形で文脈を整えるべきだ。"
-        },
-        {
-          "location": "Page 13-14間でビジョンからベータ版募集へ移行時期.",
-          "issue": "ビジョン提示からベータ版募集への移行時期も急激であり、その繋ぎとなる情報提供不足.",
-          "suggestion": "ビジョン達成にはどんなステップ・プロセスが必要か、その中でベータ版募集も重要な要素として位置付け直すことで流れとして自然になるだろう。"
+          "type": "transition",
+          "location": {
+            "from_page": 5,
+            "to_page": 6,
+            "description": "'審査員の知りたい情報'から'相手が知りたい情報'への移行が唐突であり、その間に背景情報やつながりとなる文脈が不足しているため理解しづらい。"
+          },
+          "issue": "'審査員の知りたい情報'というテーマから'相手が知りたい情報'へ移行する際に、その理由や関連性について十分な説明がなく、聴衆には混乱を招く恐れがあります。また、この移行部分ではより詳細な背景情報も必要です。 ",
+          "suggestion": "'審査員'と'相手'という異なる視点で何故その情報が重要なのか、それぞれ具体的に述べた後で次へ進む形で明確さを持たせるべきです。 ",
+          "affected_sections": [
+            {
+              "section": "'審査員'と'相手'という異なる視点への移行部分全般 ",
+              "current_slide": 5,
+              "suggested_position": "'相手'という概念への導入時点でより詳細な背景情報を加える。"
+            }
+          ]
         }
       ]
     }
@@ -225,7 +237,7 @@
       }
     }
   },
-  "predicted_questions": {
+  "predictedQuestions": {
     "question_items": [
       {
         "question": "現在のプレゼンテーションソフトウェア市場の規模はどのくらいですか？",
@@ -259,7 +271,7 @@
       }
     ]
   },
-  "text4": {
+  "scoreData": {
     "scorecard": {
       "scores": [
         {
@@ -330,335 +342,138 @@
       "low": 4
     }
   },
-  "text5": {
+  "improvement": {
     "improvements": {
-      "slide_specific": [
+      "overall": [
         {
-          "slide_number": 1,
-          "issues": [
-            {
-              "issue": "サービスの具体的な価値提案が不明瞭",
-              "improvement": {
-                "action": "具体的なユースケースやユーザーの声を取り入れ、Pitch Cartがどのような価値を提供するかを明確にする。",
-                "expected_result": "オーディエンスがPitch Cartの有用性を直感的に理解できるようになる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "ユーザーインタビューを行い、具体的な価値提案を収集する。",
-                    "estimated_time": "2週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "収集したデータを基に、スライドの内容をリデザインする。",
-                    "estimated_time": "1週間"
-                  }
-                ]
+          "category": "structure",
+          "issue": "プレゼン全体の流れが不明瞭で、オーディエンスの理解を妨げている。",
+          "improvement": {
+            "action": "プレゼンのアウトラインを明確にして、各セクションの目的を伝えるイントロダクションを追加。",
+            "expected_result": "オーディエンスがプレゼンの全体像を把握しやすくなり、関心を持続させる。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "プレゼンの全体構成を図式化し、各セクションの目的を整理する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "プレゼン冒頭にアウトラインを示すスライドを作成する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 3,
+                "description": "全体構成を説明するスクリプトを作成し、リハーサルを行う。",
+                "estimated_time": "2時間"
               }
-            },
-            {
-              "issue": "オーディエンスへの訴求力が不足",
-              "improvement": {
-                "action": "オーディエンスのニーズに基づいたストーリーを構築し、感情に訴えるデザイン要素を追加する。",
-                "expected_result": "プレゼンテーションがより魅力的になり、オーディエンスの関心を引きつける。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "ターゲットオーディエンスのペルソナを作成する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "ペルソナに基づいたストーリーテリングのセッションを行う。",
-                    "estimated_time": "1週間"
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
-          "slide_number": 3,
-          "issues": [
-            {
-              "issue": "問題の具体性が欠如している",
-              "improvement": {
-                "action": "具体的なデータや事例を用いて問題を明示化する。",
-                "expected_result": "オーディエンスが問題の深刻さを理解し、共感を得られる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "業界の課題に関するデータを収集する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "データをスライドに組み込む。",
-                    "estimated_time": "3日"
-                  }
-                ]
+          "category": "timing",
+          "issue": "プレゼンの時間配分が不均衡で、重要なポイントを十分に伝えられない。",
+          "improvement": {
+            "action": "各スライドにかける時間を事前に設定し、リハーサルを通じて時間配分を調整する。",
+            "expected_result": "オーディエンスが重要なポイントを理解しやすくなり、全体のメッセージが効果的に伝わる。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "各スライドにかける時間を設定し、全体のタイムラインを作成する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "リハーサルを行い、実際の時間配分を確認し修正を加える。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "タイムキーパーを設定して、プレゼン本番で時間配分を守る。",
+                "estimated_time": "30分"
               }
-            },
-            {
-              "issue": "視覚的な要素が不足している",
-              "improvement": {
-                "action": "ビジュアルエレメント（グラフ、画像、アイコンなど）を追加し、視覚的に訴求する。",
-                "expected_result": "視覚的に魅力的なプレゼンテーションにすることで、情報の理解を助ける。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "視覚的なデザインテンプレートを選定する。",
-                    "estimated_time": "2日"
-                  },
-                  {
-                    "step": 2,
-                    "description": "選定したテンプレートに情報を整理して配置する。",
-                    "estimated_time": "1週間"
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
-          "slide_number": 4,
-          "issues": [
-            {
-              "issue": "詳細な理由の説明が不足",
-              "improvement": {
-                "action": "選考に通らない理由を具体的に列挙し、データや事例で裏付ける。",
-                "expected_result": "審査員が納得しやすくなり、信頼感が増す。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "過去の選考結果とフィードバックを分析する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "分析結果を基にスライドを更新する。",
-                    "estimated_time": "3日"
-                  }
-                ]
+          "category": "story",
+          "issue": "プレゼンのストーリーが一貫しておらず、オーディエンスの関心を引きにくい。",
+          "improvement": {
+            "action": "ストーリーのフレームワークを作成し、各セクションがどのように繋がるかを明確にする。",
+            "expected_result": "オーディエンスがプレゼンの内容に引き込まれ、記憶に残りやすくなる。",
+            "priority": "Medium",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "ストーリーボードを作成し、各スライドのメッセージを整理する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "ストーリーのフローを確認し、必要に応じてスライドの順序を調整する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 3,
+                "description": "リハーサルを通じてストーリーが自然に展開されるか確認する。",
+                "estimated_time": "2時間"
               }
-            },
-            {
-              "issue": "課題の解決策が明確でない",
-              "improvement": {
-                "action": "各課題に対する具体的な解決策を提示し、実行可能性を示す。",
-                "expected_result": "審査員が提案内容の実現可能性を理解できる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "課題ごとに解決策をブレインストーミングする。",
-                    "estimated_time": "2週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "解決策をスライドに配置し、視覚的に理解しやすくする。",
-                    "estimated_time": "1週間"
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
-          "slide_number": 10,
-          "issues": [
-            {
-              "issue": "利用者の具体的なメリットが不明瞭",
-              "improvement": {
-                "action": "Pitch Cartを使用することで得られる具体的なメリットを示す実例を追加する。",
-                "expected_result": "オーディエンスがPitch Cartを利用することの利点を具体的に理解できる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "実際のユーザー事例を収集する。",
-                    "estimated_time": "2週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "収集した事例をスライドにまとめる。",
-                    "estimated_time": "1週間"
-                  }
-                ]
+          "category": "visual",
+          "issue": "ビジュアル要素が不足しており、オーディエンスの興味を引きにくい。",
+          "improvement": {
+            "action": "各スライドにグラフィックや図表を追加し、視覚的な魅力を高める。",
+            "expected_result": "オーディエンスの注意を引きつけ、情報の理解を助ける。",
+            "priority": "Medium",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "各スライドに適したビジュアル要素をリサーチし、提案をまとめる。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 2,
+                "description": "選定したビジュアル要素をスライドに組み込む。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "ビジュアルが効果的に機能しているか、リハーサルで確認する。",
+                "estimated_time": "1時間"
               }
-            }
-          ]
+            ]
+          }
         },
         {
-          "slide_number": 11,
-          "issues": [
-            {
-              "issue": "各ステップの具体的な成果が示されていない",
-              "improvement": {
-                "action": "各ロードマップのステップに対する具体的な成果指標を設定し、提示する。",
-                "expected_result": "プロジェクトの進捗が明確になり、信頼性が増す。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "各ステップの成果指標を定義する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "成果指標をスライドに組み込む。",
-                    "estimated_time": "3日"
-                  }
-                ]
+          "category": "audience",
+          "issue": "オーディエンスのニーズや期待に対する配慮が不足している。",
+          "improvement": {
+            "action": "オーディエンスを意識した内容に調整し、投資家が関心を持つデータや事例を強調する。",
+            "expected_result": "オーディエンスの共感を得やすくなり、プレゼンの影響力が増す。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "対象となるオーディエンスのニーズや期待をリサーチする。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "リサーチ結果を基に、プレゼンの内容を調整する。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "リハーサルでオーディエンスの反応を確認し、必要に応じて最終調整を行う。",
+                "estimated_time": "1時間"
               }
-            }
-          ]
-        },
-        {
-          "slide_number": 12,
-          "issues": [
-            {
-              "issue": "リリース後の計画が不足",
-              "improvement": {
-                "action": "正式リリース後のマーケティング戦略や顧客サポート計画を追加する。",
-                "expected_result": "審査員がリリース後のビジョンを理解できる。",
-                "priority": "Medium",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "リリース後のマーケティング戦略を策定する。",
-                    "estimated_time": "2週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "策定した戦略をスライドに反映させる。",
-                    "estimated_time": "1週間"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "slide_number": 13,
-          "issues": [
-            {
-              "issue": "ビジョンが抽象的で具体性に欠ける",
-              "improvement": {
-                "action": "ビジョンを具体的な数字や成果に基づいて再構築する。",
-                "expected_result": "オーディエンスがビジョンを具体的にイメージできるようになる。",
-                "priority": "Medium",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "ビジョンを具体的な数値目標を設定する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "設定した目標をスライドに組み込む。",
-                    "estimated_time": "3日"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "slide_number": 14,
-          "issues": [
-            {
-              "issue": "参加者への具体的なアクションが不明瞭",
-              "improvement": {
-                "action": "参加者が取るべき具体的な行動や次のステップを明示する。",
-                "expected_result": "参加者が関与しやすくなる。",
-                "priority": "Low",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "参加者に求める行動を明確にする。",
-                    "estimated_time": "3日"
-                  },
-                  {
-                    "step": 2,
-                    "description": "明確にした行動をスライドに追加する。",
-                    "estimated_time": "1日"
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "overall": [
-            {
-              "category": "ビジネスモデル",
-              "issue": "収益化の具体例が不足",
-              "improvement": {
-                "action": "収益モデルを具体的な数値とともに説明する。",
-                "expected_result": "投資家がビジネスの収益性を理解しやすくなる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "収益モデルの詳細を分析し、数値をまとめる。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "分析結果をスライドに組み込む。",
-                    "estimated_time": "3日"
-                  }
-                ]
-              }
-            },
-            {
-              "category": "市場戦略",
-              "issue": "競合優位性が弱い",
-              "improvement": {
-                "action": "競合分析を実施し、具体的な競争優位性を明示化する。",
-                "expected_result": "投資家がPitch Cartの競争力を理解できるようになる。",
-                "priority": "High",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "競合他社の分析を行う。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "分析結果をスライドにまとめ、競争優位性を強調する。",
-                    "estimated_time": "1週間"
-                  }
-                ]
-              }
-            },
-            {
-              "category": "リスク管理",
-              "issue": "リスク要因の説明が不足",
-              "improvement": {
-                "action": "リスク要因とその対策を明示する。",
-                "expected_result": "投資家がリスク管理について理解しやすくなる。",
-                "priority": "Medium",
-                "implementation_steps": [
-                  {
-                    "step": 1,
-                    "description": "リスク要因を整理し、対策を検討する。",
-                    "estimated_time": "1週間"
-                  },
-                  {
-                    "step": 2,
-                    "description": "整理したリスク要因と対策をスライドに追加する。",
-                    "estimated_time": "3日"
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         }
       ]
     }
@@ -897,7 +712,6 @@
         {
           "from_slide": 1,
           "to_slide": 2,
-          "transition_score": 85,
           "transition_issues": [
             {
               "issue": "内容の流れが少し唐突に感じる。",
@@ -910,7 +724,6 @@
         {
           "from_slide": 2,
           "to_slide": 3,
-          "transition_score": 80,
           "transition_issues": [
             {
               "issue": "自身の経験を共有したが、次のスライドとの関連が薄い。",
@@ -923,7 +736,6 @@
         {
           "from_slide": 3,
           "to_slide": 4,
-          "transition_score": 75,
           "transition_issues": [
             {
               "issue": "理由の提示が少し抽象的。",
@@ -936,7 +748,6 @@
         {
           "from_slide": 4,
           "to_slide": 5,
-          "transition_score": 80,
           "transition_issues": [
             {
               "issue": "理由の提示が続くが、聴衆が何を考えているかを引き出す工夫が必要。",
@@ -949,25 +760,21 @@
         {
           "from_slide": 5,
           "to_slide": 6,
-          "transition_score": 85,
           "transition_issues": []
         },
         {
           "from_slide": 6,
           "to_slide": 7,
-          "transition_score": 90,
           "transition_issues": []
         },
         {
           "from_slide": 7,
           "to_slide": 8,
-          "transition_score": 90,
           "transition_issues": []
         },
         {
           "from_slide": 8,
           "to_slide": 9,
-          "transition_score": 85,
           "transition_issues": [
             {
               "issue": "技術的な詳細に入るが、もう少し具体的な利点を示した方が良い。",
@@ -980,7 +787,6 @@
         {
           "from_slide": 9,
           "to_slide": 10,
-          "transition_score": 80,
           "transition_issues": [
             {
               "issue": "ビジネスモデルの説明にスムーズに入れる工夫が必要。",
@@ -993,13 +799,11 @@
         {
           "from_slide": 10,
           "to_slide": 11,
-          "transition_score": 85,
           "transition_issues": []
         },
         {
           "from_slide": 11,
           "to_slide": 12,
-          "transition_score": 80,
           "transition_issues": [
             {
               "issue": "ロードマップに入る際の導入が不明瞭。",
@@ -1012,13 +816,11 @@
         {
           "from_slide": 12,
           "to_slide": 13,
-          "transition_score": 85,
           "transition_issues": []
         },
         {
           "from_slide": 13,
           "to_slide": 14,
-          "transition_score": 80,
           "transition_issues": [
             {
               "issue": "最後の呼びかけがやや弱い。",
@@ -1064,64 +866,6 @@
             "slide_range": { "start": 11, "end": 14 },
             "narrative_strength": 75,
             "key_messages": ["今後のロードマップ", "聴衆への呼びかけ"]
-          }
-        ]
-      },
-      "logical_structure": {
-        "main_argument": "Pitch Cartを使うことで、プレゼンの質を向上させ、アイデアを実現する機会を増やすことができる。",
-        "argument_chain": [
-          {
-            "claim": "Pitch Cartはプレゼン作成支援ツールである。",
-            "evidence": [
-              "オーディエンスの反応を予測する機能",
-              "AIを活用した内容分析"
-            ],
-            "slide_numbers": [1, 7],
-            "logical_strength": 85
-          },
-          {
-            "claim": "多くのアイデアが選ばれない理由を解決する。",
-            "evidence": ["課題の解像度が低いことへの対策", "競合優位性の強化"],
-            "slide_numbers": [4, 5],
-            "logical_strength": 80
-          },
-          {
-            "claim": "技術的に優れたソリューションを提供する。",
-            "evidence": [
-              "ReactとPython-pptxを使用した解析機能",
-              "フロントエンドとバックエンドの強み"
-            ],
-            "slide_numbers": [9],
-            "logical_strength": 80
-          },
-          {
-            "claim": "具体的なビジネスモデルを持つ。",
-            "evidence": [
-              "無料利用と従量課金制の導入",
-              "ユーザーの声を活かした改善プロセス"
-            ],
-            "slide_numbers": [10],
-            "logical_strength": 80
-          },
-          {
-            "claim": "明確なロードマップがある。",
-            "evidence": ["MVPの試用とフィードバック", "正式リリースの計画"],
-            "slide_numbers": [11, 12],
-            "logical_strength": 85
-          }
-        ],
-        "logical_gaps": [
-          {
-            "description": "Pitch Cartの具体的な利用効果についての詳細が不足している。",
-            "affected_slides": [7, 8],
-            "impact": "聴衆がPitch Cartの実際の効果を理解しにくい。",
-            "improvement": "具体的な成功事例やユーザーテストの結果を示す。"
-          },
-          {
-            "description": "競合他社との差別化要因が明確に示されていない。",
-            "affected_slides": [8, 10],
-            "impact": "Pitch Cartの優位性を理解されにくい。",
-            "improvement": "競合分析を行い、Pitch Cartの独自の強みを強調する。"
           }
         ]
       }

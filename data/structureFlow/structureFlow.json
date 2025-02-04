@@ -19,12 +19,6 @@
                   "type": "number",
                   "description": "終了スライド番号"
                 },
-                "transition_score": {
-                  "type": "number",
-                  "minimum": 0,
-                  "maximum": 100,
-                  "description": "遷移の自然さスコア"
-                },
                 "transition_issues": {
                   "type": "array",
                   "items": {
@@ -105,79 +99,10 @@
                 }
               }
             }
-          },
-          "logical_structure": {
-            "type": "object",
-            "properties": {
-              "main_argument": {
-                "type": "string",
-                "description": "プレゼンテーションの中心的な主張"
-              },
-              "argument_chain": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "claim": {
-                      "type": "string",
-                      "description": "主張内容"
-                    },
-                    "evidence": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "主張を支持する証拠"
-                    },
-                    "slide_numbers": {
-                      "type": "array",
-                      "items": {
-                        "type": "number"
-                      },
-                      "description": "関連するスライド番号"
-                    },
-                    "logical_strength": {
-                      "type": "number",
-                      "minimum": 0,
-                      "maximum": 100,
-                      "description": "論理的な強さ"
-                    }
-                  }
-                }
-              },
-              "logical_gaps": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "description": {
-                      "type": "string",
-                      "description": "論理的なギャップの説明"
-                    },
-                    "affected_slides": {
-                      "type": "array",
-                      "items": {
-                        "type": "number"
-                      },
-                      "description": "影響を受けるスライド番号"
-                    },
-                    "impact": {
-                      "type": "string",
-                      "description": "このギャップが与える影響"
-                    },
-                    "improvement": {
-                      "type": "string",
-                      "description": "改善提案"
-                    }
-                  }
-                }
-              }
-            }
           }
         },
-        "required": ["edges", "story_structure", "logical_structure"]
+        "required": ["edges", "story_structure"]
       }
     }
   }
 }
-  

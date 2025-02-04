@@ -1,4 +1,4 @@
-import { Transition, Stack, SimpleGrid, Box } from "@mantine/core";
+import { Transition, Paper, SimpleGrid, Box } from "@mantine/core";
 import { useState } from "react";
 import { TotalScore } from "@/components/Result/Score/TotalScore";
 import { ScoreByCategory } from "@/components/Result/Score/ScoreByCategory";
@@ -95,18 +95,20 @@ export const Score = ({ analysisWithScore, input }: ScoreProps) => {
       <TotalScore input={input} averageScore={averageScore} />
 
       {/* メインカテゴリー選択 */}
-      <Stack mb="xl">
-        <SimpleGrid cols={3} className="gap-4 justify-center mb-8">
+      <Box mb="8">
+        <SimpleGrid cols={3} className="gap-4 justify-center">
           {mainCategories.map((category, index) => (
-            <ScoreByCategory
-              key={index}
-              category={category}
-              selectedMainCategory={selectedMainCategory}
-              setSelectedMainCategory={setSelectedMainCategory}
-            />
+            <Paper mb="16" shadow="md">
+              <ScoreByCategory
+                key={index}
+                category={category}
+                selectedMainCategory={selectedMainCategory}
+                setSelectedMainCategory={setSelectedMainCategory}
+              />
+            </Paper>
           ))}
         </SimpleGrid>
-      </Stack>
+      </Box>
 
       <Transition
         mounted={true}
@@ -114,7 +116,7 @@ export const Score = ({ analysisWithScore, input }: ScoreProps) => {
         duration={400}
         timingFunction="ease"
       >
-        {(styles) => (
+        {(_) => (
           <ReportAboutEachScore
             mainCategories={mainCategories}
             explanationByScore={explanationByScore}
