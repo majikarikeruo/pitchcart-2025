@@ -12,10 +12,7 @@ export interface ScoreExplanationProps {
     };
   };
 }
-export type AnalysisCategoryProps =
-  | "impact_score"
-  | "feasibility_score"
-  | "presentation_score";
+export type AnalysisCategoryProps = "impact_score" | "feasibility_score" | "presentation_score";
 
 export const CATEGORY_LABELS = {
   impact_score: "影響力",
@@ -54,11 +51,14 @@ export const PRESENTATION_SCORE_DETAILS = {
 } as const;
 
 export type CategoryLabel = (typeof CATEGORY_LABELS)[AnalysisCategoryProps];
+
 export const CATEGORY_DETAILS = {
   impact_score: IMPACT_SCORE_DETAILS,
   feasibility_score: FEASIBILITY_SCORE_DETAILS,
   presentation_score: PRESENTATION_SCORE_DETAILS,
 } as const;
+
+export type CategoryDetail = (typeof CATEGORY_DETAILS)[AnalysisCategoryProps];
 
 export interface AnalysisCategoryData {
   id: AnalysisCategoryProps;
@@ -66,7 +66,7 @@ export interface AnalysisCategoryData {
   label: CategoryLabel;
 }
 
-interface AnalysisProps {
+export interface AnalysisProps {
   total: number;
   breakdown: {
     [key: string]: number;

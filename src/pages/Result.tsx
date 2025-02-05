@@ -1,48 +1,47 @@
-import { useEffect, useState } from "react";
+import { Container, Stack, Alert, Loader, Text } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
 
-import { Container, Stack } from "@mantine/core";
+import { Score } from "@/components/features/Result/Score";
+import { Question } from "@/components/features/Result/Question";
+import { Improvement } from "@/components/features/Result/Improvement";
+import { Flow } from "@/components/features/Result/Flow";
 
-import { Score } from "@/components/Result/Score";
-import { Question } from "@/components/Result/Question";
-import { Improvement } from "@/components/Result/Improvement";
-import { Flow } from "@/components/Result/Flow";
-
-import { ResultData } from "@/types/Result";
+import { useResult } from "@/hooks/useResults";
 
 export default function Result() {
-  const [result, setResult] = useState<ResultData | null>(null);
+  const { result, isLoading, error } = useResult();
 
-  useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      const response = await fetch("../testdata.json");
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
+  if (isLoading) {
+    return (
+      <Container py={48} size="xl">
+        <Stack align="center">
+          <Loader size="xl" />
+          <Text size="lg">分析結果を読み込んでいます...</Text>
+        </Stack>
+      </Container>
+    );
+  }
 
-      const resultData: ResultData = await response.json();
-      setResult(resultData);
-    };
+  if (error) {
+    return (
+      <Container py={48} size="xl">
+        <Alert icon={<IconAlertCircle />} title="エラーが発生しました" color="red">
+          {error.message}
+        </Alert>
+      </Container>
+    );
+  }
 
-    fetchData();
-  }, []);
+  if (!result) return null;
 
   return (
     <Stack>
-      {result && (
-        <Container py={48} size="xl">
-          <Score
-            analysisWithScore={result.analysisWithScore}
-            input={result.input}
-          />
-          <Flow
-            heatmapFlow={result.flow.heatmapFlow}
-            structureFlow={result.flow.structureFlow}
-            prerequisiteCheck={result.flow.prerequisiteCheck}
-          />
-          <Question predictedQuestions={result.predictedQuestions} />
-          <Improvement improvement={result.improvement} />
-        </Container>
-      )}
+      <Container py={48} size="xl">
+        <Score analysisWithScore={result.analysisWithScore} input={result.input} />
+        <Flow heatmapFlow={result.heatmapFlow} structureFlow={result.structureFlow} prerequisiteCheck={result.prerequisiteCheck} />
+        <Question predictedQuestions={result.predictedQuestions} />
+        <Improvement improvement={result.improvement} />
+      </Container>
     </Stack>
   );
 }

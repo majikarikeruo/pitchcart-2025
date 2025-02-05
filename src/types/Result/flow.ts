@@ -42,7 +42,7 @@ export interface SlideData {
   section_type: string;
 }
 
-interface HeatmapData {
+export interface HeatmapData {
   slide_heatmap: {
     slides: SlideData[];
   };
@@ -81,7 +81,7 @@ interface structureProps {
   story_structure: storyStructureProps;
 }
 
-interface structureData {
+export interface structureData {
   structure_flow: structureProps;
 }
 
@@ -100,15 +100,10 @@ export interface PrerequisiteCheckItemProps {
   current_state: CurrentStateProps;
 }
 
-interface prerequisiteData {
+export interface prerequisiteData {
   prerequisite_check: PrerequisiteCheckProps;
 }
 
-export interface FlowProps {
-  heatmapFlow: HeatmapData;
-  structureFlow: structureData;
-  prerequisiteCheck: prerequisiteData;
-}
 export type DisplayType = "slide" | "transition";
 export const SECTION_CONFIG = {
   setup: {

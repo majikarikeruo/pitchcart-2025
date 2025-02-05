@@ -1,16 +1,12 @@
 import { Card, Modal } from "@mantine/core";
 
-import { SlideImage } from "@/components/Result/Flow/Detail/SlideImage";
-import { SlideInfo } from "@/components/Result/Flow/Detail/SlideInfo";
-import { SlidePrerequisite } from "@/components/Result/Flow/Detail/SlidePrerequisite";
-import { TransitionInfo } from "@/components/Result/Flow/Detail/TransitionInfo";
-import { TransitionTarget } from "@/components/Result/Flow/Detail/TransitionTarget";
+import { SlideImage } from "@/components/features/Result/Flow/Detail/SlideImage";
+import { SlideInfo } from "@/components/features/Result/Flow/Detail/SlideInfo";
+import { SlidePrerequisite } from "@/components/features/Result/Flow/Detail/SlidePrerequisite";
+import { TransitionInfo } from "@/components/features/Result/Flow/Detail/TransitionInfo";
+import { TransitionTarget } from "@/components/features/Result/Flow/Detail/TransitionTarget";
 
-import {
-  PrerequisiteCheckItemProps,
-  SlideData,
-  edgeItemProps,
-} from "@/types/Result";
+import { PrerequisiteCheckItemProps, SlideData, edgeItemProps } from "@/types/Result";
 
 interface FlowDialogProps {
   displayType: string;
@@ -22,15 +18,7 @@ interface FlowDialogProps {
   targetIndex: number;
 }
 
-export const FlowDialog = ({
-  displayType,
-  opened,
-  close,
-  edge,
-  slide,
-  targetSlideObj,
-  targetIndex,
-}: FlowDialogProps) => {
+export const FlowDialog = ({ displayType, opened, close, edge, slide, targetSlideObj, targetIndex }: FlowDialogProps) => {
   const handleCloseDialog = () => {
     close();
   };
@@ -55,12 +43,7 @@ export const FlowDialog = ({
             <SlideImage targetIndex={targetIndex} />
             <SlideInfo slide={slide} i={targetIndex} />
 
-            {targetSlideObj && (
-              <SlidePrerequisite
-                targetSlideObj={targetSlideObj}
-                index={targetIndex}
-              />
-            )}
+            {targetSlideObj && <SlidePrerequisite targetSlideObj={targetSlideObj} index={targetIndex} />}
           </>
         ) : (
           <>

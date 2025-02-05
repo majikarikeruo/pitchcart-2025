@@ -1,5 +1,5 @@
 import { Tabs, Title, Text, Container, Flex, Stack } from "@mantine/core";
-import { PresentationCheck } from "@/components/Entry/PresentationCheck";
+import { PresentationCheck } from "@/components/features/Entry/PresentationCheck";
 
 export default function Entry() {
   return (

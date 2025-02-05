@@ -30,7 +30,7 @@ export const UserInput = ({ input }: { input: UserInputProps }) => {
           </Text>
         </Grid.Col>
       </Grid>
-      <Text mt={"xl"} maw={"40rem"}>
+      <Text mt={"xl"} maw={"42rem"} fz={18}>
         {input.summary}
       </Text>
     </Box>

@@ -1,23 +1,9 @@
-import {
-  Stack,
-  Box,
-  Title,
-  Text,
-  Flex,
-  ThemeIcon,
-  Paper,
-  Divider,
-} from "@mantine/core";
+import { Stack, Box, Title, Text, Flex, ThemeIcon, Paper, Divider } from "@mantine/core";
 import { Bot, User2 } from "lucide-react";
 
-import { QuestionHeading } from "@/components/Result/Question/QuestionHeading";
-import { QuestionPill } from "@/components/Result/Question/QuestionPill";
-import {
-  QuestionItems,
-  QuestionItem,
-  StyleLevel,
-  StyleConfig,
-} from "@/types/Result";
+import { QuestionHeading } from "@/components/features/Result/Question/QuestionHeading";
+import { QuestionPill } from "@/components/features/Result/Question/QuestionPill";
+import { QuestionItems, QuestionItem, StyleLevel, StyleConfig } from "@/types/Result";
 
 const styles: Record<StyleLevel, StyleConfig> = {
   high: {
@@ -58,14 +44,7 @@ export const Question = ({ predictedQuestions }: QuestionProps) => {
       <QuestionHeading />
       <Box>
         {question_items.map((question: QuestionItem, index: number) => (
-          <Stack
-            key={index}
-            style={stackStyle(styles[question.priority].color)}
-            px={24}
-            pt={16}
-            py={24}
-            mb={16}
-          >
+          <Stack key={index} style={stackStyle(styles[question.priority].color)} px={24} pt={16} py={24} mb={16}>
             <QuestionPill pillStyles={styles} priority={question.priority} />
             <Flex align="start" mt={8}>
               <Box style={{ minWidth: 80 }} ta="center">
