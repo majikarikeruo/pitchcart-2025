@@ -1,94 +1,63 @@
-import { Transition, Paper, SimpleGrid, Box } from "@mantine/core";
 import { useState } from "react";
+
+import { Transition, Paper, SimpleGrid, Box } from "@mantine/core";
 import { TotalScore } from "@/components/Result/Score/TotalScore";
 import { ScoreByCategory } from "@/components/Result/Score/ScoreByCategory";
 import { ReportAboutEachScore } from "@/components/Result/Score/ReportAboutEachScore";
 
-interface UserInput {
-  target: string;
-  goal: string;
-  industry: string;
-  summary: string;
-}
+import {
+  UserInputProps,
+  analysisWithScoreProps,
+  AnalysisCategoryProps,
+  CATEGORY_LABELS,
+  AnalysisCategoryData,
+} from "@/types/Result";
 
-// 分析のコンポーネントの型
-interface AnalysisComponent {
-  total: number;
-  breakdown: {
-    [key: string]: number;
-  };
-}
-
-type MainCategory = "impact_score" | "feasibility_score" | "presentation_score";
-
-// 分析全体の型
-interface Analysis {
-  impact_score: AnalysisComponent;
-  feasibility_score: AnalysisComponent;
-  presentation_score: AnalysisComponent;
-}
-
-// スコア説明のコンポーネントの型
-interface ScoreExplanationComponent {
-  total_explanation: {
-    score: number;
-    summary: string;
-    key_factors: string[];
-  };
-  components: {
-    [key: string]: {
-      score: number;
-      explanation: string;
-      evidence: string;
-    };
-  };
-}
-
-// スコア説明全体の型
-interface ScoreExplanation {
-  impact_score: ScoreExplanationComponent;
-  feasibility_score: ScoreExplanationComponent;
-  presentation_score: ScoreExplanationComponent;
-}
-
-// text2全体の型
-interface Text2Data {
-  analysis: Analysis;
-  score_explanation: ScoreExplanation;
-}
-
-// コンポーネントのProps型
 interface ScoreProps {
-  analysisWithScore: Text2Data;
-  input: UserInput; // UserInputの型は別途定義が必要
+  analysisWithScore: analysisWithScoreProps;
+  input: UserInputProps;
 }
 
 export const Score = ({ analysisWithScore, input }: ScoreProps) => {
-  const [selectedMainCategory, setSelectedMainCategory] =
-    useState<MainCategory>("impact_score");
-
-  const labelObj = {
-    impact_score: "影響力",
-    feasibility_score: "実現可能性",
-    presentation_score: "プレゼンテーション",
-  };
+  const [selectedCategory, setSelectedCategory] =
+    useState<AnalysisCategoryProps>("impact_score");
   const { analysis, score_explanation } = analysisWithScore;
-  const mainCategories = Object.entries(analysis).map(([key, value]) => ({
-    id: key as MainCategory,
+
+  const explanationByScore = score_explanation[selectedCategory];
+
+  const analysisCategories: AnalysisCategoryData[] = Object.entries(
+    analysis
+  ).map(([key, value]) => ({
+    id: key as AnalysisCategoryProps,
     total: value.total,
-    label: labelObj[key as MainCategory],
+    label: CATEGORY_LABELS[key as AnalysisCategoryProps],
   }));
 
-  const explanationByScore = score_explanation[selectedMainCategory];
+  /**
+   * @function calculateAverageScore
+   * スコアの平均値を出す =
+   */
+  const calculateAverageScore = (
+    analysis: analysisWithScoreProps["analysis"]
+  ) => {
+    const scores = Object.values(analysis);
+    if (scores.length === 0) {
+      return 0;
+    }
+
+    return (
+      Object.values(analysis).reduce((sum, { total }) => sum + total, 0) /
+      scores.length
+    );
+  };
 
   /**
    * 総合スコアを平均値から出力する
    */
-  const averageScore =
-    Object.values(analysis).reduce((sum, { total }) => sum + total, 0) /
-      Object.keys(analysis).length || 0;
+  const averageScore = calculateAverageScore(analysis);
 
-  // Memo:Text2のanasysicの中の構造が実態と合わなくていじったのでDify側の調整が必要かもしれない
+  // Memo:
+  //Text2のanasysicの中の構造が実態と合わなくていじったのでDify側の調整が必要かもしれない
 
   return (
     <Box mb="xl">
@@ -97,13 +66,13 @@ export const Score = ({ analysisWithScore, input }: ScoreProps) => {
       {/* メインカテゴリー選択 */}
       <Box mb="8">
         <SimpleGrid cols={3} className="gap-4 justify-center">
-          {mainCategories.map((category, index) => (
-            <Paper mb="16" shadow="md">
+          {analysisCategories.map((category, index) => (
+            <Paper mb="16" shadow="md" key={index}>
               <ScoreByCategory
                 key={index}
                 category={category}
-                selectedMainCategory={selectedMainCategory}
-                setSelectedMainCategory={setSelectedMainCategory}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
               />
             </Paper>
           ))}
@@ -118,9 +87,9 @@ export const Score = ({ analysisWithScore, input }: ScoreProps) => {
       >
         {(_) => (
           <ReportAboutEachScore
-            mainCategories={mainCategories}
+            analysisCategories={analysisCategories}
             explanationByScore={explanationByScore}
-            selectedMainCategory={selectedMainCategory}
+            selectedCategory={selectedCategory}
           />
         )}
       </Transition>

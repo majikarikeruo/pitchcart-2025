@@ -1,5 +1,4 @@
 import { Info, Check } from "lucide-react";
-
 import {
   Stack,
   Divider,
@@ -14,34 +13,32 @@ import {
 } from "@mantine/core";
 
 import { SummarySection } from "@/components/Result/Score/ReportAboutEachScore/SummarySection";
+import {
+  CATEGORY_DETAILS,
+  AnalysisCategoryProps,
+  ScoreExplanationProps,
+  AnalysisCategoryData,
+} from "@/types/Result";
+
+interface ReportProps {
+  analysisCategories: AnalysisCategoryData[];
+  explanationByScore: ScoreExplanationProps;
+  selectedCategory: AnalysisCategoryProps;
+}
 
 export const ReportAboutEachScore = ({
-  mainCategories,
+  analysisCategories,
   explanationByScore,
-  selectedMainCategory,
-}) => {
-  console.log(explanationByScore);
-
-  const labelObj = {
-    market_alignment: "市場適合度",
-    value_proposition: "価値提案",
-    competitive_advantage: "競争優位性",
-    technical_viability: "技術的実現性",
-    resource_availability: "リソースの充足度",
-    execution_capability: "実行力",
-    clarity: "説明の明確さ",
-    structure: "構造の適切さ",
-    engagement: "聴衆の関心度",
-  };
-
-  const subCategoryKeys = Object.keys(explanationByScore.components);
-  //   console.log(explanationByScore, subCategoryKeys);
+  selectedCategory,
+}: ReportProps) => {
+  const { components } = explanationByScore;
+  const categoryDetails = CATEGORY_DETAILS[selectedCategory];
 
   return (
     <Paper shadow="md">
       <SummarySection
-        mainCategories={mainCategories}
-        selectedMainCategory={selectedMainCategory}
+        analysisCategories={analysisCategories}
+        selectedCategory={selectedCategory}
         explanationByScore={explanationByScore}
       />
 
@@ -49,8 +46,8 @@ export const ReportAboutEachScore = ({
 
       {/* サブカテゴリーのグリッド表示 */}
       <SimpleGrid cols={3} style={{ padding: "16px" }} bg="white">
-        {subCategoryKeys.map((componentKey, index) => (
-          <Stack key={index} px="md">
+        {Object.entries(categoryDetails).map(([key, label]) => (
+          <Stack key={key} px="md">
             <Flex align="center" justify="center">
               <RingProgress
                 size={200}
@@ -59,17 +56,17 @@ export const ReportAboutEachScore = ({
                 ta="center"
                 sections={[
                   {
-                    value: explanationByScore.components[componentKey].score,
+                    value: components[key].score,
                     color: "red",
                   },
                 ]}
                 label={
                   <>
                     <Title order={6} c="dimmed">
-                      {labelObj[componentKey]}
+                      {label}
                     </Title>
                     <Text fw={700} fz={40}>
-                      {explanationByScore.components[componentKey].score}
+                      {components[key].score}
                     </Text>
                   </>
                 }
@@ -82,9 +79,7 @@ export const ReportAboutEachScore = ({
                     <Check size={16} />
                   </ThemeIcon>
                   <Box>
-                    <Text fw={"bold"}>
-                      {explanationByScore.components[componentKey].explanation}
-                    </Text>
+                    <Text fw={"bold"}>{components[key].explanation}</Text>
                   </Box>
                 </Flex>
               </Box>
@@ -94,9 +89,7 @@ export const ReportAboutEachScore = ({
                     <Info size={16} />
                   </ThemeIcon>
                   <Box>
-                    <Text>
-                      {explanationByScore.components[componentKey].evidence}
-                    </Text>
+                    <Text>{components[key].evidence}</Text>
                   </Box>
                 </Flex>
               </Box>

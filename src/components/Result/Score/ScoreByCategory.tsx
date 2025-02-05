@@ -1,9 +1,17 @@
+import { Dispatch, SetStateAction } from "react";
+
 import { Progress, Card, Text, Box } from "@mantine/core";
+
+import { AnalysisCategoryData, AnalysisCategoryProps } from "@/types/Result";
 
 export const ScoreByCategory = ({
   category,
-  selectedMainCategory,
-  setSelectedMainCategory,
+  selectedCategory,
+  setSelectedCategory,
+}: {
+  category: AnalysisCategoryData;
+  selectedCategory: AnalysisCategoryProps;
+  setSelectedCategory: Dispatch<SetStateAction<AnalysisCategoryProps>>;
 }) => {
   /**
    * 各カードのStyleを適用する
@@ -11,11 +19,10 @@ export const ScoreByCategory = ({
    */
   const cardStyle = () => {
     return {
-      backgroundColor:
-        selectedMainCategory === category.id ? "#e7f2ff" : "#fff",
-      color: selectedMainCategory === category.id ? "#007bff" : "#000",
+      backgroundColor: selectedCategory === category.id ? "#e7f2ff" : "#fff",
+      color: selectedCategory === category.id ? "#007bff" : "#000",
       border:
-        selectedMainCategory === category.id
+        selectedCategory === category.id
           ? "1px solid #007bff"
           : "1px solid #ddd",
     };
@@ -25,14 +32,14 @@ export const ScoreByCategory = ({
     <Card
       withBorder
       key={category.id}
-      onClick={() => setSelectedMainCategory(category.id)}
+      onClick={() => setSelectedCategory(category.id)}
       w="100%"
       style={cardStyle}
     >
       <Text fz={16} fw={700} c="dimmed">
         {category.label}
       </Text>
-      <Box fw={700} fz={32} style={{ display: "flex", alignItems: "baseline" }}>
+      <Box fw={700} fz={40} style={{ display: "flex", alignItems: "baseline" }}>
         {category.total}
         <Text fz={16} mx={4}>
           /

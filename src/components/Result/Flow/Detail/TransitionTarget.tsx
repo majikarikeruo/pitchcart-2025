@@ -1,20 +1,12 @@
-import { Flex, Text, Title, Box, ThemeIcon } from "@mantine/core";
+import { Flex, Text, Box, ThemeIcon } from "@mantine/core";
 import { IconChevronRight, IconCheck } from "@tabler/icons-react";
+import { edgeItemProps } from "@/types/Result";
 
-interface transitionIssue {
-  issue: string;
-  current_content: string;
-  suggestion: string;
-  context: string;
-}
-
-interface edgeData {
-  from_slide: number;
-  to_slide: number;
-  transition_issues: transitionIssue[];
-}
-
-export const TransitionTarget = ({ targetEdge }: { targetEdge: edgeData }) => {
+export const TransitionTarget = ({
+  targetEdge,
+}: {
+  targetEdge: edgeItemProps;
+}) => {
   return (
     <Box ta={"center"} p={16}>
       <ThemeIcon variant="white" mr={16}>

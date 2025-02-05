@@ -1,17 +1,28 @@
 import { List, ThemeIcon, Text, Title, Flex, Box } from "@mantine/core";
 import { Check } from "lucide-react";
+import {
+  AnalysisCategoryProps,
+  ScoreExplanationProps,
+  AnalysisCategoryData,
+} from "@/types/Result";
+
+interface ReportProps {
+  analysisCategories: AnalysisCategoryData[];
+  explanationByScore: ScoreExplanationProps;
+  selectedCategory: AnalysisCategoryProps;
+}
 
 export const SummarySection = ({
-  mainCategories,
-  selectedMainCategory,
+  analysisCategories,
+  selectedCategory,
   explanationByScore,
-}) => {
+}: ReportProps) => {
   return (
     <Box mb={40} p={24} ta={"center"}>
       <Title order={2} fz={40} mb={16} c="#228be6" ta={"center"}>
         {
-          mainCategories.find(
-            (category) => category.id === selectedMainCategory
+          analysisCategories.find(
+            (category) => category.id === selectedCategory
           )?.label
         }
       </Title>
@@ -21,7 +32,7 @@ export const SummarySection = ({
       <Flex direction={"column"} align={"center"} mt={16}>
         <Box>
           {explanationByScore.total_explanation.key_factors.map(
-            (item, index) => (
+            (item: string, index: number) => (
               <List ta={"left"} key={index}>
                 <List.Item
                   py={4}

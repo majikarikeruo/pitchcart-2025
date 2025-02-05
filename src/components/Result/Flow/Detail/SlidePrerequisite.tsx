@@ -1,13 +1,4 @@
-import {
-  Title,
-  Text,
-  Badge,
-  Box,
-  List,
-  ThemeIcon,
-  Flex,
-  Tabs,
-} from "@mantine/core";
+import { Title, Text, Badge, Box, List, ThemeIcon, Tabs } from "@mantine/core";
 import {
   IconZoomCheck,
   IconThumbDown,
@@ -70,7 +61,7 @@ export const SlidePrerequisite = ({
                     </Badge>
                     <List withPadding>
                       {targetSlideObj.current_state.missing_elements.map(
-                        (item, index) => (
+                        (item: string, index: number) => (
                           <List.Item key={index}>{item}</List.Item>
                         )
                       )}

@@ -2,17 +2,7 @@ import { Box, Title, Text, ThemeIcon, Flex } from "@mantine/core";
 import { IconPointer } from "@tabler/icons-react";
 
 import { SlideIssue } from "@/components/Result/Flow/Detail/SlideIssue";
-
-interface SlideData {
-  number: number;
-  title: string;
-  content_score: number;
-  visual_score: number;
-  improvement_count: number;
-  priority: string;
-  issues: IssueData[];
-  section_type: string;
-}
+import { SlideData, IssueData } from "@/types/Result";
 
 export const SlideInfo = ({ slide, i }: { slide: SlideData; i: number }) => {
   return (
@@ -25,7 +15,7 @@ export const SlideInfo = ({ slide, i }: { slide: SlideData; i: number }) => {
       >
         <Title order={3} mb={16} p={8} px={12} ta={"center"}>
           {i + 1}枚目のスライドの改善点
-        </Title>{" "}
+        </Title>
         <Text c="#5da9ec" tt={"uppercase"} fw={"bold"}>
           Improvement
         </Text>{" "}

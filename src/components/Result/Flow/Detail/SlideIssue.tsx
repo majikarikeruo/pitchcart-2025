@@ -1,31 +1,8 @@
 import { Box, Title, Text, Grid, ThemeIcon, Paper } from "@mantine/core";
 import { IconHelpHexagon, IconCheck } from "@tabler/icons-react";
+import { ISSUE_LABELS, IssueData } from "@/types/Result";
 
-interface IssueData {
-  impact: string;
-  description: string;
-  suggestion: string;
-  type: IssueKey;
-}
 
-interface IssueValue {
-  backgroundColor: string;
-  text: string;
-}
-type IssueKey = "content" | "message" | "visual" | "structure";
-
-const budgeObj: Record<IssueKey, IssueValue> = {
-  content: {
-    backgroundColor: "blue",
-    text: "スライド内容",
-  },
-  structure: {
-    backgroundColor: "indigo",
-    text: "構造",
-  },
-  message: { backgroundColor: "orange", text: "メッセージ性" },
-  visual: { backgroundColor: "cyan", text: "デザイン" },
-};
 
 export const SlideIssue = ({ issue }: { issue: IssueData }) => {
   return (
@@ -41,7 +18,7 @@ export const SlideIssue = ({ issue }: { issue: IssueData }) => {
           <ThemeIcon variant="white" mr={16}>
             <IconCheck />
           </ThemeIcon>
-          {budgeObj[issue.type].text}
+          {ISSUE_LABELS[issue.type].text}
         </Title>
       </Box>
       <Grid gutter="lg">

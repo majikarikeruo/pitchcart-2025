@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Title, ThemeIcon } from "@mantine/core";
+import { Flex, Text, Title, ThemeIcon } from "@mantine/core";
 import { IconMessageQuestion } from "@tabler/icons-react";
 
 export const FlowHeading = () => {

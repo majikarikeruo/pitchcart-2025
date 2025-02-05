@@ -1,7 +1,8 @@
 import { Box, Text, ThemeIcon, Title, Grid, Paper } from "@mantine/core";
-import { IconHelpHexagon, IconCheck } from "@tabler/icons-react";
+import { IconHelpHexagon } from "@tabler/icons-react";
+import { issueProps } from "@/types/Result";
 
-export const TransitionIssue = ({ issue }) => {
+export const TransitionIssue = ({ issue }: { issue: issueProps }) => {
   return (
     <Box mb={24} p={16} pt={24} pos={"relative"}>
       <Grid gutter="lg">

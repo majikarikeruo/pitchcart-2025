@@ -12,21 +12,12 @@ import { Bot, User2 } from "lucide-react";
 
 import { QuestionHeading } from "@/components/Result/Question/QuestionHeading";
 import { QuestionPill } from "@/components/Result/Question/QuestionPill";
-
-type StyleLevel = "high" | "medium" | "low";
-
-interface StyleConfig {
-  label: string;
-  color: string;
-  backgroundColor: string;
-}
-
-interface QuestionItem {
-  question: string;
-  background: string;
-  source: string;
-  priority: StyleLevel;
-}
+import {
+  QuestionItems,
+  QuestionItem,
+  StyleLevel,
+  StyleConfig,
+} from "@/types/Result";
 
 const styles: Record<StyleLevel, StyleConfig> = {
   high: {
@@ -56,11 +47,12 @@ const stackStyle = (color: string): React.CSSProperties => {
   };
 };
 
-export const Question = ({
-  question_items,
-}: {
-  question_items: QuestionItem[];
-}) => {
+interface QuestionProps {
+  predictedQuestions: QuestionItems;
+}
+
+export const Question = ({ predictedQuestions }: QuestionProps) => {
+  const { question_items } = predictedQuestions;
   return (
     <Paper p={40} shadow="md">
       <QuestionHeading />

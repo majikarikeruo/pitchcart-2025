@@ -1,13 +1,7 @@
 import { Grid, Text, Box } from "@mantine/core";
+import { UserInputProps } from "@/types/Result";
 
-interface UserInput {
-  target: string;
-  goal: string;
-  industry: string;
-  summary: string;
-}
-
-export const UserInput = ({ input }: { input: UserInput }) => {
+export const UserInput = ({ input }: { input: UserInputProps }) => {
   return (
     <Box mb="md" w={"100%"}>
       <Grid>
@@ -15,7 +9,7 @@ export const UserInput = ({ input }: { input: UserInput }) => {
           <Text size="sm" fw={700} c="dimmed">
             プレゼン相手
           </Text>
-          <Text size="xl" fw={700}>
+          <Text fz={25} fw={700}>
             {input.target}
           </Text>
         </Grid.Col>
@@ -23,7 +17,7 @@ export const UserInput = ({ input }: { input: UserInput }) => {
           <Text size="sm" fw={700} c="dimmed">
             プレゼンの目的
           </Text>
-          <Text size="xl" fw={700}>
+          <Text fz={25} fw={700}>
             {input.goal}
           </Text>
         </Grid.Col>
@@ -31,12 +25,14 @@ export const UserInput = ({ input }: { input: UserInput }) => {
           <Text size="sm" fw={700} c="dimmed">
             業界
           </Text>
-          <Text size="xl" fw={700}>
+          <Text fz={25} fw={700}>
             {input.industry}
           </Text>
         </Grid.Col>
       </Grid>
-      <Text mt={"xl"}>{input.summary}</Text>
+      <Text mt={"xl"} maw={"40rem"}>
+        {input.summary}
+      </Text>
     </Box>
   );
 };

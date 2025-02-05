@@ -1,5 +1,5 @@
 import {
-  Card,
+  Paper,
   Stack,
   Title,
   Text,
@@ -7,10 +7,7 @@ import {
   ThemeIcon,
   Stepper,
   Grid,
-  Paper,
-  List,
   Badge,
-  Timeline,
   Flex,
 } from "@mantine/core";
 import {
@@ -21,13 +18,23 @@ import {
   IconListCheck,
 } from "@tabler/icons-react";
 
-export const Improvement = ({ improvement }) => {
+import {
+  ImprovementProps,
+  OverallItemProps,
+  ImplementationStepsProps,
+} from "@/types/Result";
+
+export const Improvement = ({
+  improvement,
+}: {
+  improvement: ImprovementProps;
+}) => {
   const {
     improvements: { overall },
   } = improvement;
 
   return (
-    <Card p="40" radius="md" withBorder mb="xl">
+    <Paper p="40" radius="md" withBorder my="xl" shadow="md">
       <Stack>
         {/* ヘッダー - 既存のデザインパターンを踏襲 */}
         <Flex direction={"column-reverse"} justify={"center"} align={"center"}>
@@ -44,7 +51,7 @@ export const Improvement = ({ improvement }) => {
 
         {/* 改善項目 */}
         <Grid>
-          {overall.map((item, index) => (
+          {overall.map((item: OverallItemProps, index: number) => (
             <Grid.Col span={6}>
               <Paper key={index} shadow="md" p="xl" radius="md">
                 <Badge size="lg" mb={24}>
@@ -64,15 +71,7 @@ export const Improvement = ({ improvement }) => {
                     fz={24}
                     allowStepClick={false}
                     allowStepSelect={false}
-                  >
-                    <Box ml={54} mt="xs">
-                      <List c="dimmed">
-                        {item.current_state?.points?.map((point, i) => (
-                          <List.Item key={i}>{point}</List.Item>
-                        ))}
-                      </List>
-                    </Box>
-                  </Stepper.Step>
+                  />
 
                   <Stepper.Step
                     label="改善案"
@@ -95,7 +94,7 @@ export const Improvement = ({ improvement }) => {
                       </Flex>
                       <Box>
                         {item.improvement.implementation_steps.map(
-                          (step, i) => (
+                          (step: ImplementationStepsProps, i: number) => (
                             <Flex bg={"#f8f9fa"} align={"start"} p={16}>
                               <ThemeIcon
                                 display={"block"}
@@ -137,6 +136,6 @@ export const Improvement = ({ improvement }) => {
           ))}
         </Grid>
       </Stack>
-    </Card>
+    </Paper>
   );
 };

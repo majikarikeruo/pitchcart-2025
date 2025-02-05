@@ -11,19 +11,6 @@ interface PresentationData {
   speech_text: File | null;
 }
 
-interface DifyRequest {
-  query: string;
-  response_mode: "blocking" | "streaming";
-  conversation_id?: string;
-  inputs: {
-    target_person: string;
-    goal: string;
-    presentation_file?: string;
-    script_file?: string;
-  };
-  user: string;
-}
-
 export const PresentationCheck = () => {
   const [presentationData, setPresentationData] = useState<PresentationData>({
     target_person: "",

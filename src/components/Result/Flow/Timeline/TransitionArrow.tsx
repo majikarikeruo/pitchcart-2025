@@ -3,11 +3,9 @@ import { Flex, UnstyledButton } from "@mantine/core";
 import { ChevronRight } from "lucide-react";
 
 export const TransitionArrow = ({
-  toggle,
   hasIssue,
   onClick,
 }: {
-  toggle: () => void;
   hasIssue: boolean;
   onClick?: () => void;
 }) => (
