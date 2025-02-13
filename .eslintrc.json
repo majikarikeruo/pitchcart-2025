@@ -1,0 +1,13 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "quotes": ["error", "double"],
+    "import/order": "off",
+    "@typescript-eslint/quotes": ["error", "double"]
+  }
+}

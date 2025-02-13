@@ -1,0 +1,71 @@
+{
+  "scorecard": {
+    "scores": [
+      {
+        "category": "ビジネスモデルの明確さ",
+        "score": 8,
+        "priority": "high",
+        "color": "green"
+      },
+      {
+        "category": "成長の見込みと市場規模",
+        "score": 7,
+        "priority": "high",
+        "color": "yellow"
+      },
+      {
+        "category": "競争優位性の証明",
+        "score": 6,
+        "priority": "medium",
+        "color": "yellow"
+      },
+      {
+        "category": "チームの能力と経験",
+        "score": 7,
+        "priority": "high",
+        "color": "yellow"
+      },
+      {
+        "category": "資金使途の具体的な説明",
+        "score": 5,
+        "priority": "medium",
+        "color": "orange"
+      },
+      {
+        "category": "技術の独自性",
+        "score": 8,
+        "priority": "high",
+        "color": "green"
+      },
+      {
+        "category": "顧客獲得コストの管理",
+        "score": 6,
+        "priority": "medium",
+        "color": "yellow"
+      },
+      {
+        "category": "顧客維持率の向上",
+        "score": 5,
+        "priority": "medium",
+        "color": "orange"
+      },
+      {
+        "category": "プレゼンテーションの質",
+        "score": 7,
+        "priority": "high",
+        "color": "yellow"
+      },
+      {
+        "category": "リスク管理",
+        "score": 6,
+        "priority": "medium",
+        "color": "yellow"
+      }
+    ]
+  },
+  "threshold": {
+    "high": 8,
+    "medium": 6,
+    "low": 4
+  }
+}

@@ -1,0 +1,7 @@
+{
+    'target':{{ target }},
+    'goal':{{ goal }},
+    'industry':{{ industry }},
+    'summary':{{ summary }},
+}
+

@@ -1,0 +1,167 @@
+{
+  "name": "AnalysisSchema",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "improvements": {
+        "type": "object",
+        "properties": {
+          "impact": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "enum": [
+                    "market_alignment",
+                    "value_proposition",
+                    "competitive_advantage"
+                  ]
+                },
+                "current_issue": { "type": "string" },
+                "evidence": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "improvement_action": { "type": "string" },
+                "expected_outcome": { "type": "string" },
+                "implementation": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "step": { "type": "number" },
+                      "action": { "type": "string" },
+                      "timeline": { "type": "string" },
+                      "resources": { "type": "string" }
+                    },
+                    "required": ["step", "action", "timeline", "resources"],
+                    "additionalProperties": false
+                  }
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                }
+              },
+              "required": [
+                "target",
+                "current_issue",
+                "evidence",
+                "improvement_action",
+                "expected_outcome",
+                "implementation",
+                "priority"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "feasibility": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "enum": [
+                    "technical_viability",
+                    "resource_availability",
+                    "execution_capability"
+                  ]
+                },
+                "current_issue": { "type": "string" },
+                "evidence": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                },
+                "improvement_action": { "type": "string" },
+                "expected_outcome": { "type": "string" },
+                "implementation": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "step": { "type": "number" },
+                      "action": { "type": "string" },
+                      "timeline": { "type": "string" },
+                      "resources": { "type": "string" }
+                    },
+                    "required": ["step", "action", "timeline", "resources"],
+                    "additionalProperties": false
+                  }
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                }
+              },
+              "required": [
+                "target",
+                "current_issue",
+                "evidence",
+                "improvement_action",
+                "expected_outcome",
+                "implementation",
+                "priority"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "presentation": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "enum": ["clarity", "structure", "engagement"]
+                },
+                "current_issue": { "type": "string" },
+                "evidence": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "improvement_action": { "type": "string" },
+                "expected_outcome": { "type": "string" },
+                "implementation": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "step": { "type": "number" },
+                      "action": { "type": "string" },
+                      "timeline": { "type": "string" },
+                      "resources": { "type": "string" }
+                    },
+                    "required": ["step", "action", "timeline", "resources"],
+                    "additionalProperties": false
+                  }
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                }
+              },
+              "required": [
+                "target",
+                "current_issue",
+                "evidence",
+                "improvement_action",
+                "expected_outcome",
+                "implementation",
+                "priority"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["impact", "feasibility", "presentation"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["improvements"],
+    "additionalProperties": false
+  }
+}

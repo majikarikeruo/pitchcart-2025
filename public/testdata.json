@@ -1,0 +1,874 @@
+{
+  "input": {
+    "target": "TECH系VC",
+    "goal": "シリーズA資金調達",
+    "industry": "Saas業界",
+    "summary": "資金調達に向けて明確なビジョンと収益モデルが求められています。競争が激しいSaaS業界での成長性を示し、リスクを管理する戦略が必要です。"
+  },
+  "prerequisiteCheck": {
+    "prerequisite_check": {
+      "missing_prerequisites": [
+        {
+          "topic": "機能や使用方法",
+          "slide_number": 7,
+          "current_state": {
+            "description": "Pitch Cartの機能について説明しているが、具体的な使用方法が示されていない。",
+            "missing_elements": [
+              "具体的な操作手順",
+              "ユーザーインターフェースの説明"
+            ]
+          },
+          "impact": {
+            "description": "使用方法が不明なため、オーディエンスがツールを使いたいと思うかどうかの判断に影響する。",
+            "audience_perspective": "オーディエンスは実際にツールを使えるか不安を感じる可能性がある。"
+          },
+          "importance": "high",
+          "recommendation": {
+            "what_to_add": "具体的な操作手順やユーザーインターフェースの説明を追加すること。",
+            "why_needed": "利用者がPitch Cartを実際にどのように活用できるか理解できるようにするため。"
+          }
+        },
+        {
+          "topic": "市場規模",
+          "slide_number": 10,
+          "current_state": {
+            "description": "ビジネスモデルについて触れているが、市場規模についての情報は一切提供されていない。",
+            "missing_elements": ["ターゲット市場の規模", "潜在顧客数"]
+          },
+          "impact": {
+            "description": "市場規模が不明なため、投資家はこのプロダクトの成長可能性を評価しづらくなる。",
+            "audience_perspective": "投資家は市場での競争力や成長性を判断できず、投資意欲が低下する可能性がある。"
+          },
+          "importance": "high",
+          "recommendation": {
+            "what_to_add": "ターゲット市場の規模や潜在顧客数について具体的なデータを追加すること。",
+            "why_needed": "市場でのニーズとビジネスチャンスを示すことで、投資家に魅力を伝えるため。"
+          }
+        },
+        {
+          "topic": "収益構造",
+          "slide_number": 10,
+          "current_state": {
+            "description": "ビジネスモデルについて言及しているが、収益構造について詳細な説明が不足している。",
+            "missing_elements": ["具体的な価格設定戦略", "収益源の多様性"]
+          },
+          "impact": {
+            "description": "収益構造が不明確であると、投資家は事業の持続可能性を疑問視する可能性が高い。",
+            "audience_perspective": "オーディエンスはプロダクトがどれだけ収益化できるか理解できず、不安を感じることになる。"
+          },
+          "importance": "medium",
+          "recommendation": {
+            "what_to_add": "価格設定戦略や収益源の多様性について具体的な情報を追加すること。",
+            "why_needed": "事業計画の信頼性を高め、投資家に安心感を与えるため。"
+          }
+        },
+        {
+          "topic": "業界特有の用語",
+          "slide_number": 6,
+          "current_state": {
+            "description": "Pitch Cartの目的について述べているが、業界特有の用語（例：MVP, GGAなど）が説明されていない。",
+            "missing_elements": ["MVPとは何かの説明", "GGAとは何かの説明"]
+          },
+          "impact": {
+            "description": "専門用語が理解されないと、聴衆はプレゼンテーション全体を追うことが難しくなる。",
+            "audience_perspective": "聴衆は内容に共感しづらくなり、興味を失う恐れがある。"
+          },
+          "importance": "medium",
+          "recommendation": {
+            "what_to_add": "MVPやGGAといった専門用語について簡潔に説明すること。",
+            "why_needed": "聴衆全体への理解度向上と共感度向上につながるため。"
+          }
+        }
+      ],
+      "sequence_issues": [
+        {
+          "type": "overall_structure",
+          "location": {
+            "from_page": 1,
+            "to_page": 14,
+            "description": "プレゼンテーション全体でPitch Cartの価値提案から具体的な機能まで流れるように構成されていないため、一貫したメッセージになっていない。"
+          },
+          "issue": "Pitch Cartの紹介から問題提起、解決策提示までの流れが不自然であり、聴衆には混乱を招く可能性があります。特に問題提起後すぐに解決策に移行しており、その間に必要な情報（市場分析など）が欠けています。",
+          "suggestion": "問題提起→市場分析→解決策提示→プロダクト紹介という流れに再構成することによって論理的な展開を強化するべきです。",
+          "affected_sections": [
+            {
+              "section": "全体構成",
+              "current_slide": 1,
+              "suggested_position": "最初から再構築"
+            },
+            {
+              "section": "問題提起と解決策提示間の論理展開",
+              "current_slide": 4,
+              "suggested_position": "問題提起後、まず市場分析へ移行すべきです。"
+            }
+          ]
+        },
+        {
+          "type": "transition",
+          "location": {
+            "from_page": 5,
+            "to_page": 6,
+            "description": "'審査員の知りたい情報'から'相手が知りたい情報'への移行が唐突であり、その間に背景情報やつながりとなる文脈が不足しているため理解しづらい。"
+          },
+          "issue": "'審査員の知りたい情報'というテーマから'相手が知りたい情報'へ移行する際に、その理由や関連性について十分な説明がなく、聴衆には混乱を招く恐れがあります。また、この移行部分ではより詳細な背景情報も必要です。 ",
+          "suggestion": "'審査員'と'相手'という異なる視点で何故その情報が重要なのか、それぞれ具体的に述べた後で次へ進む形で明確さを持たせるべきです。 ",
+          "affected_sections": [
+            {
+              "section": "'審査員'と'相手'という異なる視点への移行部分全般 ",
+              "current_slide": 5,
+              "suggested_position": "'相手'という概念への導入時点でより詳細な背景情報を加える。"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "analysisWithScore": {
+    "analysis": {
+      "impact_score": {
+        "total": 76,
+        "breakdown": {
+          "market_alignment": 70,
+          "value_proposition": 80,
+          "competitive_advantage": 70
+        }
+      },
+      "feasibility_score": {
+        "total": 74,
+        "breakdown": {
+          "technical_viability": 75,
+          "resource_availability": 70,
+          "execution_capability": 80
+        }
+      },
+      "presentation_score": {
+        "total": 78,
+        "breakdown": {
+          "clarity": 80,
+          "structure": 75,
+          "engagement": 75
+        }
+      }
+    },
+    "score_explanation": {
+      "impact_score": {
+        "total_explanation": {
+          "score": 76,
+          "summary": "プレゼンテーションは市場ニーズにある程度適合しているが、データの裏付けがやや不足している。",
+          "key_factors": [
+            "市場ニーズが理解できるが、データ裏付けが限定的",
+            "価値提案が明確で、ある程度の差別化がある",
+            "競争優位性はあるが、持続可能性に懸念"
+          ]
+        },
+        "components": {
+          "market_alignment": {
+            "score": 70,
+            "explanation": "市場ニーズは理解できるが、明確なデータに裏付けられていないためスコアが低い。",
+            "evidence": "提案サービスの市場に対するニーズについて具体的なデータが不足。"
+          },
+          "value_proposition": {
+            "score": 80,
+            "explanation": "価値提案は明確で、競合との差別化ができている点が評価された。",
+            "evidence": "Pitch Cartのユニークな機能が述べられている。"
+          },
+          "competitive_advantage": {
+            "score": 70,
+            "explanation": "競争優位性はあるが、持続可能性に関する具体的な証拠が不足。",
+            "evidence": "競合優位性を示す具体的なデータが不足している。"
+          }
+        }
+      },
+      "feasibility_score": {
+        "total_explanation": {
+          "score": 74,
+          "summary": "技術的実現可能性は高いが、リソースの確保に若干の懸念がある。",
+          "key_factors": [
+            "技術的な裏付けはあるが、一部不明確",
+            "リソースは確保されているが一部不足",
+            "実行体制が整っている"
+          ]
+        },
+        "components": {
+          "technical_viability": {
+            "score": 75,
+            "explanation": "技術面での実現可能性は高いが、実装例が少ないためスコアが中程度。",
+            "evidence": "Python-pptxライブラリを使用しているが、過去の実績が不明。"
+          },
+          "resource_availability": {
+            "score": 70,
+            "explanation": "リソースは確保されているが、特に人材の確保に関して不安要素がある。",
+            "evidence": "必要なリソースの確保が限定的である可能性。"
+          },
+          "execution_capability": {
+            "score": 80,
+            "explanation": "実行体制が整っており、過去の経験から信頼性が高いと評価される。",
+            "evidence": "チームメンバーの経験が豊富であることが示されている。"
+          }
+        }
+      },
+      "presentation_score": {
+        "total_explanation": {
+          "score": 78,
+          "summary": "説明は明確で構造も良好だが、聴衆の関心を引くための工夫が必要。",
+          "key_factors": [
+            "ほとんどの要素が明確",
+            "構造は理解できるが改善の余地あり",
+            "ある程度の興味は引き付ける"
+          ]
+        },
+        "components": {
+          "clarity": {
+            "score": 80,
+            "explanation": "説明の明確さは高く、聴衆が理解しやすい内容である。",
+            "evidence": "全体の流れや用語が明確に説明されている。"
+          },
+          "structure": {
+            "score": 75,
+            "explanation": "論理的な構造はあるが、より強い流れが必要。",
+            "evidence": "各ページの接続がやや弱く、改善の余地がある。"
+          },
+          "engagement": {
+            "score": 75,
+            "explanation": "聴衆の興味を引くために、よりインタラクティブな要素が必要。",
+            "evidence": "聴衆の関心を引き付ける工夫が不足している。"
+          }
+        }
+      }
+    }
+  },
+  "predictedQuestions": {
+    "question_items": [
+      {
+        "question": "現在のプレゼンテーションソフトウェア市場の規模はどのくらいですか？",
+        "background": "最新の市場調査によると、プレゼンテーションソフトウェア市場は2024年に約6694百万ドルに達し、2031年には16263百万ドルになる見込みです。これに基づいて、Pitch Cartがどのように市場で競争力を持つかを理解したい。",
+        "source": "業界標準",
+        "priority": "high"
+      },
+      {
+        "question": "Pitch Cartのビジネスモデルは競合他社と比べてどのような独自性がありますか？",
+        "background": "競合他社が提供しているサービスと比較し、Pitch Cartの独自性や競争優位性を明確にする必要があります。特に、プレゼンテーションの質を向上させるための具体的な機能について知りたい。",
+        "source": "業界標準",
+        "priority": "high"
+      },
+      {
+        "question": "AIを活用した分析機能は、他のSaaSツールと比べてどのように優れていますか？",
+        "background": "AIと機械学習の統合がSaaS市場で注目されており、Pitch CartのAI機能が競争力を持つかどうかを評価するために、他のSaaSツールと比較したい。",
+        "source": "業界知識",
+        "priority": "medium"
+      },
+      {
+        "question": "Pitch Cartがターゲットとしている市場（サブサハラアフリカなど）の特性は何ですか？",
+        "background": "低コストでの医療機器の市場が注目されており、Pitch Cartがどのように市場ニーズに応えるかを理解したい。",
+        "source": "業界知識",
+        "priority": "medium"
+      },
+      {
+        "question": "Pitch CartのMVPのリリース予定はどうなっていますか？",
+        "background": "2023年11月にベータ版をリリースする計画があり、今後のロードマップに沿った進捗を確認したい。",
+        "source": "内容ギャップ",
+        "priority": "low"
+      }
+    ]
+  },
+  "scoreData": {
+    "scorecard": {
+      "scores": [
+        {
+          "category": "ビジネスモデルの明確さ",
+          "score": 8,
+          "priority": "high",
+          "color": "green"
+        },
+        {
+          "category": "成長の見込みと市場規模",
+          "score": 7,
+          "priority": "high",
+          "color": "yellow"
+        },
+        {
+          "category": "競争優位性の証明",
+          "score": 6,
+          "priority": "medium",
+          "color": "yellow"
+        },
+        {
+          "category": "チームの能力と経験",
+          "score": 7,
+          "priority": "high",
+          "color": "yellow"
+        },
+        {
+          "category": "資金使途の具体的な説明",
+          "score": 5,
+          "priority": "medium",
+          "color": "orange"
+        },
+        {
+          "category": "技術の独自性",
+          "score": 8,
+          "priority": "high",
+          "color": "green"
+        },
+        {
+          "category": "顧客獲得コストの管理",
+          "score": 6,
+          "priority": "medium",
+          "color": "yellow"
+        },
+        {
+          "category": "顧客維持率の向上",
+          "score": 5,
+          "priority": "medium",
+          "color": "orange"
+        },
+        {
+          "category": "プレゼンテーションの質",
+          "score": 7,
+          "priority": "high",
+          "color": "yellow"
+        },
+        {
+          "category": "リスク管理",
+          "score": 6,
+          "priority": "medium",
+          "color": "yellow"
+        }
+      ]
+    },
+    "threshold": {
+      "high": 8,
+      "medium": 6,
+      "low": 4
+    }
+  },
+  "improvement": {
+    "improvements": {
+      "overall": [
+        {
+          "category": "structure",
+          "issue": "プレゼン全体の流れが不明瞭で、オーディエンスの理解を妨げている。",
+          "improvement": {
+            "action": "プレゼンのアウトラインを明確にして、各セクションの目的を伝えるイントロダクションを追加。",
+            "expected_result": "オーディエンスがプレゼンの全体像を把握しやすくなり、関心を持続させる。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "プレゼンの全体構成を図式化し、各セクションの目的を整理する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "プレゼン冒頭にアウトラインを示すスライドを作成する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 3,
+                "description": "全体構成を説明するスクリプトを作成し、リハーサルを行う。",
+                "estimated_time": "2時間"
+              }
+            ]
+          }
+        },
+        {
+          "category": "timing",
+          "issue": "プレゼンの時間配分が不均衡で、重要なポイントを十分に伝えられない。",
+          "improvement": {
+            "action": "各スライドにかける時間を事前に設定し、リハーサルを通じて時間配分を調整する。",
+            "expected_result": "オーディエンスが重要なポイントを理解しやすくなり、全体のメッセージが効果的に伝わる。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "各スライドにかける時間を設定し、全体のタイムラインを作成する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "リハーサルを行い、実際の時間配分を確認し修正を加える。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "タイムキーパーを設定して、プレゼン本番で時間配分を守る。",
+                "estimated_time": "30分"
+              }
+            ]
+          }
+        },
+        {
+          "category": "story",
+          "issue": "プレゼンのストーリーが一貫しておらず、オーディエンスの関心を引きにくい。",
+          "improvement": {
+            "action": "ストーリーのフレームワークを作成し、各セクションがどのように繋がるかを明確にする。",
+            "expected_result": "オーディエンスがプレゼンの内容に引き込まれ、記憶に残りやすくなる。",
+            "priority": "Medium",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "ストーリーボードを作成し、各スライドのメッセージを整理する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "ストーリーのフローを確認し、必要に応じてスライドの順序を調整する。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 3,
+                "description": "リハーサルを通じてストーリーが自然に展開されるか確認する。",
+                "estimated_time": "2時間"
+              }
+            ]
+          }
+        },
+        {
+          "category": "visual",
+          "issue": "ビジュアル要素が不足しており、オーディエンスの興味を引きにくい。",
+          "improvement": {
+            "action": "各スライドにグラフィックや図表を追加し、視覚的な魅力を高める。",
+            "expected_result": "オーディエンスの注意を引きつけ、情報の理解を助ける。",
+            "priority": "Medium",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "各スライドに適したビジュアル要素をリサーチし、提案をまとめる。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 2,
+                "description": "選定したビジュアル要素をスライドに組み込む。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "ビジュアルが効果的に機能しているか、リハーサルで確認する。",
+                "estimated_time": "1時間"
+              }
+            ]
+          }
+        },
+        {
+          "category": "audience",
+          "issue": "オーディエンスのニーズや期待に対する配慮が不足している。",
+          "improvement": {
+            "action": "オーディエンスを意識した内容に調整し、投資家が関心を持つデータや事例を強調する。",
+            "expected_result": "オーディエンスの共感を得やすくなり、プレゼンの影響力が増す。",
+            "priority": "High",
+            "implementation_steps": [
+              {
+                "step": 1,
+                "description": "対象となるオーディエンスのニーズや期待をリサーチする。",
+                "estimated_time": "1時間"
+              },
+              {
+                "step": 2,
+                "description": "リサーチ結果を基に、プレゼンの内容を調整する。",
+                "estimated_time": "2時間"
+              },
+              {
+                "step": 3,
+                "description": "リハーサルでオーディエンスの反応を確認し、必要に応じて最終調整を行う。",
+                "estimated_time": "1時間"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "heatmapFlow": {
+    "slide_heatmap": {
+      "slides": [
+        {
+          "number": 1,
+          "title": "Pitch Cartの紹介",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 2,
+          "priority": "High",
+          "issues": [
+            {
+              "type": "content",
+              "description": "ミッションが抽象的で具体性に欠ける。",
+              "suggestion": "ミッションの具体的な事例や影響を追加する。",
+              "impact": "オーディエンスへの訴求力が高まり、サービスの価値が明確になる。"
+            },
+            {
+              "type": "message",
+              "description": "オーディエンスに対する呼びかけが弱い。",
+              "suggestion": "具体的な質問や興味を引くフレーズを加える。",
+              "impact": "聴衆の関心を引き、より積極的な反応を促す。"
+            }
+          ],
+          "section_type": "setup"
+        },
+        {
+          "number": 2,
+          "title": "アクセラレータープログラムの経験",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "content",
+              "description": "プログラムの具体的な成果や学びが不十分。",
+              "suggestion": "具体的な事例や数値を示して成功体験を強調する。",
+              "impact": "聴衆に対する信頼性が向上し、プレゼンの説得力が増す。"
+            }
+          ],
+          "section_type": "problem"
+        },
+        {
+          "number": 3,
+          "title": "伝わらない理由",
+          "content_score": 3,
+          "visual_score": 2,
+          "improvement_count": 2,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "visual",
+              "description": "スライドの視覚的要素が単調。",
+              "suggestion": "グラフィックやアイコンを追加して視覚的な魅力を高める。",
+              "impact": "オーディエンスの注意を引きつけ、理解を助ける。"
+            },
+            {
+              "type": "message",
+              "description": "メッセージが不明瞭。",
+              "suggestion": "問題の核心を明確にするフレーズを加える。",
+              "impact": "聴衆が問題を理解しやすくなり、興味を持つ。"
+            }
+          ],
+          "section_type": "problem"
+        },
+        {
+          "number": 4,
+          "title": "提案するサービスに関する問題",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "High",
+          "issues": [
+            {
+              "type": "content",
+              "description": "提起された問題が抽象的。",
+              "suggestion": "具体的なデータや例を用いて問題の深刻さを示す。",
+              "impact": "問題の重要性が強調され、聴衆の共感を得やすくなる。"
+            }
+          ],
+          "section_type": "problem"
+        },
+        {
+          "number": 5,
+          "title": "審査員の知りたい情報",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "High",
+          "issues": [
+            {
+              "type": "content",
+              "description": "審査員のニーズが明確でない。",
+              "suggestion": "審査員が求める具体的な情報をリストアップする。",
+              "impact": "聴衆の理解が深まり、プレゼンの方向性が明確になる。"
+            }
+          ],
+          "section_type": "problem"
+        },
+        {
+          "number": 6,
+          "title": "Pitch Cartの開発経緯",
+          "content_score": 3,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "content",
+              "description": "開発の背景が薄い。",
+              "suggestion": "開発に至った具体的な理由やデータを示す。",
+              "impact": "聴衆がサービスの重要性を感じやすくなる。"
+            }
+          ],
+          "section_type": "solution"
+        },
+        {
+          "number": 7,
+          "title": "Pitch Cartの機能",
+          "content_score": 5,
+          "visual_score": 4,
+          "improvement_count": 0,
+          "priority": "High",
+          "issues": [],
+          "section_type": "solution"
+        },
+        {
+          "number": 8,
+          "title": "効果の説明",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "message",
+              "description": "効果の具体的な事例がない。",
+              "suggestion": "成功事例やユーザーの声を追加する。",
+              "impact": "サービスの信頼性が向上し、オーディエンスの興味を引く。"
+            }
+          ],
+          "section_type": "evidence"
+        },
+        {
+          "number": 9,
+          "title": "使用技術の説明",
+          "content_score": 5,
+          "visual_score": 4,
+          "improvement_count": 1,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "content",
+              "description": "技術的な詳細が不足。",
+              "suggestion": "具体的な技術の利点やユースケースを示す。",
+              "impact": "技術的な信頼性を強化し、オーディエンスの理解を深める。"
+            }
+          ],
+          "section_type": "evidence"
+        },
+        {
+          "number": 10,
+          "title": "ビジネスモデル",
+          "content_score": 5,
+          "visual_score": 4,
+          "improvement_count": 0,
+          "priority": "High",
+          "issues": [],
+          "section_type": "solution"
+        },
+        {
+          "number": 11,
+          "title": "ロードマップ",
+          "content_score": 5,
+          "visual_score": 4,
+          "improvement_count": 0,
+          "priority": "High",
+          "issues": [],
+          "section_type": "solution"
+        },
+        {
+          "number": 12,
+          "title": "今後の計画",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "Medium",
+          "issues": [
+            {
+              "type": "content",
+              "description": "計画の具体性が不十分。",
+              "suggestion": "具体的なマイルストーンや目標を追加する。",
+              "impact": "オーディエンスが進捗をより容易に理解できる。"
+            }
+          ],
+          "section_type": "evidence"
+        },
+        {
+          "number": 13,
+          "title": "実現したい世界",
+          "content_score": 5,
+          "visual_score": 4,
+          "improvement_count": 0,
+          "priority": "High",
+          "issues": [],
+          "section_type": "call_to_action"
+        },
+        {
+          "number": 14,
+          "title": "ベータ版募集",
+          "content_score": 4,
+          "visual_score": 3,
+          "improvement_count": 1,
+          "priority": "High",
+          "issues": [
+            {
+              "type": "structure",
+              "description": "呼びかけが弱い。",
+              "suggestion": "具体的なアクションを明示する。",
+              "impact": "聴衆が行動を起こしやすくなる。"
+            }
+          ],
+          "section_type": "call_to_action"
+        }
+      ]
+    }
+  },
+  "structureFlow": {
+    "structure_flow": {
+      "edges": [
+        {
+          "from_slide": 1,
+          "to_slide": 2,
+          "transition_issues": [
+            {
+              "issue": "内容の流れが少し唐突に感じる。",
+              "current_content": "本日は、私たちのサービス「Pitch Cart」についてお話しさせていただきます。",
+              "suggestion": "「Pitch Cartは、オーディエンスの反応を予測するプレゼン作成支援ツールです。私たちがこのサービスを開発するに至った背景をお話しします。」",
+              "context": "この接続があれば、なぜこのサービスが重要かがより伝わりやすくなる。"
+            }
+          ]
+        },
+        {
+          "from_slide": 2,
+          "to_slide": 3,
+          "transition_issues": [
+            {
+              "issue": "自身の経験を共有したが、次のスライドとの関連が薄い。",
+              "current_content": "100人いる同期の事業やサービスはどれも素晴らしかったのですが、最終選考ピッチを経て次のステップに進めたのはわずか20人でした。",
+              "suggestion": "「この経験から、なぜ優れたアイデアが選ばれなかったのか、次のスライドで詳しく考察します。」",
+              "context": "次のスライドでの問題提起への繋がりが強化される。"
+            }
+          ]
+        },
+        {
+          "from_slide": 3,
+          "to_slide": 4,
+          "transition_issues": [
+            {
+              "issue": "理由の提示が少し抽象的。",
+              "current_content": "良い事業アイデアがあり、スライドのデザインも悪くないのに、なぜ伝わらないのか。",
+              "suggestion": "「その理由を考えると、まずは提案するサービス内容に魅力を感じないということが多いようです。」",
+              "context": "問題提起を具体的に示すことで、聴衆の理解が深まる。"
+            }
+          ]
+        },
+        {
+          "from_slide": 4,
+          "to_slide": 5,
+          "transition_issues": [
+            {
+              "issue": "理由の提示が続くが、聴衆が何を考えているかを引き出す工夫が必要。",
+              "current_content": "「課題の解像度が低い」などの理由がある。",
+              "suggestion": "「これらの理由を挙げると、聴衆の皆さんも同じような経験をしたことがあるかもしれません。」",
+              "context": "聴衆との共感を広げることで、次のスライドへスムーズに遷移できる。"
+            }
+          ]
+        },
+        {
+          "from_slide": 5,
+          "to_slide": 6,
+          "transition_issues": []
+        },
+        {
+          "from_slide": 6,
+          "to_slide": 7,
+          "transition_issues": []
+        },
+        {
+          "from_slide": 7,
+          "to_slide": 8,
+          "transition_issues": []
+        },
+        {
+          "from_slide": 8,
+          "to_slide": 9,
+          "transition_issues": [
+            {
+              "issue": "技術的な詳細に入るが、もう少し具体的な利点を示した方が良い。",
+              "current_content": "技術面では、フロントエンドでReactを使用し、バックエンドではPythonを活用しています。",
+              "suggestion": "「この技術を使うことで、どのようにプレゼンの質が向上するのかを述べると良い。」",
+              "context": "聴衆に技術的な背景を理解させると同時に、実際の利点につなげる。"
+            }
+          ]
+        },
+        {
+          "from_slide": 9,
+          "to_slide": 10,
+          "transition_issues": [
+            {
+              "issue": "ビジネスモデルの説明にスムーズに入れる工夫が必要。",
+              "current_content": "ビジネスモデルについてです。",
+              "suggestion": "「このような技術を用いて、私たちのビジネスモデルはどのように成り立っているのかを説明します。」",
+              "context": "前のスライドの内容を引き継ぎながら、新しいトピックへ自然に移行する。"
+            }
+          ]
+        },
+        {
+          "from_slide": 10,
+          "to_slide": 11,
+          "transition_issues": []
+        },
+        {
+          "from_slide": 11,
+          "to_slide": 12,
+          "transition_issues": [
+            {
+              "issue": "ロードマップに入る際の導入が不明瞭。",
+              "current_content": "今後のロードマップとしては、まずMVPの試用とユーザーヒアリングを行います。",
+              "suggestion": "「これから私たちはどのようにPitch Cartを進化させていくのか、具体的なロードマップを示します。」",
+              "context": "聴衆が今後の展望に期待を持てるように導入する。"
+            }
+          ]
+        },
+        {
+          "from_slide": 12,
+          "to_slide": 13,
+          "transition_issues": []
+        },
+        {
+          "from_slide": 13,
+          "to_slide": 14,
+          "transition_issues": [
+            {
+              "issue": "最後の呼びかけがやや弱い。",
+              "current_content": "私たちが実現したいのは、事業やサービスを立ち上げたい人が、周囲を巻き込みやすくなる世界です。",
+              "suggestion": "「このビジョンを一緒に実現していきませんか？」",
+              "context": "聴衆に対する呼びかけを強め、行動を促す。"
+            }
+          ]
+        }
+      ],
+      "story_structure": {
+        "main_theme": "Pitch Cartによってプレゼンの質を向上させ、アイデアを実現する手助けをする",
+        "narrative_sections": [
+          {
+            "type": "setup",
+            "slide_range": { "start": 1, "end": 2 },
+            "narrative_strength": 80,
+            "key_messages": ["Pitch Cartの紹介", "私たちの経験の共有"]
+          },
+          {
+            "type": "problem",
+            "slide_range": { "start": 3, "end": 5 },
+            "narrative_strength": 75,
+            "key_messages": [
+              "プレゼンの失敗理由の提示",
+              "オーディエンスの理解不足"
+            ]
+          },
+          {
+            "type": "solution",
+            "slide_range": { "start": 6, "end": 8 },
+            "narrative_strength": 90,
+            "key_messages": ["Pitch Cartの提案", "AIによる分析と改善提案"]
+          },
+          {
+            "type": "evidence",
+            "slide_range": { "start": 9, "end": 10 },
+            "narrative_strength": 80,
+            "key_messages": ["技術的背景の説明", "ビジネスモデルの提示"]
+          },
+          {
+            "type": "call_to_action",
+            "slide_range": { "start": 11, "end": 14 },
+            "narrative_strength": 75,
+            "key_messages": ["今後のロードマップ", "聴衆への呼びかけ"]
+          }
+        ]
+      }
+    }
+  }
+}
