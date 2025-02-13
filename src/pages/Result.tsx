@@ -1,4 +1,4 @@
-import { Container, Stack, Alert, Loader, Text } from "@mantine/core";
+import { Container, Stack } from "@mantine/core";
 
 import { Score } from "@/components/features/Result/Score";
 import { Question } from "@/components/features/Result/Question";
@@ -6,10 +6,7 @@ import { Improvement } from "@/components/features/Result/Improvement";
 import { Flow } from "@/components/features/Result/Flow";
 import { useLocation } from "react-router-dom";
 
-import { useResult } from "@/hooks/useResults";
-
 export default function Result() {
-  // const { result, isLoading, error } = useResult();
   const location = useLocation();
   const {
     predictedQuestions,
@@ -20,30 +17,6 @@ export default function Result() {
     heatmapFlow,
     structureFlow,
   } = location.state || {};
-  // if (isLoading) {
-  //   return (
-  //     <Container py={48} size="xl">
-  //       <Stack align="center">
-  //         <Loader size="xl" />
-  //         <Text size="lg">分析結果を読み込んでいます...</Text>
-  //       </Stack>
-  //     </Container>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <Container py={48} size="xl">
-  //       <Alert
-  //         icon={<IconAlertCircle />}
-  //         title="エラーが発生しました"
-  //         color="red"
-  //       >
-  //         {error.message}
-  //       </Alert>
-  //     </Container>
-  //   );
-  // }
 
   if (
     !predictedQuestions ||
