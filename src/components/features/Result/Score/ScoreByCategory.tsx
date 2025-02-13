@@ -7,7 +7,10 @@ interface ScoreByCategoryProps {
   isActive: boolean;
 }
 
-export const ScoreByCategory = ({ category, isActive }: ScoreByCategoryProps) => {
+export const ScoreByCategory = ({
+  category,
+  isActive,
+}: ScoreByCategoryProps) => {
   /**
    * 各カードのStyleを適用する
    * @returns
@@ -27,7 +30,7 @@ export const ScoreByCategory = ({ category, isActive }: ScoreByCategoryProps) =>
       </Text>
       <Box style={{ display: "flex", alignItems: "baseline" }}>
         <Text fz={40} fw={700} mx={4}>
-          {category.total}
+          {Math.floor(category.total)}
         </Text>
         <Text fz={16} mx={4}>
           /

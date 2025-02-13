@@ -1,34 +1,39 @@
 {
-  "question_items": [
-    {
-      "question": "現在のプレゼンテーションソフトウェア市場の規模はどのくらいですか？",
-      "background": "最新の市場調査によると、プレゼンテーションソフトウェア市場は2024年に約6694百万ドルに達し、2031年には16263百万ドルになる見込みです。これに基づいて、Pitch Cartがどのように市場で競争力を持つかを理解したい。",
-      "source": "業界標準",
-      "priority": "high"
+  "name": "PredictedQuestionsSchema",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "question_items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string",
+              "description": "予想される質問"
+            },
+            "background": {
+              "type": "string",
+              "description": "この質問が出る背景・理由"
+            },
+            "source": {
+              "type": "string",
+              "enum": ["個人特性", "業界標準", "内容ギャップ"],
+              "description": "質問の出所"
+            },
+            "priority": {
+              "type": "string",
+              "enum": ["high", "medium", "low"],
+              "description": "質問の優先度"
+            }
+          },
+          "required": ["question", "background", "source", "priority"],
+          "additionalProperties": false
+        }
+      }
     },
-    {
-      "question": "Pitch Cartのビジネスモデルは競合他社と比べてどのような独自性がありますか？",
-      "background": "競合他社が提供しているサービスと比較し、Pitch Cartの独自性や競争優位性を明確にする必要があります。特に、プレゼンテーションの質を向上させるための具体的な機能について知りたい。",
-      "source": "業界標準",
-      "priority": "high"
-    },
-    {
-      "question": "AIを活用した分析機能は、他のSaaSツールと比べてどのように優れていますか？",
-      "background": "AIと機械学習の統合がSaaS市場で注目されており、Pitch CartのAI機能が競争力を持つかどうかを評価するために、他のSaaSツールと比較したい。",
-      "source": "業界知識",
-      "priority": "medium"
-    },
-    {
-      "question": "Pitch Cartがターゲットとしている市場（サブサハラアフリカなど）の特性は何ですか？",
-      "background": "低コストでの医療機器の市場が注目されており、Pitch Cartがどのように市場ニーズに応えるかを理解したい。",
-      "source": "業界知識",
-      "priority": "medium"
-    },
-    {
-      "question": "Pitch CartのMVPのリリース予定はどうなっていますか？",
-      "background": "2023年11月にベータ版をリリースする計画があり、今後のロードマップに沿った進捗を確認したい。",
-      "source": "内容ギャップ",
-      "priority": "low"
-    }
-  ]
+    "required": ["question_items"],
+    "additionalProperties": false
+  }
 }

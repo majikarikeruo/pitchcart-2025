@@ -1,5 +1,6 @@
 {
   "name": "ImprovementsSchema",
+  "strict": true,
   "schema": {
     "type": "object",
     "properties": {
@@ -52,7 +53,8 @@
                             "description": "実装に要する推定時間"
                           }
                         },
-                        "required": ["step", "description", "estimated_time"]
+                        "required": ["step", "description", "estimated_time"],
+                        "additionalProperties": false
                       }
                     }
                   },
@@ -61,16 +63,20 @@
                     "expected_result",
                     "priority",
                     "implementation_steps"
-                  ]
+                  ],
+                  "additionalProperties": false
                 }
               },
-              "required": ["category", "issue", "improvement"]
+              "required": ["category", "issue", "improvement"],
+              "additionalProperties": false
             }
           }
         },
-        "required": ["overall"]
+        "required": ["overall"],
+        "additionalProperties": false
       }
     },
-    "required": ["improvements"]
+    "required": ["improvements"],
+    "additionalProperties": false
   }
 }

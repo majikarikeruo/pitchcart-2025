@@ -1,7 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Stack, Input, FileInput, Button, Group } from "@mantine/core";
+import {
+  Box,
+  Stack,
+  Container,
+  Input,
+  Loader,
+  Text,
+  FileInput,
+  Button,
+  Group,
+  Alert,
+} from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 interface PresentationData {
   target_person: string;
@@ -12,6 +25,9 @@ interface PresentationData {
 }
 
 export const PresentationCheck = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
   const [presentationData, setPresentationData] = useState<PresentationData>({
     target_person: "",
     goal: "",
@@ -79,6 +95,7 @@ export const PresentationCheck = () => {
         },
       };
 
+      setIsLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/workflows/run`,
         {
@@ -103,15 +120,142 @@ export const PresentationCheck = () => {
       }
 
       const result = await response.json();
-      console.log("Success:", result);
-    } catch (error) {
-      console.error("Request failed:", error);
-      //   alert("分析リクエストに失敗しました。もう一度お試しください。");
+      const { outputs } = result.data;
+      console.log("Success:", outputs);
+
+      try {
+        // 非同期でJSONをパースする関数
+        const parseJsonAsync = async (jsonString: string) => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              try {
+                // inputの場合、値も適切にクォートで囲む
+                if (jsonString === outputs.input) {
+                  const validJson = jsonString
+                    .replace(/'/g, '"') // シングルクォートをダブルクォート
+                    .replace(/:\s*([^",\{\[\]\}]+)(,|\})/g, ':"$1"$2') // クォートされていない値を囲む
+                    .replace(/,(\s*})/g, "$1"); // 末尾のカンマを削除
+                  console.log("Transformed JSON:", validJson); // デバッグ用
+                  const parsed = JSON.parse(validJson);
+                  resolve(parsed);
+                } else {
+                  const parsed = JSON.parse(jsonString);
+                  resolve(parsed);
+                }
+              } catch (error) {
+                console.error("Parse error:", error, "in string:", jsonString);
+                resolve(null);
+              }
+            }, 0);
+          });
+        };
+
+        // 順次パースを実行
+        const parseAllData = async () => {
+          const predictedQuestions = await parseJsonAsync(
+            outputs.predictedQuestions
+          );
+          console.log("Parsed predictedQuestions");
+
+          const input = await parseJsonAsync(outputs.input);
+          console.log("Parsed input");
+
+          const improvement = await parseJsonAsync(outputs.improvement);
+          console.log("Parsed improvement");
+
+          const analysisWithScore = await parseJsonAsync(
+            outputs.analysisWithScore
+          );
+          console.log("Parsed analysisWithScore");
+
+          const prerequisite_check = await parseJsonAsync(
+            outputs.prerequisite_check
+          );
+          console.log("Parsed scoreData");
+
+          const heatmapFlow = await parseJsonAsync(outputs.heatmapFlow);
+          console.log("Parsed heatmapFlow");
+
+          const structureFlow = await parseJsonAsync(outputs.structureFlow);
+          console.log("Parsed structureFlow");
+
+          return {
+            predictedQuestions,
+            input,
+            improvement,
+            analysisWithScore,
+            prerequisite_check,
+            heatmapFlow,
+            structureFlow,
+          };
+        };
+
+        // パース実行
+        parseAllData()
+          .then((parsedData) => {
+            console.log("All data parsed:", parsedData);
+            const {
+              predictedQuestions,
+              improvement,
+              input,
+              analysisWithScore,
+              prerequisite_check,
+              heatmapFlow,
+              structureFlow,
+            } = parsedData;
+
+            // 次の処理へ
+            navigate("/result", {
+              state: {
+                predictedQuestions,
+                improvement,
+                input,
+                analysisWithScore,
+                prerequisite_check,
+                heatmapFlow,
+                structureFlow,
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Parse failed:", error);
+          });
+      } catch (error) {
+        console.error("Parse error:", error);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err : new Error("不明なエラーが発生しました")
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <Container py={48} size="xl">
+        <Stack align="center">
+          <Loader size="xl" />
+          <Text size="lg">分析結果を読み込んでいます...</Text>
+        </Stack>
+      </Container>
+    );
+  }
+
   return (
     <Box>
+      {error && (
+        <Container py={48} size="xl">
+          <Alert
+            icon={<IconAlertCircle />}
+            title="エラーが発生しました"
+            color="red"
+          >
+            {error.message}
+          </Alert>
+        </Container>
+      )}
       <Stack my={16}>
         <Input.Wrapper label="オーディエンス相手は誰ですか？">
           <Input

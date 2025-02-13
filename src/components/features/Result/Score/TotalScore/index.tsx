@@ -15,10 +15,14 @@ export const TotalScore = ({ input, analysis }: TotalScoreProps) => {
    * @function calculateAverageScore
    * スコアの平均値を出す =
    */
-  const calculateAverageScore = (analysis: analysisWithScoreProps["analysis"]) => {
+  const calculateAverageScore = (
+    analysis: analysisWithScoreProps["analysis"]
+  ) => {
     const scores = Object.values(analysis);
     if (scores.length === 0) return 0;
-    return scores.reduce((sum, { total }) => sum + total, 0) / scores.length;
+    return Math.floor(
+      scores.reduce((sum, { total }) => sum + total, 0) / scores.length
+    );
   };
 
   /**
