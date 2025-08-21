@@ -1,88 +1,75 @@
 {
-  "name": "ImprovementsSchema",
+  "name": "SlideHeatmapSchema",
   "schema": {
     "type": "object",
     "properties": {
-      "improvements": {
+      "items": {
         "type": "object",
         "properties": {
-          "overall": {
+          "number": {
+            "type": "number",
+            "description": "スライド番号"
+          },
+          "title": {
+            "type": "string",
+            "description": "スライドのタイトル"
+          },
+          "content_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "内容の充実度スコア"
+          },
+          "visual_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "視覚的要素の効果スコア"
+          },
+          "improvement_count": {
+            "type": "number",
+            "description": "改善点の数"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["High", "Medium", "Low"],
+            "description": "スライドの優先度"
+          },
+          "section_type": {
+            "type": "string",
+            "enum": ["setup", "problem", "solution", "evidence", "call_to_action"],
+            "description": "スライドのセクションタイプ"
+          },
+          "issues": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "category": {
+                "type": {
                   "type": "string",
-                  "enum": [
-                    "structure",
-                    "timing",
-                    "story",
-                    "visual",
-                    "audience"
-                  ],
-                  "description": "改善のカテゴリ"
+                  "enum": ["content", "visual", "structure", "message"],
+                  "description": "問題点の種類"
                 },
-                "issue": {
+                "description": {
                   "type": "string",
-                  "description": "全体的な問題点"
+                  "description": "問題点の詳細"
                 },
-                "improvement": {
-                  "type": "object",
-                  "properties": {
-                    "action": {
-                      "type": "string",
-                      "description": "改善のための具体的なアクション"
-                    },
-                    "expected_result": {
-                      "type": "string",
-                      "description": "改善後に期待される具体的な効果"
-                    },
-                    "priority": {
-                      "type": "string",
-                      "enum": ["High", "Medium", "Low"],
-                      "description": "改善の優先度"
-                    },
-                    "implementation_steps": {
-                      "type": "array",
-                      "maxItems": 3,
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "step": {
-                            "type": "number",
-                            "description": "実装ステップの番号"
-                          },
-                          "description": {
-                            "type": "string",
-                            "description": "実装ステップの具体的な内容"
-                          },
-                          "estimated_time": {
-                            "type": "string",
-                            "pattern": "^[0-9]+(.[0-9]+)?時間$",
-                            "description": "実装に要する推定時間"
-                          }
-                        },
-                        "required": ["step", "description", "estimated_time"]
-                      }
-                    }
-                  },
-                  "required": [
-                    "action",
-                    "expected_result",
-                    "priority",
-                    "implementation_steps"
-                  ]
+                "suggestion": {
+                  "type": "string",
+                  "description": "改善提案"
+                },
+                "impact": {
+                  "type": "string",
+                  "description": "この問題が与える影響"
                 }
               },
-              "required": ["category", "issue", "improvement"]
-            },
-            "maxItems": 6,
-            "minItems": 5
+              "required": ["type", "description", "suggestion", "impact"]
+            }
           }
         },
-        "required": ["overall"]
+        "required": ["number", "title", "content_score", "visual_score", "improvement_count", "priority", "section_type", "issues"]
       }
     },
-    "required": ["improvements"]
+    "required": ["items"]
   }
 }

@@ -1,15 +1,20 @@
 {
   "name": "ImprovementsSchema",
-  "schema": {
+  "strict": true,
+  "description": "プレゼンテーション改善提案のスキーマ",
+  "parameters": {
     "type": "object",
     "properties": {
       "improvements": {
         "type": "object",
+        "description": "改善提案",
         "properties": {
           "overall": {
             "type": "array",
+            "description": "全体的な改善提案のリスト",
             "items": {
               "type": "object",
+              "description": "全体的な改善提案",
               "properties": {
                 "category": {
                   "type": "string",
@@ -21,10 +26,11 @@
                 },
                 "improvement": {
                   "type": "object",
+                  "description": "改善策",
                   "properties": {
                     "action": {
                       "type": "string",
-                      "description": "改善のための行動"
+                      "description": "改善のための具体的な行動"
                     },
                     "expected_result": {
                       "type": "string",
@@ -32,15 +38,17 @@
                     },
                     "priority": {
                       "type": "string",
-                      "description": "改善の優先度"
+                      "description": "改善の優先度 (High, Medium, Low など)"
                     },
                     "implementation_steps": {
                       "type": "array",
+                      "description": "実装ステップのリスト",
                       "items": {
                         "type": "object",
+                        "description": "実装ステップ",
                         "properties": {
                           "step": {
-                            "type": "number",
+                            "type": "integer",
                             "description": "実装ステップの番号"
                           },
                           "description": {
@@ -49,28 +57,28 @@
                           },
                           "estimated_time": {
                             "type": "string",
-                            "description": "実装に要する推定時間"
+                            "description": "実装に要する推定時間 (例: '1時間', '3日間')"
                           }
                         },
-                        "required": ["step", "description", "estimated_time"]
+                        "required": ["step", "description", "estimated_time"],
+                        "additionalProperties": false
                       }
                     }
                   },
-                  "required": [
-                    "action",
-                    "expected_result",
-                    "priority",
-                    "implementation_steps"
-                  ]
+                  "required": ["action", "expected_result", "priority", "implementation_steps"],
+                  "additionalProperties": false
                 }
               },
-              "required": ["category", "issue", "improvement"]
+              "required": ["category", "issue", "improvement"],
+              "additionalProperties": false
             }
           }
         },
-        "required": ["overall"]
+        "required": ["overall"],
+        "additionalProperties": false
       }
     },
-    "required": ["improvements"]
+    "required": ["improvements"],
+    "additionalProperties": false
   }
 }

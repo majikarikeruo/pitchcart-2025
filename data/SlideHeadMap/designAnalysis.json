@@ -1,0 +1,47 @@
+{
+  "name": "DesignAnalysisSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "visual_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "視覚的要素の効果スコア"
+      },
+      "layout_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "レイアウトスコア"
+      },
+      "typography_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "タイポグラフィスコア"
+      },
+      "design_issues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "デザインの問題点"
+            },
+            "suggestion": {
+              "type": "string",
+              "description": "改善提案"
+            },
+            "impact": {
+              "type": "string",
+              "description": "影響度"
+            }
+          }
+        }
+      }
+    },
+    "required": ["visual_score", "layout_score", "typography_score"]
+  }
+} 

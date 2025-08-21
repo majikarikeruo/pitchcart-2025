@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Stack, Input, FileInput, Button, Group } from "@mantine/core";
+import { AnalysisInsights } from "./AnalysisInsights";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { notifications } from "@mantine/notifications";
 
 interface PresentationData {
   target_person: string;
@@ -12,6 +16,8 @@ interface PresentationData {
 }
 
 export const PresentationCheck = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [presentationData, setPresentationData] = useState<PresentationData>({
     target_person: "",
     goal: "",
@@ -19,8 +25,20 @@ export const PresentationCheck = () => {
     file: null,
     speech_text: null,
   });
+  const [presentationId, setPresentationId] = useState<string>("");
+  const [useEnhancedAnalysis, setUseEnhancedAnalysis] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // プレゼンテーションIDを生成
+  useEffect(() => {
+    if (user && presentationData.goal) {
+      const id = `${user.uid}_${presentationData.goal.slice(0, 20)}_${Date.now()}`;
+      setPresentationId(id);
+    }
+  }, [user, presentationData.goal]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       // バリデーション
       //   if (!presentationData.audience || !presentationData.goal) {
@@ -104,9 +122,28 @@ export const PresentationCheck = () => {
 
       const result = await response.json();
       console.log("Success:", result);
+
+      // 結果をlocalStorageに保存してResult画面へ遷移
+      if (result && result.data && result.data.outputs) {
+        localStorage.setItem("analysisResult", JSON.stringify(result.data.outputs));
+        notifications.show({
+          title: "分析完了",
+          message: "分析が完了しました。結果画面へ移動します。",
+          color: "teal"
+        });
+        navigate("/result");
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       console.error("Request failed:", error);
-      //   alert("分析リクエストに失敗しました。もう一度お試しください。");
+      notifications.show({
+        title: "エラー",
+        message: "分析リクエストに失敗しました。もう一度お試しください。",
+        color: "red"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,6 +185,14 @@ export const PresentationCheck = () => {
           />
         </Input.Wrapper>
 
+        {/* AI分析インサイト */}
+        {user && presentationId && (
+          <AnalysisInsights
+            presentationId={presentationId}
+            onStartEnhancedAnalysis={() => setUseEnhancedAnalysis(true)}
+          />
+        )}
+
         <FileInput
           label="プレゼン資料をアップロードしてください"
           placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
@@ -166,7 +211,13 @@ export const PresentationCheck = () => {
         />
       </Stack>
       <Group justify="center">
-        <Button onClick={handleSubmit}>分析を開始する</Button>
+        <Button 
+          onClick={handleSubmit}
+          loading={loading}
+          disabled={!presentationData.file || loading}
+        >
+          {useEnhancedAnalysis ? '🚀 高精度分析を開始' : '分析を開始する'}
+        </Button>
       </Group>
     </Box>
   );

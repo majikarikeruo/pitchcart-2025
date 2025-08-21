@@ -1,0 +1,43 @@
+{
+  "name": "ImpactAnalysisSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "memorability_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "記憶度スコア"
+      },
+      "persuasion_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "説得力スコア"
+      },
+      "engagement_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "エンゲージメントスコア"
+      },
+      "audience_concerns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "concern": {
+              "type": "string",
+              "description": "予想される懸念点"
+            },
+            "mitigation": {
+              "type": "string",
+              "description": "対応策"
+            }
+          }
+        }
+      }
+    },
+    "required": ["memorability_score", "persuasion_score", "engagement_score"]
+  }
+} 

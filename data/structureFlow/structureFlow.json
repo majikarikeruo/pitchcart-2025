@@ -60,13 +60,7 @@
                   "properties": {
                     "type": {
                       "type": "string",
-                      "enum": [
-                        "setup",
-                        "problem",
-                        "solution",
-                        "evidence",
-                        "call_to_action"
-                      ],
+                      "enum": ["setup", "problem", "solution", "evidence", "call_to_action"],
                       "description": "セクションの種類"
                     },
                     "slide_range": {
