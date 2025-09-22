@@ -1,63 +1,59 @@
 import { useState, useEffect } from "react";
-import { ResultData } from "@/types/Result";
-import { analysisService, AnalysisHistory } from "@/services/analysis.service";
+import type { ResultData } from "@/types/Result";
+import { useAuth } from "@/contexts/AuthContext";
+import { analysisService } from "@/services/analysis.service";
 
-// Todo:エラーメッセージの型定義をいずれ厳密に
-interface UseResultReturn {
+export interface UseResultReturn {
   result: ResultData | null;
-  isLoading: boolean;
-  error: Error | null;
+  loading: boolean;
+  error: string | null;
 }
 
-export const useResult = (analysisId?: string | null): UseResultReturn => {
+export const useResults = (initialResult?: ResultData | null): UseResultReturn => {
+  const { user } = useAuth();
   const [result, setResult] = useState<ResultData | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async (): Promise<void> => {
+    const fetchResult = async () => {
+      setLoading(true);
       try {
-        setIsLoading(true);
-        setError(null);
+        if (initialResult) {
+          console.log("Initial result from location state:", initialResult);
+          setResult(initialResult);
+          return;
+        }
 
-        if (analysisId) {
-          // analysisIdがある場合、Firestoreから取得
-          const analysisHistory: AnalysisHistory | null = await analysisService.getAnalysis(analysisId);
-          if (analysisHistory) {
-            setResult(analysisHistory.analysisData);
-          } else {
-            throw new Error(`Analysis with ID ${analysisId} not found.`);
-          }
-        } else {
-          // analysisIdがない場合、まずlocalStorageをチェック
-          const localData = localStorage.getItem("analysisResult");
-          if (localData) {
-            const resultData: ResultData = JSON.parse(localData);
-            setResult(resultData);
-            // 使用後は削除
-            localStorage.removeItem("analysisResult");
-          } else {
-            // localStorageにもない場合は、従来のtestdata.jsonから取得
-            const response = await fetch("/testdata.json");
-            if (!response.ok) {
-              throw new Error("Failed to fetch data");
-            }
-            const resultData: ResultData = await response.json();
-            setResult(resultData);
+        const storedResult = localStorage.getItem('analysisResult');
+        if (storedResult) {
+          console.log("Found result in local storage.");
+          const parsed = JSON.parse(storedResult) as ResultData;
+          setResult(parsed);
+          return;
+        }
+        // ストレージにも無い場合、サインイン済みなら履歴から取得（最新）
+        if (user?.uid) {
+          console.log("Fetching latest analysis history for user", user.uid);
+          const history = await analysisService.getAnalysisHistory(user.uid);
+          if (history && history.length > 0 && history[0]?.analysisData) {
+            setResult({ consensusMvp: history[0].analysisData, slideImages: [] });
+            return;
           }
         }
+
+        console.log("No initial, stored, or history result found.");
+        setError('分析結果が見つかりませんでした。');
       } catch (err) {
-        setError(err instanceof Error ? err : new Error("不明なエラーが発生しました"));
+        console.error("Error fetching result:", err);
+        setError('結果の取得中にエラーが発生しました。');
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
-    fetchData();
-  }, [analysisId]);
 
-  return {
-    result,
-    isLoading,
-    error,
-  };
+    fetchResult();
+  }, [initialResult, user?.uid]);
+
+  return { result, loading, error };
 };

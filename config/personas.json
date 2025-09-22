@@ -1,0 +1,22 @@
+[
+  {
+    "persona_id": "vc_seed",
+    "role": "VC（シード/ディープテック寄り）",
+    "tone": "端的・厳しめ・事実基調・一人称",
+    "weighting": { "clarity": 0.3, "uniqueness": 0.3, "persuasiveness": 0.4 },
+    "dealbreakers": ["市場導線が不明", "根拠のない主張"]
+  },
+  {
+    "persona_id": "accelerator_judge",
+    "role": "アクセラ審査員",
+    "tone": "建設的・実務寄り",
+    "weighting": { "clarity": 0.4, "uniqueness": 0.2, "persuasiveness": 0.4 }
+  },
+  {
+    "persona_id": "early_user",
+    "role": "アーリーアダプター顧客",
+    "tone": "率直・体験重視",
+    "weighting": { "clarity": 0.5, "uniqueness": 0.1, "persuasiveness": 0.4 }
+  }
+]
+

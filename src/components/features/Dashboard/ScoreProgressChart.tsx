@@ -13,6 +13,7 @@ import {
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../../contexts/AuthContext';
 import { analysisService } from '../../../services/analysis.service';
+import { generateDummyGrowthData, generateDummyAnalysisHistory } from '../../../services/dummy.service';
 
 interface ScoreProgressChartProps {
   timeRange: string;
@@ -45,7 +46,17 @@ export const ScoreProgressChart: React.FC<ScoreProgressChartProps> = ({ timeRang
 
     try {
       setLoading(true);
-      const history = await analysisService.getAnalysisHistory(user.uid);
+      
+      let history;
+      // 匿名ユーザーまたはデータがない場合はダミーデータを使用
+      if (user.isAnonymous) {
+        history = generateDummyAnalysisHistory(user.uid);
+      } else {
+        history = await analysisService.getAnalysisHistory(user.uid);
+        if (history.length === 0) {
+          history = generateDummyAnalysisHistory(user.uid);
+        }
+      }
       
       // 時間範囲でフィルタリング
       const now = new Date();
@@ -67,7 +78,16 @@ export const ScoreProgressChart: React.FC<ScoreProgressChartProps> = ({ timeRang
       }
 
       const filteredHistory = history.filter(h => {
-        const date = h.createdAt?.toDate?.() || new Date(h.createdAt);
+        let date: Date;
+        if (h.createdAt instanceof Date) {
+          date = h.createdAt;
+        } else if (h.createdAt?.toDate) {
+          date = h.createdAt.toDate();
+        } else if (h.createdAt?.seconds) {
+          date = new Date(h.createdAt.seconds * 1000);
+        } else {
+          date = new Date(h.createdAt);
+        }
         return date >= cutoffDate;
       });
 
@@ -76,7 +96,16 @@ export const ScoreProgressChart: React.FC<ScoreProgressChartProps> = ({ timeRang
         .slice(0, 20) // 最大20ポイント
         .reverse() // 時系列順にする
         .map(h => {
-          const date = h.createdAt?.toDate?.() || new Date(h.createdAt);
+          let date: Date;
+          if (h.createdAt instanceof Date) {
+            date = h.createdAt;
+          } else if (h.createdAt?.toDate) {
+            date = h.createdAt.toDate();
+          } else if (h.createdAt?.seconds) {
+            date = new Date(h.createdAt.seconds * 1000);
+          } else {
+            date = new Date(h.createdAt);
+          }
           return {
             date: date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' }),
             totalScore: Math.round(h.metadata.totalScore * 10) / 10,

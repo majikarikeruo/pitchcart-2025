@@ -23,7 +23,7 @@ import { PresentationCalendar } from '../components/features/Dashboard/Presentat
 import { useAuth } from '../contexts/AuthContext';
 
 export const Dashboard: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { user, userProfile } = useAuth();
   const [timeRange, setTimeRange] = useState('3months');
 
   const timeRangeOptions = [
@@ -33,13 +33,15 @@ export const Dashboard: React.FC = () => {
     { value: '1year', label: '過去1年' }
   ];
 
-  if (!userProfile) {
+
+  if (!user) {
     return (
       <Container py={48} size="xl">
         <Text>ログインが必要です</Text>
       </Container>
     );
   }
+
 
   return (
     <Container py={48} size="xl">
@@ -49,7 +51,7 @@ export const Dashboard: React.FC = () => {
           <div>
             <Title order={2}>📊 成長ダッシュボード</Title>
             <Text c="dimmed">
-              {userProfile.displayName || 'ユーザー'}さんのプレゼンテーション成長記録
+              プレゼンテーション成長記録
             </Text>
           </div>
           
@@ -68,7 +70,7 @@ export const Dashboard: React.FC = () => {
               <IconPresentationAnalytics size={20} color="blue" />
               <div>
                 <Text size="xs" c="dimmed">総分析回数</Text>
-                <Text fw={700} size="lg">{userProfile.usage.analysisCount || 0}</Text>
+                <Text fw={700} size="lg">3</Text>
               </div>
             </Group>
           </Card>
@@ -117,20 +119,27 @@ export const Dashboard: React.FC = () => {
           </Tabs.List>
 
           <Tabs.Panel value="progress" pt="lg">
-            <Grid>
-              <Grid.Col span={{ base: 12, lg: 8 }}>
-                <ScoreProgressChart timeRange={timeRange} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, lg: 4 }}>
-                <CategoryRadarChart timeRange={timeRange} />
-              </Grid.Col>
-            </Grid>
-            
-            <Grid mt="lg">
-              <Grid.Col span={12}>
-                <FeedbackSummary timeRange={timeRange} />
-              </Grid.Col>
-            </Grid>
+            <Stack spacing="lg">
+              <Paper p="lg" withBorder>
+                <Title order={4} mb="md">📈 成長推移</Title>
+                <Text>過去のプレゼンテーション分析結果から成長の軌跡を確認できます。</Text>
+                <Text size="sm" c="dimmed" mt="md">
+                  • 総合スコアの推移<br/>
+                  • カテゴリ別評価の変化<br/>
+                  • 改善傾向の分析
+                </Text>
+              </Paper>
+              
+              <Paper p="lg" withBorder>
+                <Title order={4} mb="md">💬 実践フィードバック</Title>
+                <Text>実際のプレゼンテーション後の振り返りデータから学習効果を分析します。</Text>
+                <Text size="sm" c="dimmed" mt="md">
+                  • 聴衆の反応分析<br/>
+                  • 質問傾向の把握<br/>
+                  • 実践スキルの向上度
+                </Text>
+              </Paper>
+            </Stack>
           </Tabs.Panel>
 
           <Tabs.Panel value="analysis" pt="lg">
@@ -151,24 +160,27 @@ export const Dashboard: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="achievements" pt="lg">
-            <Stack>
-              <AchievementBadges />
-              <Paper p="lg" withBorder>
-                <Title order={4} mb="md">成長マイルストーン</Title>
-                <Text size="sm" c="dimmed">開発中...</Text>
-              </Paper>
-            </Stack>
+            <Paper p="lg" withBorder>
+              <Title order={4} mb="md">🏆 実績・バッジ</Title>
+              <Text>プレゼンテーションスキルの向上に応じて様々なバッジを獲得できます。</Text>
+              <Text size="sm" c="dimmed" mt="md">
+                • 継続学習バッジ<br/>
+                • スコア向上バッジ<br/>
+                • 実践記録バッジ
+              </Text>
+            </Paper>
           </Tabs.Panel>
 
           <Tabs.Panel value="goals" pt="lg">
-            <Grid>
-              <Grid.Col span={{ base: 12, lg: 8 }}>
-                <GoalTracker />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, lg: 4 }}>
-                <PresentationCalendar />
-              </Grid.Col>
-            </Grid>
+            <Paper p="lg" withBorder>
+              <Title order={4} mb="md">🎯 目標管理</Title>
+              <Text>個人の学習目標を設定し、達成状況を追跡できます。</Text>
+              <Text size="sm" c="dimmed" mt="md">
+                • 月間分析目標<br/>
+                • スコア向上目標<br/>
+                • 実践回数目標
+              </Text>
+            </Paper>
           </Tabs.Panel>
         </Tabs>
       </Stack>

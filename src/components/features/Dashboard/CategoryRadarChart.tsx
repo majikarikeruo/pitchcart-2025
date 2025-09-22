@@ -12,6 +12,7 @@ import {
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import { useAuth } from '../../../contexts/AuthContext';
 import { analysisService } from '../../../services/analysis.service';
+import { generateDummyAnalysisHistory } from '../../../services/dummy.service';
 
 interface CategoryRadarChartProps {
   timeRange: string;
@@ -41,7 +42,12 @@ export const CategoryRadarChart: React.FC<CategoryRadarChartProps> = ({ timeRang
 
     try {
       setLoading(true);
-      const history = await analysisService.getAnalysisHistory(user.uid);
+      let history = await analysisService.getAnalysisHistory(user.uid);
+      
+      // データがない場合はダミーデータを使用
+      if (history.length === 0) {
+        history = generateDummyAnalysisHistory(user.uid);
+      }
       
       if (history.length === 0) {
         setData([]);

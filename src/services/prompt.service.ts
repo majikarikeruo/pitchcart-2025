@@ -1,5 +1,4 @@
 import { PracticeFeedback, AnalysisHistory } from './analysis.service';
-import { ResultData } from '../types/Result/resultData';
 
 export class PromptService {
   // フィードバックを基にした追加プロンプトを生成

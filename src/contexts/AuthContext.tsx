@@ -40,10 +40,72 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchUserProfile = async (user: User) => {
     try {
       const profile = await authService.getUserProfile(user.uid);
-      setUserProfile(profile);
+      
+      // プロファイルが取得できない場合（匿名ユーザーなど）はダミーデータを使用
+      if (!profile && user.isAnonymous) {
+        const dummyProfile: UserProfile = {
+          uid: user.uid,
+          email: user.email || 'anonymous@example.com',
+          displayName: user.displayName || 'ゲストユーザー',
+          photoURL: user.photoURL,
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+          subscription: {
+            plan: 'free',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          },
+          usage: {
+            analysisCount: 3,
+            lastAnalysisAt: new Date()
+          }
+        };
+        setUserProfile(dummyProfile);
+      } else if (profile) {
+        // Timestampオブジェクトを適切なDateオブジェクトに変換
+        const convertedProfile: UserProfile = {
+          ...profile,
+          createdAt: profile.createdAt?.toDate ? profile.createdAt.toDate() : new Date(profile.createdAt),
+          lastLoginAt: profile.lastLoginAt?.toDate ? profile.lastLoginAt.toDate() : new Date(profile.lastLoginAt),
+          subscription: profile.subscription ? {
+            ...profile.subscription,
+            expiresAt: profile.subscription.expiresAt?.toDate ? 
+              profile.subscription.expiresAt.toDate() : 
+              (profile.subscription.expiresAt ? new Date(profile.subscription.expiresAt) : new Date())
+          } : undefined,
+          usage: profile.usage ? {
+            ...profile.usage,
+            lastAnalysisAt: profile.usage.lastAnalysisAt?.toDate ? profile.usage.lastAnalysisAt.toDate() : new Date(profile.usage.lastAnalysisAt)
+          } : undefined
+        };
+        setUserProfile(convertedProfile);
+      } else {
+        setUserProfile(null);
+      }
     } catch (err) {
       console.error('Failed to fetch user profile:', err);
-      setError(err as Error);
+      
+      // エラー時も匿名ユーザーならダミーデータを設定
+      if (user.isAnonymous) {
+        const dummyProfile: UserProfile = {
+          uid: user.uid,
+          email: user.email || 'anonymous@example.com',
+          displayName: user.displayName || 'ゲストユーザー',
+          photoURL: user.photoURL,
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+          subscription: {
+            plan: 'free',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          },
+          usage: {
+            analysisCount: 3,
+            lastAnalysisAt: new Date()
+          }
+        };
+        setUserProfile(dummyProfile);
+      } else {
+        setError(err as Error);
+      }
     }
   };
 
