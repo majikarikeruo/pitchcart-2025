@@ -18,11 +18,7 @@
                   "value_proposition": { "type": "number" },
                   "competitive_advantage": { "type": "number" }
                 },
-                "required": [
-                  "market_alignment",
-                  "value_proposition",
-                  "competitive_advantage"
-                ],
+                "required": ["market_alignment", "value_proposition", "competitive_advantage"],
                 "additionalProperties": false
               }
             },
@@ -40,11 +36,7 @@
                   "resource_availability": { "type": "number" },
                   "execution_capability": { "type": "number" }
                 },
-                "required": [
-                  "technical_viability",
-                  "resource_availability",
-                  "execution_capability"
-                ],
+                "required": ["technical_viability", "resource_availability", "execution_capability"],
                 "additionalProperties": false
               }
             },
@@ -126,11 +118,7 @@
                     "additionalProperties": false
                   }
                 },
-                "required": [
-                  "market_alignment",
-                  "value_proposition",
-                  "competitive_advantage"
-                ],
+                "required": ["market_alignment", "value_proposition", "competitive_advantage"],
                 "additionalProperties": false
               }
             },
@@ -187,11 +175,7 @@
                     "additionalProperties": false
                   }
                 },
-                "required": [
-                  "technical_viability",
-                  "resource_availability",
-                  "execution_capability"
-                ],
+                "required": ["technical_viability", "resource_availability", "execution_capability"],
                 "additionalProperties": false
               }
             },

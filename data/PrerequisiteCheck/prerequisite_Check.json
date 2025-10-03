@@ -1,5 +1,6 @@
 {
   "name": "PrerequisiteCheckSchema",
+  "strict": true,
   "schema": {
     "type": "object",
     "properties": {
@@ -34,7 +35,8 @@
                       "description": "具体的に不足している要素"
                     }
                   },
-                  "required": ["description", "missing_elements"]
+                  "required": ["description", "missing_elements"],
+                  "additionalProperties": false
                 },
                 "impact": {
                   "type": "object",
@@ -48,7 +50,8 @@
                       "description": "聴衆の視点からの問題点"
                     }
                   },
-                  "required": ["description", "audience_perspective"]
+                  "required": ["description", "audience_perspective"],
+                  "additionalProperties": false
                 },
                 "importance": {
                   "type": "string",
@@ -67,18 +70,20 @@
                       "description": "なぜ必要か"
                     }
                   },
-                  "required": ["what_to_add", "why_needed"]
+                  "required": ["what_to_add", "why_needed"],
+                  "additionalProperties": false
                 }
               },
               "required": [
                 "topic",
                 "current_state",
+                "slide_number",
                 "impact",
                 "importance",
                 "recommendation"
-              ]
-            },
-            "minItems": 1
+              ],
+              "additionalProperties": false
+            }
           },
           "sequence_issues": {
             "type": "array",
@@ -91,30 +96,23 @@
                   "description": "シーケンス問題のタイプ（全体構造か移行部分か）"
                 },
                 "location": {
-                  "oneOf": [
-                    {
-                      "type": "string",
-                      "description": "全体構造に関する問題の場合の説明"
+                  "type": "object",
+                  "properties": {
+                    "from_page": {
+                      "type": "number",
+                      "description": "移行元のページ番号"
                     },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "from_page": {
-                          "type": "number",
-                          "description": "移行元のページ番号"
-                        },
-                        "to_page": {
-                          "type": "number",
-                          "description": "移行先のページ番号"
-                        },
-                        "description": {
-                          "type": "string",
-                          "description": "移行部分の説明"
-                        }
-                      },
-                      "required": ["from_page", "to_page", "description"]
+                    "to_page": {
+                      "type": "number",
+                      "description": "移行先のページ番号"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "移行部分の説明"
                     }
-                  ]
+                  },
+                  "required": ["from_page", "to_page", "description"],
+                  "additionalProperties": false
                 },
                 "issue": {
                   "type": "string",
@@ -146,25 +144,28 @@
                       "section",
                       "current_slide",
                       "suggested_position"
-                    ]
+                    ],
+                    "additionalProperties": false
                   },
                   "description": "全体構造の問題の場合の影響を受けるセクション一覧"
                 }
               },
-              "required": ["type", "location", "issue", "suggestion"],
-              "if": {
-                "properties": { "type": { "const": "overall_structure" } }
-              },
-              "then": {
-                "required": ["affected_sections"]
-              }
-            },
-            "minItems": 1
+              "required": [
+                "type",
+                "location",
+                "issue",
+                "suggestion",
+                "affected_sections"
+              ],
+              "additionalProperties": false
+            }
           }
         },
-        "required": ["missing_prerequisites", "sequence_issues"]
+        "required": ["missing_prerequisites", "sequence_issues"],
+        "additionalProperties": false
       }
     },
-    "required": ["prerequisite_check"]
+    "required": ["prerequisite_check"],
+    "additionalProperties": false
   }
 }

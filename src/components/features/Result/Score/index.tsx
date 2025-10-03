@@ -1,12 +1,28 @@
 import { useState } from "react";
-import { Transition, Paper, SimpleGrid, Box, Flex, Divider, Text, Title, ThemeIcon } from "@mantine/core";
+import {
+  Transition,
+  Paper,
+  SimpleGrid,
+  Box,
+  Flex,
+  Divider,
+  Text,
+  Title,
+  ThemeIcon,
+} from "@mantine/core";
 import { IconPresentation } from "@tabler/icons-react";
 
 import { TotalScore } from "@/components/features/Result/Score/TotalScore";
 import { ScoreByCategory } from "@/components/features/Result/Score/ScoreByCategory";
 import { ReportAboutEachScore } from "@/components/features/Result/Score/ReportAboutEachScore";
 
-import { UserInputProps, analysisWithScoreProps, AnalysisCategoryProps, CATEGORY_LABELS, AnalysisCategoryData } from "@/types/Result";
+import {
+  UserInputProps,
+  analysisWithScoreProps,
+  AnalysisCategoryProps,
+  CATEGORY_LABELS,
+  AnalysisCategoryData,
+} from "@/types/Result";
 
 interface ScoreProps {
   analysisWithScore: analysisWithScoreProps;
@@ -14,12 +30,15 @@ interface ScoreProps {
 }
 
 export const Score = ({ analysisWithScore, input }: ScoreProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<AnalysisCategoryProps>("impact_score");
+  const [selectedCategory, setSelectedCategory] =
+    useState<AnalysisCategoryProps>("impact_score");
   const { analysis, score_explanation } = analysisWithScore;
 
   const explanationByScore = score_explanation[selectedCategory];
 
-  const analysisCategories: AnalysisCategoryData[] = Object.entries(analysis).map(([key, value]) => ({
+  const analysisCategories: AnalysisCategoryData[] = Object.entries(
+    analysis
+  ).map(([key, value]) => ({
     id: key as AnalysisCategoryProps,
     total: value.total,
     label: CATEGORY_LABELS[key as AnalysisCategoryProps],
@@ -50,15 +69,35 @@ export const Score = ({ analysisWithScore, input }: ScoreProps) => {
       <Box mb="8">
         <SimpleGrid cols={3} className="gap-4 justify-center">
           {analysisCategories.map((category, index) => (
-            <Paper mb="16" shadow="md" key={index} onClick={() => setSelectedCategory(category.id)}>
-              <ScoreByCategory key={index} category={category} isActive={selectedCategory === category.id} />
+            <Paper
+              mb="16"
+              shadow="md"
+              key={index}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              <ScoreByCategory
+                key={index}
+                category={category}
+                isActive={selectedCategory === category.id}
+              />
             </Paper>
           ))}
         </SimpleGrid>
       </Box>
 
-      <Transition mounted={true} transition="fade" duration={400} timingFunction="ease">
-        {(_) => <ReportAboutEachScore analysisCategories={analysisCategories} explanationByScore={explanationByScore} selectedCategory={selectedCategory} />}
+      <Transition
+        mounted={true}
+        transition="fade"
+        duration={400}
+        timingFunction="ease"
+      >
+        {(_) => (
+          <ReportAboutEachScore
+            analysisCategories={analysisCategories}
+            explanationByScore={explanationByScore}
+            selectedCategory={selectedCategory}
+          />
+        )}
       </Transition>
     </Box>
   );
