@@ -1,4 +1,4 @@
-import type { AnalysisResponse, StreamEvent, PersonaOutput, Consensus } from "@/types/analysis";
+import type { AnalysisResponse, StreamEvent, PersonaOutput } from "@/types/analysis";
 
 // APIベースURLの解決を共通化（失敗時は'/api'へフォールバック）
 // .env には通常、オリジン（例: http://localhost:8787）を入れる想定。
