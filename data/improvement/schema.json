@@ -1,0 +1,82 @@
+{
+  "name": "ImprovementsSchema",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "improvements": {
+        "type": "object",
+        "properties": {
+          "overall": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "description": "全体的な改善のカテゴリ"
+                },
+                "issue": {
+                  "type": "string",
+                  "description": "全体的な問題点"
+                },
+                "improvement": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "改善のための行動"
+                    },
+                    "expected_result": {
+                      "type": "string",
+                      "description": "改善後に期待される結果"
+                    },
+                    "priority": {
+                      "type": "string",
+                      "description": "改善の優先度"
+                    },
+                    "implementation_steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "step": {
+                            "type": "number",
+                            "description": "実装ステップの番号"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "実装ステップの詳細"
+                          },
+                          "estimated_time": {
+                            "type": "string",
+                            "description": "実装に要する推定時間"
+                          }
+                        },
+                        "required": ["step", "description", "estimated_time"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "expected_result",
+                    "priority",
+                    "implementation_steps"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["category", "issue", "improvement"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["overall"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["improvements"],
+    "additionalProperties": false
+  }
+}

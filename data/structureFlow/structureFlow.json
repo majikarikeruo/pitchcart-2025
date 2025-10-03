@@ -1,0 +1,97 @@
+{
+  "name": "structure_flow_schema",
+  "description": "プレゼンテーションの構造とフローを分析するためのスキーマ",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "structure_flow": {
+        "type": "object",
+        "properties": {
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from_slide": { "type": "number" },
+                "to_slide": { "type": "number" },
+                "transition_issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "issue": { "type": "string" },
+                      "current_content": { "type": "string" },
+                      "suggestion": { "type": "string" },
+                      "context": { "type": "string" }
+                    },
+                    "required": [
+                      "issue",
+                      "current_content",
+                      "suggestion",
+                      "context"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": ["from_slide", "to_slide", "transition_issues"],
+              "additionalProperties": false
+            }
+          },
+          "story_structure": {
+            "type": "object",
+            "properties": {
+              "main_theme": { "type": "string" },
+              "narrative_sections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "setup",
+                        "problem",
+                        "solution",
+                        "evidence",
+                        "call_to_action"
+                      ]
+                    },
+                    "narrative_strength": { "type": "number" },
+                    "slide_range": {
+                      "type": "object",
+                      "properties": {
+                        "start": { "type": "number" },
+                        "end": { "type": "number" }
+                      },
+                      "required": ["start", "end"],
+                      "additionalProperties": false
+                    },
+                    "key_messages": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "narrative_strength",
+                    "slide_range",
+                    "key_messages"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["main_theme", "narrative_sections"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["edges", "story_structure"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["structure_flow"],
+    "additionalProperties": false
+  }
+}

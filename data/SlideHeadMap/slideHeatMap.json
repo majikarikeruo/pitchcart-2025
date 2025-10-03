@@ -1,0 +1,94 @@
+{
+  "name": "ImprovementsSchema",
+  "string": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "improvements": {
+        "type": "object",
+        "properties": {
+          "overall": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "structure",
+                    "timing",
+                    "story",
+                    "visual",
+                    "audience"
+                  ],
+                  "description": "改善のカテゴリ"
+                },
+                "issue": {
+                  "type": "string",
+                  "description": "全体的な問題点"
+                },
+                "improvement": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "改善のための具体的なアクション"
+                    },
+                    "expected_result": {
+                      "type": "string",
+                      "description": "改善後に期待される具体的な効果"
+                    },
+                    "priority": {
+                      "type": "string",
+                      "enum": ["High", "Medium", "Low"],
+                      "description": "改善の優先度"
+                    },
+                    "implementation_steps": {
+                      "type": "array",
+                      "maxItems": 3,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "step": {
+                            "type": "number",
+                            "description": "実装ステップの番号"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "実装ステップの具体的な内容"
+                          },
+                          "estimated_time": {
+                            "type": "string",
+                            "pattern": "^[0-9]+(.[0-9]+)?時間$",
+                            "description": "実装に要する推定時間"
+                          }
+                        },
+                        "required": ["step", "description", "estimated_time"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "expected_result",
+                    "priority",
+                    "implementation_steps"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": ["category", "issue", "improvement"],
+              "additionalProperties": false
+            },
+            "maxItems": 6,
+            "minItems": 5
+          }
+        },
+        "required": ["overall"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["improvements"],
+    "additionalProperties": false
+  }
+}

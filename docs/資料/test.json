@@ -1,0 +1,250 @@
+{
+  "name": "AnalysisSchema",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "analysis": {
+        "type": "object",
+        "properties": {
+          "impact_score": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "number" },
+              "breakdown": {
+                "type": "object",
+                "properties": {
+                  "market_alignment": { "type": "number" },
+                  "value_proposition": { "type": "number" },
+                  "competitive_advantage": { "type": "number" }
+                },
+                "required": ["market_alignment", "value_proposition", "competitive_advantage"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total", "breakdown"],
+            "additionalProperties": false
+          },
+          "feasibility_score": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "number" },
+              "breakdown": {
+                "type": "object",
+                "properties": {
+                  "technical_viability": { "type": "number" },
+                  "resource_availability": { "type": "number" },
+                  "execution_capability": { "type": "number" }
+                },
+                "required": ["technical_viability", "resource_availability", "execution_capability"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total", "breakdown"],
+            "additionalProperties": false
+          },
+          "presentation_score": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "number" },
+              "breakdown": {
+                "type": "object",
+                "properties": {
+                  "clarity": { "type": "number" },
+                  "structure": { "type": "number" },
+                  "engagement": { "type": "number" }
+                },
+                "required": ["clarity", "structure", "engagement"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total", "breakdown"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["impact_score", "feasibility_score", "presentation_score"],
+        "additionalProperties": false
+      },
+      "score_explanation": {
+        "type": "object",
+        "properties": {
+          "impact_score": {
+            "type": "object",
+            "properties": {
+              "total_explanation": {
+                "type": "object",
+                "properties": {
+                  "score": { "type": "number" },
+                  "summary": { "type": "string" },
+                  "key_factors": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["score", "summary", "key_factors"],
+                "additionalProperties": false
+              },
+              "components": {
+                "type": "object",
+                "properties": {
+                  "market_alignment": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "value_proposition": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "competitive_advantage": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["market_alignment", "value_proposition", "competitive_advantage"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total_explanation", "components"],
+            "additionalProperties": false
+          },
+          "feasibility_score": {
+            "type": "object",
+            "properties": {
+              "total_explanation": {
+                "type": "object",
+                "properties": {
+                  "score": { "type": "number" },
+                  "summary": { "type": "string" },
+                  "key_factors": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["score", "summary", "key_factors"],
+                "additionalProperties": false
+              },
+              "components": {
+                "type": "object",
+                "properties": {
+                  "technical_viability": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "resource_availability": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "execution_capability": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["technical_viability", "resource_availability", "execution_capability"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total_explanation", "components"],
+            "additionalProperties": false
+          },
+          "presentation_score": {
+            "type": "object",
+            "properties": {
+              "total_explanation": {
+                "type": "object",
+                "properties": {
+                  "score": { "type": "number" },
+                  "summary": { "type": "string" },
+                  "key_factors": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                },
+                "required": ["score", "summary", "key_factors"],
+                "additionalProperties": false
+              },
+              "components": {
+                "type": "object",
+                "properties": {
+                  "clarity": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "structure": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  },
+                  "engagement": {
+                    "type": "object",
+                    "properties": {
+                      "score": { "type": "number" },
+                      "explanation": { "type": "string" },
+                      "evidence": { "type": "string" }
+                    },
+                    "required": ["score", "explanation", "evidence"],
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["clarity", "structure", "engagement"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["total_explanation", "components"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["impact_score", "feasibility_score", "presentation_score"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["analysis", "score_explanation"],
+    "additionalProperties": false
+  }
+}

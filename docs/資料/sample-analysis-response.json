@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "personas": [
+    {
+      "persona_id": "vc_seed",
+      "summary": "VC（シード/ディープテック寄り）視点: 要点は把握",
+      "scores": { "clarity": 65, "uniqueness": 60, "persuasiveness": 66 },
+      "comment": "私はVC（シード/ディープテック寄り）として見ています。端的・厳しめ・事実基調・一人称。与えられた情報から判断しました。",
+      "evidence": [ { "slide": 1, "quote": "要約..." } ],
+      "confidence": 0.7
+    },
+    {
+      "persona_id": "accelerator_judge",
+      "summary": "アクセラ審査員視点: 要点は把握",
+      "scores": { "clarity": 66, "uniqueness": 58, "persuasiveness": 67 },
+      "comment": "私はアクセラ審査員として見ています。建設的・実務寄り。与えられた情報から判断しました。",
+      "evidence": [ { "slide": 1, "quote": "要約..." } ],
+      "confidence": 0.7
+    },
+    {
+      "persona_id": "early_user",
+      "summary": "アーリーアダプター顧客視点: 要点は把握",
+      "scores": { "clarity": 68, "uniqueness": 56, "persuasiveness": 66 },
+      "comment": "私はアーリーアダプター顧客として見ています。率直・体験重視。与えられた情報から判断しました。",
+      "evidence": [ { "slide": 1, "quote": "要約..." } ],
+      "confidence": 0.7
+    }
+  ],
+  "consensus": {
+    "agreements": ["メッセージの明確化が必要", "定量根拠の補強が効果的"],
+    "disagreements": ["独自性の評価で見解が分かれる"],
+    "overall_score": 64,
+    "top_todos": ["冒頭に総括スライドを追加", "競合比較の定量化"],
+    "what_if": [
+      { "change": "Slide1に要約ボックス追加", "expected_gain": 8, "uncertainty": 3 },
+      { "change": "競合比較表の追加", "expected_gain": 6, "uncertainty": 2 }
+    ]
+  }
+}
+
