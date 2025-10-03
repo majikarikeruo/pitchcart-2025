@@ -87,15 +87,24 @@ export const PresentationCheck = () => {
         }
       );
 
-      const resultToStore = { consensusMvp: finalResult || undefined, ...finalResult };
       if (finalResult) {
+        const resultToStore: ResultData = { consensusMvp: finalResult };
         localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
         setLatestResult(resultToStore);
         setCanViewResult(true);
         notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
       } else {
-        // Fallback for when streaming fails to return a complete result
-        notifications.show({ title: "エラー", message: "分析ストリームから完全な結果を取得できませんでした。", color: "red" });
+        notifications.show({ title: "ストリーミング失敗", message: "通常の分析モードにフォールバックします。", color: "yellow" });
+        const fallbackResult = await postAnalyzeForm(form);
+        if (fallbackResult) {
+          const resultToStore: ResultData = { consensusMvp: fallbackResult };
+          localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
+          setLatestResult(resultToStore);
+          setCanViewResult(true);
+          notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
+        } else {
+          notifications.show({ title: "エラー", message: "分析に失敗しました。", color: "red" });
+        }
       }
     } catch (error: any) {
       console.error("Request failed:", error);
@@ -168,7 +177,11 @@ export const PresentationCheck = () => {
         <Button onClick={handleSubmit} loading={loading || streaming} disabled={!presentationData.file || loading || streaming}>
           {streaming ? "分析中…" : useEnhancedAnalysis ? "🚀 高精度分析を開始" : "分析を開始する"}
         </Button>
-        <Button variant="light" onClick={() => navigate("/result", { state: { result: latestResult, presentationId, presentationTitle: presentationData.goal } })} disabled={!canViewResult}>
+        <Button
+          variant="light"
+          onClick={() => navigate("/result", { state: { result: latestResult, presentationId, presentationTitle: presentationData.goal } })}
+          disabled={!canViewResult}
+        >
           結果を見る
         </Button>
       </Group>
