@@ -1,22 +1,9 @@
-import React, { useState } from 'react';
-import {
-  Paper,
-  TextInput,
-  PasswordInput,
-  Button,
-  Stack,
-  Title,
-  Text,
-  Divider,
-  Anchor,
-  Group,
-  LoadingOverlay,
-  Box
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { IconBrandGoogle, IconUser } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState } from "react";
+import { Paper, TextInput, PasswordInput, Button, Stack, Title, Text, Divider, Anchor, Group, LoadingOverlay } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconBrandGoogle, IconUser } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -30,31 +17,31 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
   const form = useForm({
     initialValues: {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'メールアドレスが無効です'),
-      password: (value) => (value.length >= 6 ? null : 'パスワードは6文字以上必要です')
-    }
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "メールアドレスが無効です"),
+      password: (value) => (value.length >= 6 ? null : "パスワードは6文字以上必要です"),
+    },
   });
 
   const resetForm = useForm({
     initialValues: {
-      resetEmail: ''
+      resetEmail: "",
     },
     validate: {
-      resetEmail: (value) => (/^\S+@\S+$/.test(value) ? null : 'メールアドレスが無効です')
-    }
+      resetEmail: (value) => (/^\S+@\S+$/.test(value) ? null : "メールアドレスが無効です"),
+    },
   });
 
   const handleEmailLogin = async (values: typeof form.values) => {
     try {
       setLoading(true);
       await signInWithEmail(values.email, values.password);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -64,9 +51,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     try {
       setLoading(true);
       await signInWithGoogle();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Google login error:', error);
+      console.error("Google login error:", error);
     } finally {
       setLoading(false);
     }
@@ -76,9 +63,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
     try {
       setLoading(true);
       await signInAnonymously();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Anonymous login error:', error);
+      console.error("Anonymous login error:", error);
     } finally {
       setLoading(false);
     }
@@ -91,7 +78,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       setShowResetPassword(false);
       resetForm.reset();
     } catch (error) {
-      console.error('Password reset error:', error);
+      console.error("Password reset error:", error);
     } finally {
       setLoading(false);
     }
@@ -106,21 +93,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
         <form onSubmit={resetForm.onSubmit(handlePasswordReset)}>
           <Stack>
-            <TextInput
-              label="メールアドレス"
-              placeholder="your@email.com"
-              required
-              {...resetForm.getInputProps('resetEmail')}
-            />
+            <TextInput label="メールアドレス" placeholder="your@email.com" required {...resetForm.getInputProps("resetEmail")} />
 
             <Group justify="space-between" mt="lg">
-              <Anchor
-                component="button"
-                type="button"
-                c="dimmed"
-                onClick={() => setShowResetPassword(false)}
-                size="sm"
-              >
+              <Anchor component="button" type="button" c="dimmed" onClick={() => setShowResetPassword(false)} size="sm">
                 ログインに戻る
               </Anchor>
               <Button type="submit" loading={loading}>
@@ -136,7 +112,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   return (
     <Paper radius="md" p="xl" withBorder pos="relative">
       <LoadingOverlay visible={loading} />
-      
+
       <Title order={2} size="h3" ta="center" mb="md">
         PitchCartへようこそ
       </Title>
@@ -147,28 +123,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
 
       <form onSubmit={form.onSubmit(handleEmailLogin)}>
         <Stack>
-          <TextInput
-            label="メールアドレス"
-            placeholder="your@email.com"
-            required
-            {...form.getInputProps('email')}
-          />
+          <TextInput label="メールアドレス" placeholder="your@email.com" required {...form.getInputProps("email")} />
 
-          <PasswordInput
-            label="パスワード"
-            placeholder="パスワード"
-            required
-            {...form.getInputProps('password')}
-          />
+          <PasswordInput label="パスワード" placeholder="パスワード" required {...form.getInputProps("password")} />
 
           <Group justify="space-between" mt="sm">
-            <Anchor
-              component="button"
-              type="button"
-              c="dimmed"
-              onClick={() => setShowResetPassword(true)}
-              size="sm"
-            >
+            <Anchor component="button" type="button" c="dimmed" onClick={() => setShowResetPassword(true)} size="sm">
               パスワードを忘れた方
             </Anchor>
           </Group>
@@ -182,27 +142,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
       <Divider label="または" labelPosition="center" my="lg" />
 
       <Stack>
-        <Button
-          variant="default"
-          fullWidth
-          leftSection={<IconBrandGoogle size={20} />}
-          onClick={handleGoogleLogin}
-        >
+        <Button variant="default" fullWidth leftSection={<IconBrandGoogle size={20} />} onClick={handleGoogleLogin}>
           Googleでログイン
         </Button>
 
-        <Button
-          variant="light"
-          fullWidth
-          leftSection={<IconUser size={20} />}
-          onClick={handleAnonymousLogin}
-        >
+        <Button variant="light" fullWidth leftSection={<IconUser size={20} />} onClick={handleAnonymousLogin}>
           お試しで始める（7日間無料）
         </Button>
       </Stack>
 
       <Text ta="center" mt="md">
-        アカウントをお持ちでない方は{' '}
+        アカウントをお持ちでない方は{" "}
         <Anchor component="button" type="button" onClick={onToggleMode}>
           新規登録
         </Anchor>
