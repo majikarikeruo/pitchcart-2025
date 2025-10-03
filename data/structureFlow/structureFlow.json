@@ -1,7 +1,5 @@
 {
-  "name": "structure_flow_schema",
-  "description": "プレゼンテーションの構造とフローを分析するためのスキーマ",
-  "strict": true,
+  "name": "StructureFlowSchema",
   "schema": {
     "type": "object",
     "properties": {
@@ -13,36 +11,48 @@
             "items": {
               "type": "object",
               "properties": {
-                "from_slide": { "type": "number" },
-                "to_slide": { "type": "number" },
+                "from_slide": {
+                  "type": "number",
+                  "description": "開始スライド番号"
+                },
+                "to_slide": {
+                  "type": "number",
+                  "description": "終了スライド番号"
+                },
                 "transition_issues": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "issue": { "type": "string" },
-                      "current_content": { "type": "string" },
-                      "suggestion": { "type": "string" },
-                      "context": { "type": "string" }
-                    },
-                    "required": [
-                      "issue",
-                      "current_content",
-                      "suggestion",
-                      "context"
-                    ],
-                    "additionalProperties": false
+                      "issue": {
+                        "type": "string",
+                        "description": "遷移時の問題点"
+                      },
+                      "current_content": {
+                        "type": "string",
+                        "description": "現在の接続部分の具体的な内容"
+                      },
+                      "suggestion": {
+                        "type": "string",
+                        "description": "改善提案（具体的な文言例を含む）"
+                      },
+                      "context": {
+                        "type": "string",
+                        "description": "なぜその遷移が問題なのかの文脈説明"
+                      }
+                    }
                   }
                 }
-              },
-              "required": ["from_slide", "to_slide", "transition_issues"],
-              "additionalProperties": false
+              }
             }
           },
           "story_structure": {
             "type": "object",
             "properties": {
-              "main_theme": { "type": "string" },
+              "main_theme": {
+                "type": "string",
+                "description": "プレゼンテーション全体のメインテーマ"
+              },
               "narrative_sections": {
                 "type": "array",
                 "items": {
@@ -50,48 +60,43 @@
                   "properties": {
                     "type": {
                       "type": "string",
-                      "enum": [
-                        "setup",
-                        "problem",
-                        "solution",
-                        "evidence",
-                        "call_to_action"
-                      ]
+                      "enum": ["setup", "problem", "solution", "evidence", "call_to_action"],
+                      "description": "セクションの種類"
                     },
-                    "narrative_strength": { "type": "number" },
                     "slide_range": {
                       "type": "object",
                       "properties": {
-                        "start": { "type": "number" },
-                        "end": { "type": "number" }
-                      },
-                      "required": ["start", "end"],
-                      "additionalProperties": false
+                        "start": {
+                          "type": "number",
+                          "description": "開始スライド番号"
+                        },
+                        "end": {
+                          "type": "number",
+                          "description": "終了スライド番号"
+                        }
+                      }
+                    },
+                    "narrative_strength": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "ストーリーとしての強さ"
                     },
                     "key_messages": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "このセクションの主要なメッセージ"
                     }
-                  },
-                  "required": [
-                    "type",
-                    "narrative_strength",
-                    "slide_range",
-                    "key_messages"
-                  ],
-                  "additionalProperties": false
+                  }
                 }
               }
-            },
-            "required": ["main_theme", "narrative_sections"],
-            "additionalProperties": false
+            }
           }
         },
-        "required": ["edges", "story_structure"],
-        "additionalProperties": false
+        "required": ["edges", "story_structure"]
       }
-    },
-    "required": ["structure_flow"],
-    "additionalProperties": false
+    }
   }
 }

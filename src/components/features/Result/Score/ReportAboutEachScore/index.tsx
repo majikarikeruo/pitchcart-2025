@@ -22,7 +22,7 @@ export const ReportAboutEachScore = ({ analysisCategories, explanationByScore, s
       {/* サブカテゴリーのグリッド表示 */}
       <SimpleGrid cols={3} style={{ padding: "16px" }} bg="white">
         {Object.entries(categoryDetails).map(([subcategory, label]) => (
-          <SubCategory subcategory={subcategory} label={label} explanationByScore={explanationByScore} />
+          <SubCategory key={subcategory} subcategory={subcategory} label={label} explanationByScore={explanationByScore} />
         ))}
       </SimpleGrid>
     </Paper>

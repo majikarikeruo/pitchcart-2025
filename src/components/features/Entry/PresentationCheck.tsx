@@ -1,20 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Box,
-  Stack,
-  Container,
-  Input,
-  Loader,
-  Text,
-  FileInput,
-  Button,
-  Group,
-  Alert,
-} from "@mantine/core";
+import { useState, useEffect, Suspense, lazy } from "react";
+import { Box, Stack, Input, FileInput, Button, Group, Switch } from "@mantine/core";
+const AnalysisInsights = lazy(() => import("./AnalysisInsights").then((m) => ({ default: m.AnalysisInsights })));
+import { useAuth } from "../../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { postAnalyzeForm, streamAnalyzeForm, checkApiHealth } from "@/services/analyze";
+import type { PersonaOutput, AnalysisResponse } from "@/types/analysis";
+import type { ResultData } from "@/types/Result";
 
 interface PresentationData {
   target_person: string;
@@ -25,9 +19,8 @@ interface PresentationData {
 }
 
 export const PresentationCheck = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
   const [presentationData, setPresentationData] = useState<PresentationData>({
     target_person: "",
     goal: "",
@@ -35,227 +28,96 @@ export const PresentationCheck = () => {
     file: null,
     speech_text: null,
   });
+  const [presentationId, setPresentationId] = useState<string>("");
+  const [useEnhancedAnalysis, setUseEnhancedAnalysis] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
+  const [receivedPersonas, setReceivedPersonas] = useState<PersonaOutput[]>([]);
+  const [canViewResult, setCanViewResult] = useState(false);
+  const [latestResult, setLatestResult] = useState<ResultData | null>(null);
+
+  useEffect(() => {
+    if (user && presentationData.goal) {
+      const id = `${user.uid}_${presentationData.goal.slice(0, 20)}_${Date.now()}`;
+      setPresentationId(id);
+    }
+  }, [user, presentationData.goal]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
-      // バリデーション
-      //   if (!presentationData.audience || !presentationData.goal) {
-      //     alert("オーディエンスと目的を入力してください");
-      //     return;
-      //   }
+      const healthy = await checkApiHealth();
+      if (!healthy) {
+        notifications.show({ title: "サーバ未起動", message: "バックエンドAPIに接続できませんでした。", color: "red" });
+        return;
+      }
+      const form = new FormData();
+      if (presentationData.file) form.append("file", presentationData.file);
+      if (presentationData.speech_text) form.append("speech_text", presentationData.speech_text);
+      form.append("target_person", presentationData.target_person);
+      form.append("goal", presentationData.goal);
+      form.append("industry", presentationData.industry);
+      form.append("use_llm", useEnhancedAnalysis ? "true" : "false");
+      if (useEnhancedAnalysis) {
+        form.append("detail", "high");
+        form.append("evidence_max", "5");
+      }
 
-      const uploadFile = async (file: File) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append(
-          "user",
-          `user_${Math.random().toString(36).substring(7)}`
-        );
+      setStreaming(true);
+      setReceivedPersonas([]);
+      let finalResult: AnalysisResponse | null = null;
 
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/files/upload`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-            },
-            body: formData,
+      await streamAnalyzeForm(
+        form,
+        (evt) => {
+          if (evt.type === "persona") {
+            setReceivedPersonas((prev) => {
+              const i = prev.findIndex((p) => p.persona_id === evt.data.persona_id);
+              if (i >= 0) {
+                const next = prev.slice();
+                next[i] = evt.data;
+                return next;
+              }
+              return [...prev, evt.data];
+            });
           }
-        );
-
-        if (!response.ok) throw new Error("File upload failed");
-        return response.json();
-      };
-
-      const [presentationFileData, speechTextFileData] = await Promise.all([
-        presentationData.file ? uploadFile(presentationData.file) : null,
-        presentationData.speech_text
-          ? uploadFile(presentationData.speech_text)
-          : null,
-      ]);
-
-      const requestBody = {
-        response_mode: "blocking",
-        user: `user_${Math.random().toString(36).substring(7)}`,
-
-        inputs: {
-          target_person: presentationData.target_person,
-          goal: presentationData.goal,
-          industry: presentationData.industry,
-          file: {
-            type: "document", // PPTXはdocumentタイプ
-            transfer_method: "local_file",
-            upload_file_id: presentationFileData.id,
-          },
-          speech_text: {
-            type: "document",
-            transfer_method: "local_file",
-            upload_file_id: speechTextFileData.id,
-          },
         },
-      };
-
-      setIsLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/workflows/run`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
-          body: JSON.stringify(requestBody),
+        (fullResponse) => {
+          finalResult = fullResponse;
         }
       );
 
-      // 以下のエラーハンドリングは同じ
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", {
-          status: response.status,
-          statusText: response.statusText,
-          data: errorData,
-        });
-        throw new Error(`API error: ${response.status}`);
+      if (finalResult) {
+        const resultToStore: ResultData = { consensusMvp: finalResult };
+        localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
+        setLatestResult(resultToStore);
+        setCanViewResult(true);
+        notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
+      } else {
+        notifications.show({ title: "ストリーミング失敗", message: "通常の分析モードにフォールバックします。", color: "yellow" });
+        const fallbackResult = await postAnalyzeForm(form);
+        if (fallbackResult) {
+          const resultToStore: ResultData = { consensusMvp: fallbackResult };
+          localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
+          setLatestResult(resultToStore);
+          setCanViewResult(true);
+          notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
+        } else {
+          notifications.show({ title: "エラー", message: "分析に失敗しました。", color: "red" });
+        }
       }
-
-      const result = await response.json();
-      const { outputs } = result.data;
-      console.log("Success:", outputs);
-
-      try {
-        // 非同期でJSONをパースする関数
-        const parseJsonAsync = async (jsonString: string) => {
-          return new Promise((resolve) => {
-            setTimeout(() => {
-              try {
-                // inputの場合、値も適切にクォートで囲む
-                if (jsonString === outputs.input) {
-                  const validJson = jsonString
-                    .replace(/'/g, '"') // シングルクォートをダブルクォート
-                    .replace(/:\s*([^",\{\[\]\}]+)(,|\})/g, ':"$1"$2') // クォートされていない値を囲む
-                    .replace(/,(\s*})/g, "$1"); // 末尾のカンマを削除
-                  console.log("Transformed JSON:", validJson); // デバッグ用
-                  const parsed = JSON.parse(validJson);
-                  resolve(parsed);
-                } else {
-                  const parsed = JSON.parse(jsonString);
-                  resolve(parsed);
-                }
-              } catch (error) {
-                console.error("Parse error:", error, "in string:", jsonString);
-                resolve(null);
-              }
-            }, 0);
-          });
-        };
-
-        // 順次パースを実行
-        const parseAllData = async () => {
-          const predictedQuestions = await parseJsonAsync(
-            outputs.predictedQuestions
-          );
-          console.log("Parsed predictedQuestions");
-
-          const input = await parseJsonAsync(outputs.input);
-          console.log("Parsed input");
-
-          const improvement = await parseJsonAsync(outputs.improvement);
-          console.log("Parsed improvement");
-
-          const analysisWithScore = await parseJsonAsync(
-            outputs.analysisWithScore
-          );
-          console.log("Parsed analysisWithScore");
-
-          const prerequisite_check = await parseJsonAsync(
-            outputs.prerequisite_check
-          );
-          console.log("Parsed scoreData");
-
-          const heatmapFlow = await parseJsonAsync(outputs.heatmapFlow);
-          console.log("Parsed heatmapFlow");
-
-          const structureFlow = await parseJsonAsync(outputs.structureFlow);
-          console.log("Parsed structureFlow");
-
-          return {
-            predictedQuestions,
-            input,
-            improvement,
-            analysisWithScore,
-            prerequisite_check,
-            heatmapFlow,
-            structureFlow,
-          };
-        };
-
-        // パース実行
-        parseAllData()
-          .then((parsedData) => {
-            console.log("All data parsed:", parsedData);
-            const {
-              predictedQuestions,
-              improvement,
-              input,
-              analysisWithScore,
-              prerequisite_check,
-              heatmapFlow,
-              structureFlow,
-            } = parsedData;
-
-            // 次の処理へ
-            navigate("/result", {
-              state: {
-                predictedQuestions,
-                improvement,
-                input,
-                analysisWithScore,
-                prerequisite_check,
-                heatmapFlow,
-                structureFlow,
-              },
-            });
-          })
-          .catch((error) => {
-            console.error("Parse failed:", error);
-          });
-      } catch (error) {
-        console.error("Parse error:", error);
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("不明なエラーが発生しました")
-      );
+    } catch (error: any) {
+      console.error("Request failed:", error);
+      const message = error?.message || "分析に失敗しました。";
+      notifications.show({ title: "エラー", message, color: "red" });
     } finally {
-      setIsLoading(false);
+      setStreaming(false);
+      setLoading(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <Container py={48} size="xl">
-        <Stack align="center">
-          <Loader size="xl" />
-          <Text size="lg">分析結果を読み込んでいます...</Text>
-        </Stack>
-      </Container>
-    );
-  }
-
   return (
     <Box>
-      {error && (
-        <Container py={48} size="xl">
-          <Alert
-            icon={<IconAlertCircle />}
-            title="エラーが発生しました"
-            color="red"
-          >
-            {error.message}
-          </Alert>
-        </Container>
-      )}
       <Stack my={16}>
         <Input.Wrapper label="オーディエンス相手は誰ですか？">
           <Input
@@ -273,9 +135,7 @@ export const PresentationCheck = () => {
           <Input
             placeholder="例）シリーズA資金調達"
             value={presentationData.goal}
-            onChange={(e) =>
-              setPresentationData({ ...presentationData, goal: e.target.value })
-            }
+            onChange={(e) => setPresentationData({ ...presentationData, goal: e.target.value })}
           />
         </Input.Wrapper>
 
@@ -292,26 +152,44 @@ export const PresentationCheck = () => {
           />
         </Input.Wrapper>
 
+        {user && presentationId && (
+          <Suspense fallback={null}>
+            <AnalysisInsights presentationId={presentationId} onStartEnhancedAnalysis={() => setUseEnhancedAnalysis(true)} />
+          </Suspense>
+        )}
+
+        <Switch label="高精度分析（LLM使用）" checked={useEnhancedAnalysis} onChange={(e) => setUseEnhancedAnalysis(e.currentTarget.checked)} />
+
         <FileInput
           label="プレゼン資料をアップロードしてください"
           placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
           value={presentationData.file}
-          onChange={(file) =>
-            setPresentationData({ ...presentationData, file: file })
-          }
+          onChange={(file) => setPresentationData({ ...presentationData, file: file })}
         />
         <FileInput
           label="プレゼン原稿をアップロードしてください"
           placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
           value={presentationData.speech_text}
-          onChange={(file) =>
-            setPresentationData({ ...presentationData, speech_text: file })
-          }
+          onChange={(file) => setPresentationData({ ...presentationData, speech_text: file })}
         />
       </Stack>
-      <Group justify="center">
-        <Button onClick={handleSubmit}>分析を開始する</Button>
+      <Group justify="center" gap="md">
+        <Button onClick={handleSubmit} loading={loading || streaming} disabled={!presentationData.file || loading || streaming}>
+          {streaming ? "分析中…" : useEnhancedAnalysis ? "🚀 高精度分析を開始" : "分析を開始する"}
+        </Button>
+        <Button
+          variant="light"
+          onClick={() => navigate("/result", { state: { result: latestResult, presentationId, presentationTitle: presentationData.goal } })}
+          disabled={!canViewResult}
+        >
+          結果を見る
+        </Button>
       </Group>
+      {streaming && (
+        <Group justify="center" mt={8}>
+          <span style={{ fontSize: 12, color: "var(--mantine-color-dimmed)" }}>評価進行中: 受信 {receivedPersonas.length} 件</span>
+        </Group>
+      )}
     </Box>
   );
 };

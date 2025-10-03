@@ -1,46 +1,90 @@
-import { Container, Stack } from "@mantine/core";
+import { Container, Alert, Loader, Button, Title } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useResults } from "@/hooks/useResults";
+import { ConsensusMvp } from "@/components/features/Result/ConsensusMvp";
+import { analysisService } from "@/services/analysis.service";
+import type { ResultData } from "@/types/Result";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+// no-op
 
-import { Score } from "@/components/features/Result/Score";
-import { Question } from "@/components/features/Result/Question";
-import { Improvement } from "@/components/features/Result/Improvement";
-import { Flow } from "@/components/features/Result/Flow";
-import { useLocation } from "react-router-dom";
-
-export default function Result() {
+function Result() {
   const location = useLocation();
-  const {
-    predictedQuestions,
-    improvement,
-    input,
-    analysisWithScore,
-    prerequisite_check,
-    heatmapFlow,
-    structureFlow,
-  } = location.state || {};
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { result, loading, error } = useResults(location.state?.result as ResultData | null);
 
-  if (
-    !predictedQuestions ||
-    !improvement ||
-    !input ||
-    !analysisWithScore ||
-    !prerequisite_check ||
-    !heatmapFlow ||
-    !structureFlow
-  )
-    return <div>何かがおかしい</div>;
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (result?.slideImages && result.slideImages.length > 0) {
+      // slideImages are URLs, pass them directly
+      // analyzeAllSlides(result.slideImages); // This line was removed as per the new_code
+    } else if (!loading) {
+      // setIsDesignLoading(false); // This line was removed as per the new_code
+    }
+  }, [result, loading]);
+
+  const handleSave = async () => {
+    if (result?.consensusMvp && user) {
+      setIsSaving(true);
+      try {
+        const presentationId = `presentation_${Date.now()}`;
+        const presentationTitle = "無題のプレゼンテーション";
+
+        await analysisService.saveAnalysis(user.uid, presentationId, presentationTitle, result.consensusMvp);
+
+        // Optionally, navigate or show a success message
+        // For now, we just log success and handle the saving state
+        console.log("Analysis saved successfully!");
+      } catch (err) {
+        console.error("Failed to save analysis:", err);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <Title order={1} my="lg" ta="center">
+          分析結果
+        </Title>
+        <Loader />
+      </Container>
+    );
+  }
+
+  if (error || !result?.consensusMvp) {
+    return (
+      <Container>
+        <Title order={1} my="lg" ta="center">
+          分析結果
+        </Title>
+        <Alert icon={<IconAlertCircle />} title="エラーが発生しました" color="red">
+          {error || "有効な分析結果データが見つかりませんでした。エントリーページから再度分析をお試しください。"}
+        </Alert>
+        <Button onClick={() => navigate("/entry")} mt="md">
+          エントリーページへ
+        </Button>
+      </Container>
+    );
+  }
 
   return (
-    <Stack>
-      <Container py={48} size="xl">
-        <Score analysisWithScore={analysisWithScore} input={input} />
-        <Flow
-          heatmapFlow={heatmapFlow}
-          structureFlow={structureFlow}
-          prerequisiteCheck={prerequisite_check}
-        />
-        <Question predictedQuestions={predictedQuestions} />
-        <Improvement improvement={improvement} />
-      </Container>
-    </Stack>
+    <Container>
+      <Title order={1} my="lg" ta="center">
+        分析結果
+      </Title>
+      <ConsensusMvp data={result.consensusMvp} />
+
+      <Button onClick={handleSave} loading={isSaving} fullWidth mt="xl">
+        今回の分析結果を保存
+      </Button>
+    </Container>
   );
 }
+
+export default Result;

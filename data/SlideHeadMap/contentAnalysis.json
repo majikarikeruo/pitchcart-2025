@@ -1,0 +1,47 @@
+{
+  "name": "ContentAnalysisSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "content_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "内容の充実度スコア"
+      },
+      "logic_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "論理性スコア"
+      },
+      "relevance_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "目的適合度スコア"
+      },
+      "content_issues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "内容の問題点"
+            },
+            "suggestion": {
+              "type": "string",
+              "description": "改善提案"
+            },
+            "impact": {
+              "type": "string",
+              "description": "影響度"
+            }
+          }
+        }
+      }
+    },
+    "required": ["content_score", "logic_score", "relevance_score"]
+  }
+} 

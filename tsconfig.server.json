@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-server",
+    "module": "CommonJS",
+    "types": ["node", "@vercel/node"]
+  },
+  "include": ["server/**/*.ts"],
+  "exclude": ["node_modules", "src"]
+}

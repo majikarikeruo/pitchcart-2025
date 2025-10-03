@@ -1,0 +1,27 @@
+{
+  "name": "BasicInfoSchema",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "number": {
+        "type": "number",
+        "description": "スライド番号"
+      },
+      "title": {
+        "type": "string",
+        "description": "スライドのタイトル"
+      },
+      "section_type": {
+        "type": "string",
+        "enum": ["setup", "problem", "solution", "evidence", "call_to_action"],
+        "description": "スライドのセクションタイプ"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["High", "Medium", "Low"],
+        "description": "スライドの優先度"
+      }
+    },
+    "required": ["number", "title", "section_type", "priority"]
+  }
+} 
