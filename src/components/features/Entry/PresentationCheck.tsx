@@ -48,7 +48,7 @@ export const PresentationCheck = () => {
     try {
       const healthy = await checkApiHealth();
       if (!healthy) {
-        notifications.show({ title: "サーバ未起動", message: "バックエンドが起動していません。npm run server を実行してください。", color: "red" });
+        notifications.show({ title: "サーバ未起動", message: "バックエンドAPIに接続できませんでした。", color: "red" });
         return;
       }
       const form = new FormData();
@@ -87,7 +87,7 @@ export const PresentationCheck = () => {
         }
       );
 
-      const resultToStore = { consensusMvp: finalResult || undefined };
+      const resultToStore = { consensusMvp: finalResult || undefined, ...finalResult };
       if (finalResult) {
         localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
         setLatestResult(resultToStore);
@@ -95,12 +95,7 @@ export const PresentationCheck = () => {
         notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
       } else {
         // Fallback for when streaming fails to return a complete result
-        const fallback = await postAnalyzeForm(form);
-        const fallbackResultToStore = { consensusMvp: fallback };
-        localStorage.setItem("analysisResult", JSON.stringify(fallbackResultToStore));
-        setLatestResult(fallbackResultToStore);
-        setCanViewResult(true);
-        notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
+        notifications.show({ title: "エラー", message: "分析ストリームから完全な結果を取得できませんでした。", color: "red" });
       }
     } catch (error: any) {
       console.error("Request failed:", error);
@@ -173,7 +168,7 @@ export const PresentationCheck = () => {
         <Button onClick={handleSubmit} loading={loading || streaming} disabled={!presentationData.file || loading || streaming}>
           {streaming ? "分析中…" : useEnhancedAnalysis ? "🚀 高精度分析を開始" : "分析を開始する"}
         </Button>
-        <Button variant="light" onClick={() => navigate("/result", { state: { result: latestResult } })} disabled={!canViewResult}>
+        <Button variant="light" onClick={() => navigate("/result", { state: { result: latestResult, presentationId, presentationTitle: presentationData.goal } })} disabled={!canViewResult}>
           結果を見る
         </Button>
       </Group>
