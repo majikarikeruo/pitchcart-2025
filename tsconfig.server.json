@@ -2,16 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist-server",
-    "rootDir": "./server",
-    "module": "ESNext",
-    "target": "ES2022",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "declaration": false,
-    "allowJs": false
+    "module": "CommonJS",
+    "types": ["node", "@vercel/node"]
   },
-  "include": ["server/**/*"],
-  "exclude": ["node_modules", "dist", "dist-server"]
+  "include": ["server/**/*.ts"],
+  "exclude": ["node_modules", "src"]
 }
