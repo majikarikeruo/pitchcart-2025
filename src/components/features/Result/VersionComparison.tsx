@@ -1,32 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Paper,
-  Stack,
-  Title,
-  Group,
-  Select,
-  Text,
-  Badge,
-  Grid,
-  Card,
-  Progress,
-  List,
-  ThemeIcon,
-  Button,
-  Divider,
-  Center,
-  Loader
-} from '@mantine/core';
-import {
-  IconTrendingUp,
-  IconTrendingDown,
-  IconEqual,
-  IconChevronRight,
-  IconCheck,
-  IconX,
-  IconArrowsHorizontal
-} from '@tabler/icons-react';
-import { AnalysisHistory, analysisService } from '../../../services/analysis.service';
+import React, { useState, useEffect } from "react";
+import { Paper, Stack, Title, Group, Select, Text, Grid, Card, Progress, List, ThemeIcon, Divider, Center, Loader } from "@mantine/core";
+import { IconTrendingUp, IconTrendingDown, IconEqual, IconChevronRight, IconCheck, IconX, IconArrowsHorizontal } from "@tabler/icons-react";
+import { AnalysisHistory, analysisService } from "../../../services/analysis.service";
 
 interface VersionComparisonProps {
   presentationId: string;
@@ -41,13 +16,10 @@ interface ScoreComparison {
   percentChange: number;
 }
 
-export const VersionComparison: React.FC<VersionComparisonProps> = ({
-  presentationId,
-  currentVersionId
-}) => {
+export const VersionComparison: React.FC<VersionComparisonProps> = ({ presentationId }) => {
   const [history, setHistory] = useState<AnalysisHistory[]>([]);
-  const [version1, setVersion1] = useState<string>('');
-  const [version2, setVersion2] = useState<string>('');
+  const [version1, setVersion1] = useState<string>("");
+  const [version2, setVersion2] = useState<string>("");
   const [analysis1, setAnalysis1] = useState<AnalysisHistory | null>(null);
   const [analysis2, setAnalysis2] = useState<AnalysisHistory | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,15 +31,15 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
   const loadHistory = async () => {
     try {
       setLoading(true);
-      const data = await analysisService.getAnalysisHistory('', presentationId);
+      const data = await analysisService.getAnalysisHistory("", presentationId);
       setHistory(data);
-      
+
       if (data.length >= 2) {
         setVersion1(data[1].id);
         setVersion2(data[0].id);
       }
     } catch (error) {
-      console.error('Failed to load history:', error);
+      console.error("Failed to load history:", error);
     } finally {
       setLoading(false);
     }
@@ -75,14 +47,14 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
 
   useEffect(() => {
     if (version1) {
-      const a1 = history.find(h => h.id === version1);
+      const a1 = history.find((h) => h.id === version1);
       setAnalysis1(a1 || null);
     }
   }, [version1, history]);
 
   useEffect(() => {
     if (version2) {
-      const a2 = history.find(h => h.id === version2);
+      const a2 = history.find((h) => h.id === version2);
       setAnalysis2(a2 || null);
     }
   }, [version2, history]);
@@ -109,10 +81,10 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
     if (!analysis1 || !analysis2) return [];
 
     const categories = [
-      { key: 'content', label: 'コンテンツ' },
-      { key: 'design', label: 'デザイン' },
-      { key: 'persuasiveness', label: '説得力' },
-      { key: 'technicalQuality', label: '技術品質' }
+      { key: "content", label: "コンテンツ" },
+      { key: "design", label: "デザイン" },
+      { key: "persuasiveness", label: "説得力" },
+      { key: "technicalQuality", label: "技術品質" },
     ];
 
     return categories.map(({ key, label }) => {
@@ -126,7 +98,7 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
         oldScore,
         newScore,
         difference,
-        percentChange
+        percentChange,
       };
     });
   };
@@ -138,17 +110,17 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
   };
 
   const getScoreColor = (difference: number) => {
-    if (difference > 0) return 'teal';
-    if (difference < 0) return 'red';
-    return 'gray';
+    if (difference > 0) return "teal";
+    if (difference < 0) return "red";
+    return "gray";
   };
 
   const formatDate = (timestamp: any) => {
     const date = timestamp?.toDate?.() || new Date(timestamp);
-    return new Intl.DateTimeFormat('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+    return new Intl.DateTimeFormat("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     }).format(date);
   };
 
@@ -163,13 +135,13 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
               label="比較元バージョン"
               value={version1}
               onChange={(value) => value && setVersion1(value)}
-              data={history.map(h => ({
+              data={history.map((h) => ({
                 value: h.id,
-                label: `v${h.version} - ${formatDate(h.createdAt)}`
+                label: `v${h.version} - ${formatDate(h.createdAt)}`,
               }))}
             />
           </Grid.Col>
-          
+
           <Grid.Col span={2}>
             <Center h="100%">
               <IconArrowsHorizontal size={24} color="gray" />
@@ -181,9 +153,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
               label="比較先バージョン"
               value={version2}
               onChange={(value) => value && setVersion2(value)}
-              data={history.map(h => ({
+              data={history.map((h) => ({
                 value: h.id,
-                label: `v${h.version} - ${formatDate(h.createdAt)}`
+                label: `v${h.version} - ${formatDate(h.createdAt)}`,
               }))}
             />
           </Grid.Col>
@@ -199,25 +171,29 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                 <Text fw={600}>総合スコア</Text>
                 <Group justify="space-between" align="center">
                   <Stack gap="xs" align="center">
-                    <Text size="xs" c="dimmed">v{analysis1.version}</Text>
-                    <Text size="xl" fw={700}>{analysis1.metadata.totalScore.toFixed(1)}</Text>
+                    <Text size="xs" c="dimmed">
+                      v{analysis1.version}
+                    </Text>
+                    <Text size="xl" fw={700}>
+                      {analysis1.metadata.totalScore.toFixed(1)}
+                    </Text>
                   </Stack>
-                  
+
                   <Stack gap="xs" align="center">
                     {getScoreIcon(analysis2.metadata.totalScore - analysis1.metadata.totalScore)}
-                    <Text 
-                      size="sm" 
-                      fw={600} 
-                      c={getScoreColor(analysis2.metadata.totalScore - analysis1.metadata.totalScore)}
-                    >
-                      {analysis2.metadata.totalScore - analysis1.metadata.totalScore > 0 ? '+' : ''}
+                    <Text size="sm" fw={600} c={getScoreColor(analysis2.metadata.totalScore - analysis1.metadata.totalScore)}>
+                      {analysis2.metadata.totalScore - analysis1.metadata.totalScore > 0 ? "+" : ""}
                       {(analysis2.metadata.totalScore - analysis1.metadata.totalScore).toFixed(1)}点
                     </Text>
                   </Stack>
 
                   <Stack gap="xs" align="center">
-                    <Text size="xs" c="dimmed">v{analysis2.version}</Text>
-                    <Text size="xl" fw={700}>{analysis2.metadata.totalScore.toFixed(1)}</Text>
+                    <Text size="xs" c="dimmed">
+                      v{analysis2.version}
+                    </Text>
+                    <Text size="xl" fw={700}>
+                      {analysis2.metadata.totalScore.toFixed(1)}
+                    </Text>
                   </Stack>
                 </Group>
               </Stack>
@@ -229,37 +205,30 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
               {getScoreComparisons().map((comparison) => (
                 <Card key={comparison.category} p="sm" withBorder>
                   <Group justify="space-between" align="center">
-                    <Text size="sm" fw={500} w={100}>{comparison.category}</Text>
-                    
+                    <Text size="sm" fw={500} w={100}>
+                      {comparison.category}
+                    </Text>
+
                     <Group gap="xs" flex={1}>
-                      <Text size="sm" c="dimmed">{comparison.oldScore.toFixed(1)}</Text>
-                      <Progress
-                        value={comparison.oldScore}
-                        color="gray"
-                        size="sm"
-                        style={{ flex: 1 }}
-                      />
+                      <Text size="sm" c="dimmed">
+                        {comparison.oldScore.toFixed(1)}
+                      </Text>
+                      <Progress value={comparison.oldScore} color="gray" size="sm" style={{ flex: 1 }} />
                     </Group>
 
                     <Group gap="xs" w={80} justify="center">
                       {getScoreIcon(comparison.difference)}
-                      <Text 
-                        size="xs" 
-                        fw={600} 
-                        c={getScoreColor(comparison.difference)}
-                      >
-                        {comparison.difference > 0 ? '+' : ''}{comparison.difference.toFixed(1)}
+                      <Text size="xs" fw={600} c={getScoreColor(comparison.difference)}>
+                        {comparison.difference > 0 ? "+" : ""}
+                        {comparison.difference.toFixed(1)}
                       </Text>
                     </Group>
 
                     <Group gap="xs" flex={1}>
-                      <Progress
-                        value={comparison.newScore}
-                        color={getScoreColor(comparison.difference)}
-                        size="sm"
-                        style={{ flex: 1 }}
-                      />
-                      <Text size="sm" fw={600}>{comparison.newScore.toFixed(1)}</Text>
+                      <Progress value={comparison.newScore} color={getScoreColor(comparison.difference)} size="sm" style={{ flex: 1 }} />
+                      <Text size="sm" fw={600}>
+                        {comparison.newScore.toFixed(1)}
+                      </Text>
                     </Group>
                   </Group>
                 </Card>
@@ -270,7 +239,7 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
             {analysis2.comparison && (
               <>
                 <Divider />
-                
+
                 <Grid>
                   <Grid.Col span={6}>
                     <Stack gap="sm">
@@ -278,7 +247,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                         <ThemeIcon color="teal" size="sm">
                           <IconCheck size={16} />
                         </ThemeIcon>
-                        <Text fw={600} size="sm">改善された点</Text>
+                        <Text fw={600} size="sm">
+                          改善された点
+                        </Text>
                       </Group>
                       <List
                         spacing="xs"
@@ -302,7 +273,9 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({
                         <ThemeIcon color="red" size="sm">
                           <IconX size={16} />
                         </ThemeIcon>
-                        <Text fw={600} size="sm">新たな課題</Text>
+                        <Text fw={600} size="sm">
+                          新たな課題
+                        </Text>
                       </Group>
                       <List
                         spacing="xs"

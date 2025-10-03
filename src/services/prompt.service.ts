@@ -1,28 +1,25 @@
-import { PracticeFeedback, AnalysisHistory } from './analysis.service';
+import { PracticeFeedback } from "./analysis.service";
 
 export class PromptService {
   // フィードバックを基にした追加プロンプトを生成
-  generateFeedbackBasedPrompt(
-    feedbacks: PracticeFeedback[],
-    previousAnalyses: AnalysisHistory[]
-  ): string {
+  generateFeedbackBasedPrompt(feedbacks: PracticeFeedback[]): string {
     if (feedbacks.length === 0) {
-      return '';
+      return "";
     }
 
     const prompts: string[] = [];
 
     // 最新のフィードバックから学習
     const latestFeedback = feedbacks[0];
-    
+
     // 全体的な成功度が低い場合の改善点
     if (latestFeedback.outcomes.overallSuccess <= 3) {
       prompts.push(`前回のプレゼンテーションの全体評価が低かったため、特に以下の点を重点的に分析してください：`);
-      
+
       if (latestFeedback.outcomes.audienceEngagement <= 3) {
         prompts.push(`- 聴衆の関心を引く要素（ストーリーテリング、ビジュアル、インパクトのあるデータ）`);
       }
-      
+
       if (latestFeedback.outcomes.clarityOfMessage <= 3) {
         prompts.push(`- メッセージの明確性（構造の論理性、専門用語の説明、要点の強調）`);
       }
@@ -45,7 +42,7 @@ export class PromptService {
     const unanticipatedQuestions = this.getUnanticipatedQuestions(feedbacks);
     if (unanticipatedQuestions.length > 0) {
       prompts.push(`\n以下の想定外の質問を受けた経験があります：`);
-      unanticipatedQuestions.slice(0, 3).forEach(q => {
+      unanticipatedQuestions.slice(0, 3).forEach((q) => {
         prompts.push(`- ${q.question}`);
       });
       prompts.push(`これらの観点も考慮した分析を行ってください。`);
@@ -55,7 +52,7 @@ export class PromptService {
     const improvementPatterns = this.analyzeImprovementPatterns(feedbacks);
     if (improvementPatterns.length > 0) {
       prompts.push(`\n繰り返し指摘されている改善点：`);
-      improvementPatterns.forEach(pattern => {
+      improvementPatterns.forEach((pattern) => {
         prompts.push(`- ${pattern}`);
       });
     }
@@ -64,7 +61,7 @@ export class PromptService {
     const successPatterns = this.analyzeSuccessPatterns(feedbacks);
     if (successPatterns.length > 0) {
       prompts.push(`\n過去に評価が高かった要素：`);
-      successPatterns.forEach(pattern => {
+      successPatterns.forEach((pattern) => {
         prompts.push(`- ${pattern}`);
       });
       prompts.push(`これらの強みを維持・強化することを推奨してください。`);
@@ -76,15 +73,15 @@ export class PromptService {
       prompts.push(`\n${audienceInsights}`);
     }
 
-    return prompts.join('\n');
+    return prompts.join("\n");
   }
 
   // 質問パターンの分析
   private analyzeQuestionPatterns(feedbacks: PracticeFeedback[]) {
     const categoryCount = new Map<string, { count: number; questions: string[] }>();
-    
-    feedbacks.forEach(feedback => {
-      feedback.questionsReceived.forEach(q => {
+
+    feedbacks.forEach((feedback) => {
+      feedback.questionsReceived.forEach((q) => {
         if (!categoryCount.has(q.category)) {
           categoryCount.set(q.category, { count: 0, questions: [] });
         }
@@ -98,7 +95,7 @@ export class PromptService {
       .map(([category, data]) => ({
         category,
         count: data.count,
-        examples: data.questions.slice(0, 2)
+        examples: data.questions.slice(0, 2),
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
@@ -107,11 +104,9 @@ export class PromptService {
   // 想定外の質問を抽出
   private getUnanticipatedQuestions(feedbacks: PracticeFeedback[]) {
     const questions: { question: string; category: string }[] = [];
-    
-    feedbacks.forEach(feedback => {
-      feedback.questionsReceived
-        .filter(q => !q.wasAnticipated)
-        .forEach(q => questions.push(q));
+
+    feedbacks.forEach((feedback) => {
+      feedback.questionsReceived.filter((q) => !q.wasAnticipated).forEach((q) => questions.push(q));
     });
 
     return questions;
@@ -121,15 +116,15 @@ export class PromptService {
   private analyzeImprovementPatterns(feedbacks: PracticeFeedback[]): string[] {
     const patterns = new Map<string, number>();
     const keywords = [
-      { pattern: /時間配分|時間管理|時間オーバー/i, label: '時間配分の最適化' },
-      { pattern: /専門用語|難しい|わかりにくい/i, label: '専門用語の説明不足' },
-      { pattern: /データ|根拠|エビデンス/i, label: 'データや根拠の補強' },
-      { pattern: /ストーリー|流れ|構成/i, label: 'ストーリー構成の改善' },
-      { pattern: /ビジュアル|スライド|見やすさ/i, label: 'ビジュアルデザインの改善' },
-      { pattern: /質問対応|回答/i, label: '質問への対応力' }
+      { pattern: /時間配分|時間管理|時間オーバー/i, label: "時間配分の最適化" },
+      { pattern: /専門用語|難しい|わかりにくい/i, label: "専門用語の説明不足" },
+      { pattern: /データ|根拠|エビデンス/i, label: "データや根拠の補強" },
+      { pattern: /ストーリー|流れ|構成/i, label: "ストーリー構成の改善" },
+      { pattern: /ビジュアル|スライド|見やすさ/i, label: "ビジュアルデザインの改善" },
+      { pattern: /質問対応|回答/i, label: "質問への対応力" },
     ];
 
-    feedbacks.forEach(feedback => {
+    feedbacks.forEach((feedback) => {
       const text = feedback.reflections.whatToImprove;
       keywords.forEach(({ pattern, label }) => {
         if (pattern.test(text)) {
@@ -148,15 +143,15 @@ export class PromptService {
   private analyzeSuccessPatterns(feedbacks: PracticeFeedback[]): string[] {
     const patterns = new Map<string, number>();
     const keywords = [
-      { pattern: /ストーリー|物語|流れ/i, label: 'ストーリーテリングの効果' },
-      { pattern: /ビジュアル|グラフ|図/i, label: 'ビジュアル表現の効果' },
-      { pattern: /データ|数字|根拠/i, label: 'データの説得力' },
-      { pattern: /わかりやすい|明確|クリア/i, label: 'メッセージの明確性' },
-      { pattern: /情熱|熱意|想い/i, label: 'プレゼンターの情熱' },
-      { pattern: /具体例|事例|ケース/i, label: '具体例の効果' }
+      { pattern: /ストーリー|物語|流れ/i, label: "ストーリーテリングの効果" },
+      { pattern: /ビジュアル|グラフ|図/i, label: "ビジュアル表現の効果" },
+      { pattern: /データ|数字|根拠/i, label: "データの説得力" },
+      { pattern: /わかりやすい|明確|クリア/i, label: "メッセージの明確性" },
+      { pattern: /情熱|熱意|想い/i, label: "プレゼンターの情熱" },
+      { pattern: /具体例|事例|ケース/i, label: "具体例の効果" },
     ];
 
-    feedbacks.forEach(feedback => {
+    feedbacks.forEach((feedback) => {
       const text = feedback.reflections.whatWentWell;
       keywords.forEach(({ pattern, label }) => {
         if (pattern.test(text)) {
@@ -174,23 +169,22 @@ export class PromptService {
   // 聴衆タイプ別の分析
   private analyzeAudiencePatterns(feedbacks: PracticeFeedback[]): string | null {
     const audienceTypes = new Map<string, number>();
-    
-    feedbacks.forEach(feedback => {
+
+    feedbacks.forEach((feedback) => {
       const type = feedback.audience.type;
       audienceTypes.set(type, (audienceTypes.get(type) || 0) + 1);
     });
 
-    const mostFrequent = Array.from(audienceTypes.entries())
-      .sort((a, b) => b[1] - a[1])[0];
+    const mostFrequent = Array.from(audienceTypes.entries()).sort((a, b) => b[1] - a[1])[0];
 
     if (!mostFrequent) return null;
 
     const audienceSpecificTips: Record<string, string> = {
-      internal: '社内向けプレゼンでは、実現可能性と実装計画の具体性を重視してください。',
-      client: 'クライアント向けプレゼンでは、価値提案とROIを明確に示すことが重要です。',
-      investor: '投資家向けプレゼンでは、市場規模、成長性、競合優位性を強調してください。',
-      conference: 'カンファレンスでは、新規性とインパクト、実践的な知見を重視してください。',
-      academic: '学術発表では、理論的裏付けと研究手法の妥当性を詳細に説明してください。'
+      internal: "社内向けプレゼンでは、実現可能性と実装計画の具体性を重視してください。",
+      client: "クライアント向けプレゼンでは、価値提案とROIを明確に示すことが重要です。",
+      investor: "投資家向けプレゼンでは、市場規模、成長性、競合優位性を強調してください。",
+      conference: "カンファレンスでは、新規性とインパクト、実践的な知見を重視してください。",
+      academic: "学術発表では、理論的裏付けと研究手法の妥当性を詳細に説明してください。",
     };
 
     return audienceSpecificTips[mostFrequent[0]] || null;
@@ -199,28 +193,23 @@ export class PromptService {
   // カテゴリラベルの取得
   private getCategoryLabel(category: string): string {
     const labels: Record<string, string> = {
-      content: 'コンテンツ内容',
-      data: 'データ・根拠',
-      feasibility: '実現可能性',
-      impact: 'インパクト・効果',
-      technical: '技術的詳細',
-      business: 'ビジネス面',
-      other: 'その他'
+      content: "コンテンツ内容",
+      data: "データ・根拠",
+      feasibility: "実現可能性",
+      impact: "インパクト・効果",
+      technical: "技術的詳細",
+      business: "ビジネス面",
+      other: "その他",
     };
     return labels[category] || category;
   }
 
   // 分析時の動的プロンプトを生成
-  async generateAnalysisPrompt(
-    basePrompt: string,
-    userId: string,
-    presentationId: string,
-    analysisService: any
-  ): Promise<string> {
+  async generateAnalysisPrompt(basePrompt: string, userId: string, presentationId: string, analysisService: any): Promise<string> {
     try {
       // 過去の分析履歴を取得
       const history = await analysisService.getAnalysisHistory(userId, presentationId);
-      
+
       if (history.length === 0) {
         return basePrompt;
       }
@@ -234,11 +223,11 @@ export class PromptService {
       }
 
       // フィードバックベースの追加プロンプトを生成
-      const additionalPrompt = this.generateFeedbackBasedPrompt(feedbacks, history);
+      const additionalPrompt = this.generateFeedbackBasedPrompt(feedbacks);
 
       return `${basePrompt}\n\n【過去のプレゼン実績に基づく追加分析ポイント】\n${additionalPrompt}`;
     } catch (error) {
-      console.error('Failed to generate dynamic prompt:', error);
+      console.error("Failed to generate dynamic prompt:", error);
       return basePrompt;
     }
   }

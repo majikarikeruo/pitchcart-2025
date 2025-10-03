@@ -1,40 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Paper,
-  Stack,
-  Text,
-  Badge,
-  Group,
-  List,
-  ThemeIcon,
-  Alert,
-  Button,
-  Collapse,
-  ActionIcon,
-  Loader,
-  Center
-} from '@mantine/core';
-import {
-  IconBrain,
-  IconTrendingUp,
-  IconTrendingDown,
-  IconBulb,
-  IconTarget,
-  IconChevronDown,
-  IconChevronUp,
-  IconSparkles
-} from '@tabler/icons-react';
-import { useEnhancedAnalysis } from '../../../hooks/useEnhancedAnalysis';
+import React, { useEffect, useState } from "react";
+import { Paper, Stack, Text, Group, List, ThemeIcon, Alert, Button, Collapse, ActionIcon, Loader, Center } from "@mantine/core";
+import { IconBrain, IconTrendingUp, IconBulb, IconTarget, IconChevronDown, IconChevronUp, IconSparkles } from "@tabler/icons-react";
+import { useEnhancedAnalysis } from "../../../hooks/useEnhancedAnalysis";
 
 interface AnalysisInsightsProps {
   presentationId: string;
   onStartEnhancedAnalysis: () => void;
 }
 
-export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
-  presentationId,
-  onStartEnhancedAnalysis
-}) => {
+export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({ presentationId, onStartEnhancedAnalysis }) => {
   const { getAnalysisInsights, loading } = useEnhancedAnalysis();
   const [insights, setInsights] = useState<any>(null);
   const [expanded, setExpanded] = useState(false);
@@ -67,8 +41,12 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
             <IconBrain size={18} />
           </ThemeIcon>
           <div>
-            <Text fw={600} size="sm">初回分析</Text>
-            <Text size="xs" c="dimmed">{insights.message}</Text>
+            <Text fw={600} size="sm">
+              初回分析
+            </Text>
+            <Text size="xs" c="dimmed">
+              {insights.message}
+            </Text>
           </div>
         </Group>
       </Paper>
@@ -85,11 +63,15 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
               <IconBulb size={18} />
             </ThemeIcon>
             <div>
-              <Text fw={600} size="sm">分析精度を向上させませんか？</Text>
-              <Text size="xs" c="dimmed">{insights.message}</Text>
+              <Text fw={600} size="sm">
+                分析精度を向上させませんか？
+              </Text>
+              <Text size="xs" c="dimmed">
+                {insights.message}
+              </Text>
             </div>
           </Group>
-          
+
           <Alert icon={<IconTarget size={16} />} color="blue" variant="light">
             <Text size="xs">{insights.suggestion}</Text>
           </Alert>
@@ -108,25 +90,21 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
               <IconSparkles size={18} />
             </ThemeIcon>
             <div>
-              <Text fw={600} size="sm">パーソナライズ分析</Text>
-              <Text size="xs" c="dimmed">{insights.message}</Text>
+              <Text fw={600} size="sm">
+                パーソナライズ分析
+              </Text>
+              <Text size="xs" c="dimmed">
+                {insights.message}
+              </Text>
             </div>
           </Group>
-          
-          <ActionIcon
-            variant="light"
-            onClick={() => setExpanded(!expanded)}
-          >
+
+          <ActionIcon variant="light" onClick={() => setExpanded(!expanded)}>
             {expanded ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
           </ActionIcon>
         </Group>
 
-        <Button
-          fullWidth
-          leftSection={<IconSparkles size={16} />}
-          onClick={onStartEnhancedAnalysis}
-          gradient={{ from: 'teal', to: 'blue', deg: 45 }}
-        >
+        <Button fullWidth leftSection={<IconSparkles size={16} />} onClick={onStartEnhancedAnalysis} gradient={{ from: "teal", to: "blue", deg: 45 }}>
           過去の実績を活かした高精度分析を開始
         </Button>
 
@@ -139,13 +117,11 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
                   <ThemeIcon size="sm" color="teal" variant="light">
                     <IconTrendingUp size={14} />
                   </ThemeIcon>
-                  <Text fw={600} size="sm" c="teal">確認された強み</Text>
+                  <Text fw={600} size="sm" c="teal">
+                    確認された強み
+                  </Text>
                 </Group>
-                <List
-                  spacing="xs"
-                  size="xs"
-                  icon={<Text c="teal">✓</Text>}
-                >
+                <List spacing="xs" size="xs" icon={<Text c="teal">✓</Text>}>
                   {insights.insights.strengths.map((strength: string, index: number) => (
                     <List.Item key={index}>{strength}</List.Item>
                   ))}
@@ -160,13 +136,11 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
                   <ThemeIcon size="sm" color="orange" variant="light">
                     <IconTarget size={14} />
                   </ThemeIcon>
-                  <Text fw={600} size="sm" c="orange">重点改善エリア</Text>
+                  <Text fw={600} size="sm" c="orange">
+                    重点改善エリア
+                  </Text>
                 </Group>
-                <List
-                  spacing="xs"
-                  size="xs"
-                  icon={<Text c="orange">⚠</Text>}
-                >
+                <List spacing="xs" size="xs" icon={<Text c="orange">⚠</Text>}>
                   {insights.insights.weaknesses.map((weakness: string, index: number) => (
                     <List.Item key={index}>{weakness}</List.Item>
                   ))}
@@ -181,13 +155,11 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
                   <ThemeIcon size="sm" color="blue" variant="light">
                     <IconTrendingUp size={14} />
                   </ThemeIcon>
-                  <Text fw={600} size="sm" c="blue">スコア推移</Text>
+                  <Text fw={600} size="sm" c="blue">
+                    スコア推移
+                  </Text>
                 </Group>
-                <List
-                  spacing="xs"
-                  size="xs"
-                  icon={<Text c="blue">📈</Text>}
-                >
+                <List spacing="xs" size="xs" icon={<Text c="blue">📈</Text>}>
                   {insights.insights.trends.map((trend: string, index: number) => (
                     <List.Item key={index}>{trend}</List.Item>
                   ))}
@@ -202,13 +174,11 @@ export const AnalysisInsights: React.FC<AnalysisInsightsProps> = ({
                   <ThemeIcon size="sm" color="violet" variant="light">
                     <IconBulb size={14} />
                   </ThemeIcon>
-                  <Text fw={600} size="sm" c="violet">AI推奨事項</Text>
+                  <Text fw={600} size="sm" c="violet">
+                    AI推奨事項
+                  </Text>
                 </Group>
-                <List
-                  spacing="xs"
-                  size="xs"
-                  icon={<Text c="violet">💡</Text>}
-                >
+                <List spacing="xs" size="xs" icon={<Text c="violet">💡</Text>}>
                   {insights.insights.recommendations.map((rec: string, index: number) => (
                     <List.Item key={index}>{rec}</List.Item>
                   ))}

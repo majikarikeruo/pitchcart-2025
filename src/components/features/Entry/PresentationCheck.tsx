@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, lazy } from "react";
 import { Box, Stack, Input, FileInput, Button, Group, Switch } from "@mantine/core";
-const AnalysisInsights = lazy(() => import('./AnalysisInsights').then(m => ({ default: m.AnalysisInsights })));
+const AnalysisInsights = lazy(() => import("./AnalysisInsights").then((m) => ({ default: m.AnalysisInsights })));
 import { useAuth } from "../../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
@@ -52,34 +52,42 @@ export const PresentationCheck = () => {
         return;
       }
       const form = new FormData();
-      if (presentationData.file) form.append('file', presentationData.file);
-      if (presentationData.speech_text) form.append('speech_text', presentationData.speech_text);
-      form.append('target_person', presentationData.target_person);
-      form.append('goal', presentationData.goal);
-      form.append('industry', presentationData.industry);
-      form.append('use_llm', useEnhancedAnalysis ? 'true' : 'false');
+      if (presentationData.file) form.append("file", presentationData.file);
+      if (presentationData.speech_text) form.append("speech_text", presentationData.speech_text);
+      form.append("target_person", presentationData.target_person);
+      form.append("goal", presentationData.goal);
+      form.append("industry", presentationData.industry);
+      form.append("use_llm", useEnhancedAnalysis ? "true" : "false");
       if (useEnhancedAnalysis) {
-        form.append('detail', 'high');
-        form.append('evidence_max', '5');
+        form.append("detail", "high");
+        form.append("evidence_max", "5");
       }
 
       setStreaming(true);
       setReceivedPersonas([]);
       let finalResult: AnalysisResponse | null = null;
 
-      await streamAnalyzeForm(form, (evt) => {
-        if (evt.type === 'persona') {
-          setReceivedPersonas((prev) => {
-            const i = prev.findIndex((p) => p.persona_id === evt.data.persona_id);
-            if (i >= 0) { const next = prev.slice(); next[i] = evt.data; return next; }
-            return [...prev, evt.data];
-          });
+      await streamAnalyzeForm(
+        form,
+        (evt) => {
+          if (evt.type === "persona") {
+            setReceivedPersonas((prev) => {
+              const i = prev.findIndex((p) => p.persona_id === evt.data.persona_id);
+              if (i >= 0) {
+                const next = prev.slice();
+                next[i] = evt.data;
+                return next;
+              }
+              return [...prev, evt.data];
+            });
+          }
+        },
+        (fullResponse) => {
+          finalResult = fullResponse;
         }
-      }, (fullResponse) => {
-        finalResult = fullResponse;
-      });
+      );
 
-      const resultToStore = { consensusMvp: finalResult };
+      const resultToStore = { consensusMvp: finalResult || undefined };
       if (finalResult) {
         localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
         setLatestResult(resultToStore);
@@ -123,9 +131,7 @@ export const PresentationCheck = () => {
           <Input
             placeholder="例）シリーズA資金調達"
             value={presentationData.goal}
-            onChange={(e) =>
-              setPresentationData({ ...presentationData, goal: e.target.value })
-            }
+            onChange={(e) => setPresentationData({ ...presentationData, goal: e.target.value })}
           />
         </Input.Wrapper>
 
@@ -144,57 +150,36 @@ export const PresentationCheck = () => {
 
         {user && presentationId && (
           <Suspense fallback={null}>
-            <AnalysisInsights
-              presentationId={presentationId}
-              onStartEnhancedAnalysis={() => setUseEnhancedAnalysis(true)}
-            />
+            <AnalysisInsights presentationId={presentationId} onStartEnhancedAnalysis={() => setUseEnhancedAnalysis(true)} />
           </Suspense>
         )}
 
-        <Switch
-          label="高精度分析（LLM使用）"
-          checked={useEnhancedAnalysis}
-          onChange={(e) => setUseEnhancedAnalysis(e.currentTarget.checked)}
-        />
+        <Switch label="高精度分析（LLM使用）" checked={useEnhancedAnalysis} onChange={(e) => setUseEnhancedAnalysis(e.currentTarget.checked)} />
 
         <FileInput
           label="プレゼン資料をアップロードしてください"
           placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
           value={presentationData.file}
-          onChange={(file) =>
-            setPresentationData({ ...presentationData, file: file })
-          }
+          onChange={(file) => setPresentationData({ ...presentationData, file: file })}
         />
         <FileInput
           label="プレゼン原稿をアップロードしてください"
           placeholder="ここにスライドの資料をドラッグするか、クリックしてファイルを選択してください(pptx。容量●MB。)"
           value={presentationData.speech_text}
-          onChange={(file) =>
-            setPresentationData({ ...presentationData, speech_text: file })
-          }
+          onChange={(file) => setPresentationData({ ...presentationData, speech_text: file })}
         />
       </Stack>
       <Group justify="center" gap="md">
-        <Button 
-          onClick={handleSubmit}
-          loading={loading || streaming}
-          disabled={!presentationData.file || loading || streaming}
-        >
-          {streaming ? '分析中…' : (useEnhancedAnalysis ? '🚀 高精度分析を開始' : '分析を開始する')}
+        <Button onClick={handleSubmit} loading={loading || streaming} disabled={!presentationData.file || loading || streaming}>
+          {streaming ? "分析中…" : useEnhancedAnalysis ? "🚀 高精度分析を開始" : "分析を開始する"}
         </Button>
-        <Button
-          variant="light"
-          onClick={() => navigate('/result', { state: { result: latestResult } })}
-          disabled={!canViewResult}
-        >
+        <Button variant="light" onClick={() => navigate("/result", { state: { result: latestResult } })} disabled={!canViewResult}>
           結果を見る
         </Button>
       </Group>
       {streaming && (
         <Group justify="center" mt={8}>
-          <span style={{ fontSize: 12, color: 'var(--mantine-color-dimmed)' }}>
-            評価進行中: 受信 {receivedPersonas.length} 件
-          </span>
+          <span style={{ fontSize: 12, color: "var(--mantine-color-dimmed)" }}>評価進行中: 受信 {receivedPersonas.length} 件</span>
         </Group>
       )}
     </Box>
