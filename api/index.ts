@@ -557,8 +557,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(204).send("");
   }
 
-  if (req.method === "GET" && pathname === "/api/health") {
-    return sendJson(res, 200, { ok: true, version: "v1.0" });
+  // /api へのGETリクエストをヘルスチェックとして扱う
+  if (req.method === "GET" && (pathname === "/api" || pathname === "/api/index" || pathname === "/")) {
+    return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 
   if (req.method === "POST" && pathname === "/api/analyze/stream") {
@@ -617,6 +618,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
     return;
+  }
+
+  // analyze エンドポイントも残しておく
+  if (req.method === "POST" && pathname === "/api/analyze") {
+    try {
+      if (String(req.headers["content-type"] || "").startsWith("multipart/form-data")) {
+        const form = formidable({ multiples: true });
+        const { fields, files } = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) return reject(err);
+            resolve({ fields, files });
+          });
+        });
+
+        const uploadedFile = (files.file as formidable.File[])?.[0];
+        if (!uploadedFile) {
+          return sendJson(res, 400, { message: "file is required" });
+        }
+        const zip = new AdmZip(uploadedFile.filepath);
+        const slides_struct = parseSlides(zip);
+
+        const body = {
+          summary: `${fields.target_person || ""} ${fields.goal || ""} ${fields.industry || ""}`.trim(),
+          slides_text: slides_struct.map((s) => `Slide ${s.index}: ${s.title}\n${s.texts.join(" ")}`).join("\n\n"),
+          slides_struct: slides_struct,
+          speech_text: "",
+        };
+        const runtime = getRuntimeOptsFromBody(fields);
+        const analysisResult = await analyze(body, runtime);
+        return sendJson(res, 200, analysisResult);
+      } else {
+        const body = req.body;
+        const runtime = getRuntimeOptsFromBody(body || {});
+        const result = await analyze(body, runtime);
+        return sendJson(res, 200, result);
+      }
+    } catch (e: any) {
+      console.error(`[serverless] /api/analyze error:`, e);
+      return sendJson(res, 400, { error: "Bad Request", message: String(e?.message || e) });
+    }
   }
 
   res.status(404).json({ error: "Not Found" });
