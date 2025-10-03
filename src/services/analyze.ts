@@ -1,4 +1,4 @@
-import type { AnalysisResponse, StreamEvent } from "@/types/analysis";
+import type { AnalysisResponse, StreamEvent, PersonaOutput, Consensus } from "@/types/analysis";
 
 // APIベースURLの解決を共通化（失敗時は'/api'へフォールバック）
 // .env には通常、オリジン（例: http://localhost:8787）を入れる想定。
@@ -136,6 +136,7 @@ export async function streamAnalyzeForm(
             // Note: This is a simplified way to reconstruct the full response.
             // A more robust solution might send the full object at the 'done' event.
             fullResponse = {
+              schema_version: "1.0",
               personas: collectedPersonas,
               consensus: evt.data,
               // IMPORTANT: slides_struct is not available on the client from stream alone.
