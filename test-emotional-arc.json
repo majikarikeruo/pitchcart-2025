@@ -1,0 +1,18 @@
+{
+  "slides_struct": [
+    {
+      "index": 1,
+      "title": "テストスライド1",
+      "texts": ["これはテストです"],
+      "imageCount": 0,
+      "chartCount": 0
+    },
+    {
+      "index": 2,
+      "title": "テストスライド2",
+      "texts": ["課題の提示"],
+      "imageCount": 0,
+      "chartCount": 0
+    }
+  ]
+}

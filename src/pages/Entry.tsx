@@ -1,4 +1,4 @@
-import { Tabs, Title, Text, Container, Flex, Stack } from "@mantine/core";
+import { Title, Text, Container, Flex, Stack } from "@mantine/core";
 import { PresentationCheck } from "@/components/features/Entry/PresentationCheck";
 
 export default function Entry() {
@@ -19,25 +19,7 @@ export default function Entry() {
         pt={8}
         py={24}
       >
-        <Tabs defaultValue="pitch">
-          <Tabs.List my={16}>
-            <Tabs.Tab value="pitch">プレゼンチェックモード</Tabs.Tab>
-            <Tabs.Tab value="rehearsal">リハーサルモード（作成中）</Tabs.Tab>
-            <Tabs.Tab value="simulation">
-              シミュレーションモード（作成中）
-            </Tabs.Tab>
-          </Tabs.List>
-
-          <Tabs.Panel value="pitch">
-            <PresentationCheck />
-          </Tabs.Panel>
-          <Tabs.Panel value="rehearsal">
-            <Text ta="center">リハーサルモード</Text>
-          </Tabs.Panel>
-          <Tabs.Panel value="simulation">
-            <Text ta="center">シミュレーションモード</Text>
-          </Tabs.Panel>
-        </Tabs>
+        <PresentationCheck />
       </Container>
     </Stack>
   );

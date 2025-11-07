@@ -1,11 +1,19 @@
-import React, { useState } from "react";
-import { Container, Title, Stack, Grid, Card, Text, Group, Badge, Select, Tabs, Paper, SimpleGrid } from "@mantine/core";
+import React, { useState, useEffect } from "react";
+import { Container, Title, Stack, Grid, Card, Text, Group, Badge, Select, Tabs, Paper, SimpleGrid, Loader } from "@mantine/core";
 import { IconTrendingUp, IconPresentationAnalytics, IconTarget, IconCalendar } from "@tabler/icons-react";
 import { useAuth } from "../contexts/AuthContext";
+import { analysisService, AnalysisHistory } from "@/services/analysis.service";
+import { ScoreProgressChart } from "@/components/features/Dashboard/ScoreProgressChart";
+import { CategoryRadarChart } from "@/components/features/Dashboard/CategoryRadarChart";
+import { AchievementBadges } from "@/components/features/Dashboard/AchievementBadges";
+import { GoalTracker } from "@/components/features/Dashboard/GoalTracker";
+import { FeedbackSummary } from "@/components/features/Dashboard/FeedbackSummary";
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [timeRange, setTimeRange] = useState("3months");
+  const [analysisHistory, setAnalysisHistory] = useState<AnalysisHistory[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const timeRangeOptions = [
     { value: "1month", label: "過去1ヶ月" },
@@ -14,6 +22,24 @@ export const Dashboard: React.FC = () => {
     { value: "1year", label: "過去1年" },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          const history = await analysisService.getAnalysisHistory(user.uid);
+          setAnalysisHistory(history);
+        } catch (error) {
+          console.error("Failed to fetch analysis history:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
   if (!user) {
     return (
       <Container py={48} size="xl">
@@ -21,6 +47,29 @@ export const Dashboard: React.FC = () => {
       </Container>
     );
   }
+
+  if (loading) {
+    return (
+      <Container py={48} size="xl">
+        <Stack align="center" gap="md">
+          <Loader size="lg" />
+          <Text>データを読み込んでいます...</Text>
+        </Stack>
+      </Container>
+    );
+  }
+
+  // 統計データの計算
+  const totalAnalysisCount = analysisHistory.length;
+  const averageScore = totalAnalysisCount > 0
+    ? Math.round(analysisHistory.reduce((sum, item) => sum + item.metadata.totalScore, 0) / totalAnalysisCount * 10) / 10
+    : 0;
+
+  // スコアの推移を計算（最新3件を比較）
+  const recentAnalyses = analysisHistory.slice(0, 3);
+  const scoreImprovement = recentAnalyses.length >= 2
+    ? Math.round((recentAnalyses[0].metadata.totalScore - recentAnalyses[recentAnalyses.length - 1].metadata.totalScore) * 10) / 10
+    : 0;
 
   return (
     <Container py={48} size="xl">
@@ -45,7 +94,7 @@ export const Dashboard: React.FC = () => {
                   総分析回数
                 </Text>
                 <Text fw={700} size="lg">
-                  3
+                  {totalAnalysisCount}
                 </Text>
               </div>
             </Group>
@@ -59,11 +108,13 @@ export const Dashboard: React.FC = () => {
                   平均スコア
                 </Text>
                 <Text fw={700} size="lg">
-                  82.4
+                  {averageScore.toFixed(1)}
                 </Text>
-                <Badge size="xs" color="teal" variant="light">
-                  +5.2↑
-                </Badge>
+                {scoreImprovement !== 0 && (
+                  <Badge size="xs" color={scoreImprovement > 0 ? "teal" : "red"} variant="light">
+                    {scoreImprovement > 0 ? `+${scoreImprovement}↑` : `${scoreImprovement}↓`}
+                  </Badge>
+                )}
               </div>
             </Group>
           </Card>
@@ -73,14 +124,11 @@ export const Dashboard: React.FC = () => {
               <IconTarget size={20} color="orange" />
               <div>
                 <Text size="xs" c="dimmed">
-                  達成目標
+                  最高スコア
                 </Text>
                 <Text fw={700} size="lg">
-                  4/6
+                  {totalAnalysisCount > 0 ? Math.max(...analysisHistory.map(h => h.metadata.totalScore)).toFixed(0) : 0}
                 </Text>
-                <Badge size="xs" color="orange" variant="light">
-                  67%
-                </Badge>
               </div>
             </Group>
           </Card>
@@ -90,13 +138,13 @@ export const Dashboard: React.FC = () => {
               <IconCalendar size={20} color="violet" />
               <div>
                 <Text size="xs" c="dimmed">
-                  実践回数
+                  プレゼン数
                 </Text>
                 <Text fw={700} size="lg">
-                  12
+                  {new Set(analysisHistory.map(h => h.presentationId)).size}
                 </Text>
                 <Badge size="xs" color="violet" variant="light">
-                  月平均4回
+                  {totalAnalysisCount}回分析
                 </Badge>
               </div>
             </Group>
@@ -114,31 +162,42 @@ export const Dashboard: React.FC = () => {
 
           <Tabs.Panel value="progress" pt="lg">
             <Stack gap="lg">
-              <Paper p="lg" withBorder>
-                <Title order={4} mb="md">
-                  📈 成長推移
-                </Title>
-                <Text>過去のプレゼンテーション分析結果から成長の軌跡を確認できます。</Text>
-                <Text size="sm" c="dimmed" mt="md">
-                  • 総合スコアの推移
-                  <br />
-                  • カテゴリ別評価の変化
-                  <br />• 改善傾向の分析
-                </Text>
-              </Paper>
+              <ScoreProgressChart timeRange={timeRange} />
+              <CategoryRadarChart timeRange={timeRange} />
 
               <Paper p="lg" withBorder>
                 <Title order={4} mb="md">
-                  💬 実践フィードバック
+                  📈 分析履歴
                 </Title>
-                <Text>実際のプレゼンテーション後の振り返りデータから学習効果を分析します。</Text>
-                <Text size="sm" c="dimmed" mt="md">
-                  • 聴衆の反応分析
-                  <br />
-                  • 質問傾向の把握
-                  <br />• 実践スキルの向上度
-                </Text>
+                {totalAnalysisCount === 0 ? (
+                  <Text c="dimmed">まだ分析履歴がありません。プレゼンチェックから分析を開始しましょう。</Text>
+                ) : (
+                  <Stack gap="md">
+                    {analysisHistory.slice(0, 5).map((item) => (
+                      <Card key={item.id} withBorder p="md">
+                        <Group justify="space-between" mb="xs">
+                          <div>
+                            <Text fw={600}>{item.presentationTitle}</Text>
+                            <Text size="xs" c="dimmed">
+                              バージョン {item.version} • {item.createdAt?.toDate?.().toLocaleDateString() || "日付不明"}
+                            </Text>
+                          </div>
+                          <Badge color={item.metadata.totalScore >= 80 ? "teal" : item.metadata.totalScore >= 60 ? "orange" : "red"}>
+                            {item.metadata.totalScore.toFixed(0)}点
+                          </Badge>
+                        </Group>
+                        <Group gap="xs">
+                          <Badge size="sm" variant="light">明確性: {item.metadata.categoryScores.content.toFixed(0)}</Badge>
+                          <Badge size="sm" variant="light">デザイン: {item.metadata.categoryScores.design.toFixed(0)}</Badge>
+                          <Badge size="sm" variant="light">説得力: {item.metadata.categoryScores.persuasiveness.toFixed(0)}</Badge>
+                        </Group>
+                      </Card>
+                    ))}
+                  </Stack>
+                )}
               </Paper>
+
+              <FeedbackSummary timeRange={timeRange} />
             </Stack>
           </Tabs.Panel>
 
@@ -168,33 +227,11 @@ export const Dashboard: React.FC = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="achievements" pt="lg">
-            <Paper p="lg" withBorder>
-              <Title order={4} mb="md">
-                🏆 実績・バッジ
-              </Title>
-              <Text>プレゼンテーションスキルの向上に応じて様々なバッジを獲得できます。</Text>
-              <Text size="sm" c="dimmed" mt="md">
-                • 継続学習バッジ
-                <br />
-                • スコア向上バッジ
-                <br />• 実践記録バッジ
-              </Text>
-            </Paper>
+            <AchievementBadges />
           </Tabs.Panel>
 
           <Tabs.Panel value="goals" pt="lg">
-            <Paper p="lg" withBorder>
-              <Title order={4} mb="md">
-                🎯 目標管理
-              </Title>
-              <Text>個人の学習目標を設定し、達成状況を追跡できます。</Text>
-              <Text size="sm" c="dimmed" mt="md">
-                • 月間分析目標
-                <br />
-                • スコア向上目標
-                <br />• 実践回数目標
-              </Text>
-            </Paper>
+            <GoalTracker />
           </Tabs.Panel>
         </Tabs>
       </Stack>
