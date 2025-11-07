@@ -133,16 +133,18 @@ export async function streamAnalyzeForm(
           if (evt.type === "persona") {
             collectedPersonas.push(evt.data);
           } else if (evt.type === "consensus") {
-            // Note: This is a simplified way to reconstruct the full response.
-            // A more robust solution might send the full object at the 'done' event.
+            // Temporarily store consensus, but wait for 'done' to get slides_struct
             fullResponse = {
               schema_version: "1.0",
               personas: collectedPersonas,
               consensus: evt.data,
-              // IMPORTANT: slides_struct is not available on the client from stream alone.
-              // The caller might need to merge it back if required.
-              slides_struct: [],
+              slides_struct: [], // Will be updated by 'done' event
             };
+          } else if (evt.type === "done" && fullResponse) {
+            // Update slides_struct from 'done' event
+            if (evt.data?.slides_struct) {
+              fullResponse.slides_struct = evt.data.slides_struct;
+            }
           }
         }
       }
@@ -169,7 +171,7 @@ function parseSseEvent(chunk: string): StreamEvent | null {
   }
   try {
     const json = data ? JSON.parse(data) : {};
-    if (event === "done") return { type: "done" };
+    if (event === "done") return { type: "done", data: json };
     if (json && (json.type === "persona" || json.type === "consensus")) return json as StreamEvent;
   } catch {
     // ignore bad chunk

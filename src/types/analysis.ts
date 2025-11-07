@@ -10,7 +10,7 @@ export type AnalysisResponse = {
 export type StreamEvent =
   | { type: 'persona'; data: PersonaOutput }
   | { type: 'consensus'; data: Consensus }
-  | { type: 'done'; data?: {} };
+  | { type: 'done'; data?: { slides_struct?: { index: number; title: string; texts: string[] }[] } };
 
 export type EmotionalArcPoint = {
   slide: number;

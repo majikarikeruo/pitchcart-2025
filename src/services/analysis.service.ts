@@ -284,11 +284,30 @@ export class AnalysisService {
 
   // ユーザーの使用回数を更新
   private async updateUserUsage(userId: string): Promise<void> {
-    const userRef = doc(db, "users", userId);
-    await updateDoc(userRef, {
-      "usage.analysisCount": serverTimestamp(),
-      "usage.lastAnalysisAt": serverTimestamp(),
-    });
+    try {
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        await updateDoc(userRef, {
+          "usage.analysisCount": serverTimestamp(),
+          "usage.lastAnalysisAt": serverTimestamp(),
+        });
+      } else {
+        // ユーザードキュメントが存在しない場合は作成
+        await setDoc(userRef, {
+          userId,
+          usage: {
+            analysisCount: serverTimestamp(),
+            lastAnalysisAt: serverTimestamp(),
+          },
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update user usage:", error);
+      // エラーでも分析保存は成功させる
+    }
   }
 }
 
