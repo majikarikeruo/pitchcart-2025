@@ -1,29 +1,38 @@
 export const runtime = "edge";
-// import handler from "../index"; // Node.js handler can't be used directly
 
-export default async function analyzeStream(req: Request) {
+export default async function (req: Request): Promise<Response> {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
-  // Vercel Edge Functions don't have access to the local filesystem directly,
-  // so we stream the request body to another function that can process it.
-  // This internal function will run in the Node.js runtime.
-  const host = req.headers.get("host");
-  const proto = req.headers.get("x-forwarded-proto") || "https";
-  const internalApiUrl = new URL("/api", `${proto}://${host}`);
+  try {
+    const host = req.headers.get("host");
+    if (!host) {
+      return new Response("Host header is missing", { status: 400 });
+    }
 
-  const response = await fetch(internalApiUrl.toString(), {
-    method: "POST",
-    headers: req.headers,
-    body: req.body,
-    // @ts-ignore
-    duplex: "half",
-  });
+    const proto = req.headers.get("x-forwarded-proto") || "https";
+    const internalApiUrl = new URL("/api", `${proto}://${host}`);
 
-  // Stream the response back to the client
-  return new Response(response.body, {
-    status: response.status,
-    headers: response.headers,
-  });
+    // Forward the request to the Node.js backend for processing
+    const response = await fetch(internalApiUrl.toString(), {
+      method: "POST",
+      headers: req.headers,
+      body: req.body,
+      // @ts-ignore
+      duplex: "half",
+    });
+
+    // Stream the response from the Node.js backend back to the client
+    return new Response(response.body, {
+      status: response.status,
+      headers: response.headers,
+    });
+  } catch (error: any) {
+    console.error("Edge function error:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error", message: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }
