@@ -122,12 +122,74 @@ export async function llmMergeConsensus(personas: PersonaOutput[]): Promise<Cons
   return llmMergeConsensusWithOpts(personas, {});
 }
 
+function buildLocalConsensus(personas: PersonaOutput[]): Consensus {
+  const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const cat = {
+    clarity: personas.map((p) => p.scores.clarity),
+    uniqueness: personas.map((p) => p.scores.uniqueness),
+    persuasiveness: personas.map((p) => p.scores.persuasiveness),
+  };
+  const avgClarity = Math.round(avg(cat.clarity));
+  const avgUniq = Math.round(avg(cat.uniqueness));
+  const avgPers = Math.round(avg(cat.persuasiveness));
+  const overall = Math.round(avg(personas.map((p) => (p.scores.clarity + p.scores.uniqueness + p.scores.persuasiveness) / 3)));
+  const variance = (xs: number[]) => (xs.length ? avg(xs.map((x) => (x - avg(xs)) ** 2)) : 0);
+  const stdev = (xs: number[]) => Math.sqrt(variance(xs));
+  const sdUniq = stdev(cat.uniqueness);
+  const sdPers = stdev(cat.persuasiveness);
+
+  const agreements: string[] = [];
+  if (avgClarity < 85) agreements.push(`clarity avg=${avgClarity}`);
+  if (avgUniq < 85) agreements.push(`uniqueness avg=${avgUniq}`);
+  if (avgPers < 85) agreements.push(`persuasiveness avg=${avgPers}`);
+  if (agreements.length === 0) agreements.push(`balanced scores overall=${overall}`);
+
+  const disagreements: string[] = [];
+  if (sdUniq > 8) disagreements.push(`uniqueness stdev=${sdUniq.toFixed(1)}`);
+  if (sdPers > 8 && disagreements.length < 2) disagreements.push(`persuasiveness stdev=${sdPers.toFixed(1)}`);
+
+  const entries: { key: 'clarity'|'uniqueness'|'persuasiveness'; avg: number }[] = [
+    { key: 'clarity', avg: avgClarity },
+    { key: 'uniqueness', avg: avgUniq },
+    { key: 'persuasiveness', avg: avgPers },
+  ].sort((a,b)=>a.avg-b.avg);
+  const top_todos: string[] = [];
+  const slidesHint = personas
+    .flatMap((p) => (Array.isArray(p.evidence) ? p.evidence : []))
+    .map((e) => (Number.isInteger((e as any).slide) ? Number((e as any).slide) : null))
+    .filter((n): n is number => n !== null)
+    .slice(0,3);
+  for (const entry of entries) {
+    if (top_todos.length >= 3) break;
+    if (entry.avg < 85) {
+      const hint = slidesHint.length ? `slides=${slidesHint.join(',')}` : '';
+      top_todos.push(`${entry.key}: avg=${entry.avg} (<85) ${hint}`.trim());
+    }
+  }
+  if (top_todos.length === 0) top_todos.push(`stability: overall=${overall}`);
+
+  const what_if = top_todos.slice(0, 2).map((change) => {
+    const baseDeficit = 100 - Math.min(90, overall);
+    const expected_gain = clamp(Math.round(baseDeficit / 3), 2, 12);
+    const uncertainty = 2;
+    return { change, expected_gain, uncertainty };
+  });
+
+  return {
+    agreements: agreements.slice(0, 3),
+    disagreements: disagreements.slice(0, 2),
+    overall_score: clamp(overall, 0, 100),
+    top_todos: top_todos.slice(0, 3),
+    what_if,
+  };
+}
+
 export async function llmMergeConsensusWithOpts(personas: PersonaOutput[], opts: LlmMergeOpts): Promise<Consensus> {
   const client = getLlmClient(opts.provider);
   if (!client) {
     log(`[llm] consensus DUMMY MODE (no api key)`);
-    // NOTE: This now hits the local fallback logic directly.
-    return llmMergeConsensusWithOpts(personas, { ...opts, provider: 'dummy' });
+    return buildLocalConsensus(personas);
   }
 
   const model = opts.model || process.env.MERGE_MODEL || 'gpt-4o';
@@ -153,67 +215,7 @@ export async function llmMergeConsensusWithOpts(personas: PersonaOutput[], opts:
     return repaired || { agreements: [], disagreements: [], overall_score: 0, top_todos: [], what_if: [] };
   } catch (e) {
     console.error(`[llm] detailed consensus error:`, e);
-    // Dynamic local consensus fallback (no static strings)
-    const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
-    const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
-    const cat = {
-      clarity: personas.map((p) => p.scores.clarity),
-      uniqueness: personas.map((p) => p.scores.uniqueness),
-      persuasiveness: personas.map((p) => p.scores.persuasiveness),
-    };
-    const avgClarity = Math.round(avg(cat.clarity));
-    const avgUniq = Math.round(avg(cat.uniqueness));
-    const avgPers = Math.round(avg(cat.persuasiveness));
-    const overall = Math.round(avg(personas.map((p) => (p.scores.clarity + p.scores.uniqueness + p.scores.persuasiveness) / 3)));
-    const variance = (xs: number[]) => (xs.length ? avg(xs.map((x) => (x - avg(xs)) ** 2)) : 0);
-    const stdev = (xs: number[]) => Math.sqrt(variance(xs));
-    const sdUniq = stdev(cat.uniqueness);
-    const sdPers = stdev(cat.persuasiveness);
-
-    const agreements: string[] = [];
-    if (avgClarity < 85) agreements.push(`clarity avg=${avgClarity}`);
-    if (avgUniq < 85) agreements.push(`uniqueness avg=${avgUniq}`);
-    if (avgPers < 85) agreements.push(`persuasiveness avg=${avgPers}`);
-    if (agreements.length === 0) agreements.push(`balanced scores overall=${overall}`);
-
-    const disagreements: string[] = [];
-    if (sdUniq > 8) disagreements.push(`uniqueness stdev=${sdUniq.toFixed(1)}`);
-    if (sdPers > 8 && disagreements.length < 2) disagreements.push(`persuasiveness stdev=${sdPers.toFixed(1)}`);
-
-    const entries: { key: 'clarity'|'uniqueness'|'persuasiveness'; avg: number }[] = [
-      { key: 'clarity' as const, avg: avgClarity },
-      { key: 'uniqueness' as const, avg: avgUniq },
-      { key: 'persuasiveness' as const, avg: avgPers },
-    ].sort((a,b)=>a.avg-b.avg);
-    const top_todos: string[] = [];
-    const slidesHint = personas
-      .flatMap((p) => (Array.isArray(p.evidence) ? p.evidence : []))
-      .map((e) => (Number.isInteger(e.slide) ? Number(e.slide) : null))
-      .filter((n): n is number => n !== null)
-      .slice(0,3);
-    for (const e2 of entries) {
-      if (top_todos.length >= 3) break;
-      if (e2.avg < 85) {
-        const hint = slidesHint.length ? `slides=${slidesHint.join(',')}` : '';
-        top_todos.push(`${e2.key}: avg=${e2.avg} (<85) ${hint}`.trim());
-      }
-    }
-    if (top_todos.length === 0) top_todos.push(`stability: overall=${overall}`);
-
-    const what_if = top_todos.slice(0, 2).map((t) => {
-      const baseDeficit = 100 - Math.min(90, overall);
-      const expected_gain = clamp(Math.round(baseDeficit / 3), 2, 12);
-      const uncertainty = 2;
-      return { change: t, expected_gain, uncertainty };
-    });
-
-    return {
-      agreements: agreements.slice(0, 3),
-      disagreements: disagreements.slice(0, 2),
-      overall_score: clamp(overall, 0, 100),
-      top_todos: top_todos.slice(0, 3),
-      what_if,
-    };
+    return buildLocalConsensus(personas);
   }
 }
 
