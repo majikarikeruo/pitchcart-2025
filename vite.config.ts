@@ -17,15 +17,14 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Mantineを分割
-          'mantine-core': ['@mantine/core'],
-          'mantine-charts': ['@mantine/charts', 'recharts'],
-          'mantine-other': ['@mantine/hooks', '@mantine/notifications', '@mantine/modals', '@mantine/dates', '@mantine/form', '@mantine/carousel'],
-          // Firebaseを分割
-          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
-          // React関連を分割
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+
+          if (id.includes('@mantine/')) return 'mantine';
+          if (id.includes('recharts')) return 'mantine';
+          if (id.includes('firebase/')) return 'firebase';
+          if (id.includes('react-router')) return 'react-vendor';
+          if (id.includes('react-dom') || id.includes('/react/')) return 'react-vendor';
         },
       },
     },
