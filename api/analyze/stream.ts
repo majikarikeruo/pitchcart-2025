@@ -9,7 +9,9 @@ export default async function analyzeStream(req: Request) {
   // Vercel Edge Functions don't have access to the local filesystem directly,
   // so we stream the request body to another function that can process it.
   // This internal function will run in the Node.js runtime.
-  const internalApiUrl = new URL("/api", req.url);
+  const host = req.headers.get("host");
+  const proto = req.headers.get("x-forwarded-proto") || "https";
+  const internalApiUrl = new URL("/api", `${proto}://${host}`);
 
   const response = await fetch(internalApiUrl.toString(), {
     method: "POST",
