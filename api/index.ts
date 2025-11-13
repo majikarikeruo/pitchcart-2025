@@ -575,6 +575,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       sseHeaders(res);
 
+      // すぐに開始メッセージを送信してVercelタイムアウトを回避
+      writeSse(res, "start", { message: "Analysis started" });
+
       const form = formidable({ multiples: true });
       const { fields, files } = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
