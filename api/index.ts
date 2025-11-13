@@ -591,7 +591,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
         return;
       }
+      console.log('[debug] uploadedFile.filepath:', uploadedFile.filepath);
+      console.log('[debug] uploadedFile.size:', uploadedFile.size);
       const fileBuffer = readFileSync(uploadedFile.filepath);
+      console.log('[debug] fileBuffer.length:', fileBuffer.length);
       const zip = new AdmZip(fileBuffer);
       const slides_struct = parseSlides(zip);
 
