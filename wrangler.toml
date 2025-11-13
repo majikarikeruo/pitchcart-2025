@@ -1,0 +1,27 @@
+name = "pitchcart-api"
+main = "workers/src/index.ts"
+compatibility_date = "2024-11-13"
+compatibility_flags = ["nodejs_compat"]
+
+# Workers Routes (for custom domains)
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+# Environment variables (set these via `wrangler secret put <NAME>`)
+# These are placeholders - actual values should be set as secrets
+[vars]
+PERSONA_TIMEOUT_MS = "60000"
+MERGE_TIMEOUT_MS = "60000"
+USE_LLM = "true"
+USE_MASTRA = "false"
+LLM_PROVIDER = "openai"
+PERSONA_MODEL = "gpt-4o-mini"
+MERGE_MODEL = "gpt-4o"
+
+# Secrets (set with: wrangler secret put <NAME>)
+# wrangler secret put OPENAI_API_KEY
+# wrangler secret put ANTHROPIC_API_KEY
+# wrangler secret put GEMINI_API_KEY
+# wrangler secret put LLM_API_KEY
+# wrangler secret put LLM_BASE_URL

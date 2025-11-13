@@ -26,5 +26,6 @@ dist-ssr
 
 node_modules
 .env
+.dev.vars
 
 /docs
