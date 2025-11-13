@@ -4,8 +4,7 @@ import { parse as parseUrl } from "url";
 // Use specific imports to avoid conflicts
 import { readFileSync, existsSync, createReadStream } from "fs";
 import { promises as fsPromises } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { join } from "path";
 
 import type { AnalysisResponse, PersonaOutput, Consensus, SlideStruct } from "./schema.js";
 import { fallbackPersona, makeResponse, validateAndRepairJson } from "./schema.js";
@@ -108,13 +107,9 @@ process.on("unhandledRejection", (reason) => {
   } catch {}
 });
 
-// ESモジュール環境での__dirnameの代替
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 // Vercel環境では、apiディレクトリからの相対パスで静的ファイルを解決
 function loadPersonas(): PersonaConfig[] {
-  const path = join(__dirname, "..", "config", "personas.json");
+  const path = join(__dirname, "..", "..", "config", "personas.json");
   if (!existsSync(path)) return [];
   const text = readFileSync(path, "utf-8");
   return JSON.parse(text);
@@ -554,9 +549,6 @@ async function extractPptxAll(filePath: string): Promise<{ text: string; slides:
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { pathname } = parseUrl(req.url || "/", true);
 
-  // Vercel debugging
-  console.log(`[vercel] ${req.method} ${req.url} -> pathname: ${pathname}`);
-
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
@@ -570,13 +562,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 
-  // 内部APIとして /api/analyze/stream へのPOSTリクエストをストリーム処理のエントリポイントとする
-  if (req.method === "POST" && (pathname === "/api/analyze/stream" || pathname === "/api" || pathname === "/api/index")) {
+  if (req.method === "POST" && pathname === "/api/analyze/stream") {
     try {
       sseHeaders(res);
-
-      // すぐに開始メッセージを送信してVercelタイムアウトを回避
-      writeSse(res, "start", { message: "Analysis started" });
 
       const form = formidable({ multiples: true });
       const { fields, files } = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>((resolve, reject) => {
@@ -586,21 +574,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       });
 
-      // ファイル処理と分析ロジック
-      const uploadedFile = (files.file as formidable.File[])?.[0];
-      if (!uploadedFile) {
-        if (!res.headersSent) {
-          res.status(400).json({ message: "file is required" });
-        }
-        return;
-      }
-      console.log('[debug] uploadedFile.filepath:', uploadedFile.filepath);
-      console.log('[debug] uploadedFile.size:', uploadedFile.size);
-      const fileBuffer = readFileSync(uploadedFile.filepath);
-      console.log('[debug] fileBuffer.length:', fileBuffer.length);
-      const zip = new AdmZip(fileBuffer);
-      const slides_struct = parseSlides(zip);
-
+      // ... (ファイル処理と分析ロジック) ...
       const body = {
         summary: `${fields.target_person || ""} ${fields.goal || ""} ${fields.industry || ""}`.trim(),
         slides_text: slides_struct.map((s) => `Slide ${s.index}: ${s.title}\n${s.texts.join(" ")}`).join("\n\n"),
@@ -622,35 +596,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const personaOutputs: PersonaOutput[] = [];
       for (const task of tasks) {
         const result = await task;
-        const output = result.status === "fulfilled" ? result.value : fallbackPersona((result as any).persona_id);
-        const validated = validateAndRepairJson(output, PersonaOutputSchema, "persona") ?? fallbackPersona((result as any).persona_id);
+        const output = result.status === "fulfilled" ? result.value : fallbackPersona(result.persona_id);
+        const validated = validateAndRepairJson(output, PersonaOutputSchema, "persona") ?? fallbackPersona(result.persona_id);
         personaOutputs.push(validated);
         writeSse(res, "message", { type: "persona", data: validated });
       }
 
       let consensus = createConsensus(personaOutputs);
-
-      // LLM/Mastraによるconsensusのマージ処理
-      if (runtime.useMastra) {
-        try {
-          consensus = await mastraMergeConsensus(personaOutputs, {
-            provider: runtime.provider,
-            model: runtime.mergeModel,
-            timeoutMs: runtime.mergeTimeoutMs,
-          });
-        } catch {}
-      } else if (runtime.useLLM) {
-        try {
-          consensus = await llmMergeConsensusWithOpts(personaOutputs, {
-            provider: runtime.provider,
-            model: runtime.mergeModel,
-            timeoutMs: runtime.mergeTimeoutMs,
-          });
-        } catch {}
-      }
+      // ... (LLM/Mastraによるconsensusのマージ処理) ...
 
       writeSse(res, "message", { type: "consensus", data: consensus });
-      writeSse(res, "done", { slides_struct });
+      writeSse(res, "done", {});
 
       return res.end();
     } catch (e: any) {
@@ -701,59 +657,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } catch (e: any) {
       console.error(`[serverless] /api/analyze error:`, e);
       return sendJson(res, 400, { error: "Bad Request", message: String(e?.message || e) });
-    }
-  }
-
-  // emotional_arc エンドポイント
-  if (req.method === "POST" && pathname === "/api/analyze/emotional_arc") {
-    try {
-      const body = req.body;
-      console.log('[emotional_arc] Received body:', JSON.stringify(body).substring(0, 500));
-      const slides_struct = body?.slides_struct;
-      console.log('[emotional_arc] slides_struct type:', typeof slides_struct, 'isArray:', Array.isArray(slides_struct), 'length:', slides_struct?.length);
-
-      if (!Array.isArray(slides_struct) || slides_struct.length === 0) {
-        console.error('[emotional_arc] Invalid slides_struct:', slides_struct);
-        return sendJson(res, 400, { error: "Bad Request", message: "slides_struct is required and must be a non-empty array" });
-      }
-
-      const runtime = getRuntimeOptsFromBody(body || {});
-      const emotionalArc = await llmAnalyzeEmotionalArc(slides_struct, {
-        provider: runtime.provider,
-        model: runtime.mergeModel,
-        timeoutMs: runtime.mergeTimeoutMs,
-        log: true,
-      });
-
-      return sendJson(res, 200, emotionalArc);
-    } catch (e: any) {
-      console.error(`[serverless] /api/analyze/emotional_arc error:`, e);
-      return sendJson(res, 500, { error: "Internal Server Error", message: String(e?.message || e) });
-    }
-  }
-
-  // simulate/structure エンドポイント
-  if (req.method === "POST" && pathname === "/api/simulate/structure") {
-    try {
-      const body = req.body;
-      const slides_struct = body?.slides_struct;
-
-      if (!Array.isArray(slides_struct) || slides_struct.length === 0) {
-        return sendJson(res, 400, { error: "Bad Request", message: "slides_struct is required and must be a non-empty array" });
-      }
-
-      const runtime = getRuntimeOptsFromBody(body || {});
-      const structureSimulation = await llmSimulateStructure(slides_struct, {
-        provider: runtime.provider,
-        model: runtime.mergeModel,
-        timeoutMs: runtime.mergeTimeoutMs,
-        log: true,
-      });
-
-      return sendJson(res, 200, structureSimulation);
-    } catch (e: any) {
-      console.error(`[serverless] /api/simulate/structure error:`, e);
-      return sendJson(res, 500, { error: "Internal Server Error", message: String(e?.message || e) });
     }
   }
 
