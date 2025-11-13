@@ -554,6 +554,9 @@ async function extractPptxAll(filePath: string): Promise<{ text: string; slides:
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { pathname } = parseUrl(req.url || "/", true);
 
+  // Vercel debugging
+  console.log(`[vercel] ${req.method} ${req.url} -> pathname: ${pathname}`);
+
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
