@@ -7,13 +7,17 @@
     "dev": "vite",
     "dev:api": "npx tsx watch dev-server.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:api\"",
+    "dev:workers": "wrangler dev",
+    "dev:with-workers": "concurrently \"npm run dev\" \"npm run dev:workers\"",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "server:build": "tsc -p tsconfig.server.json",
     "server:start": "npx tsx dev-server.ts",
     "server:test": "npm run server:build && node --test dist-server/tests/*.js",
-    "server:dev": "nodemon --watch server --exec 'npm run server'"
+    "server:dev": "nodemon --watch server --exec 'npm run server'",
+    "workers:dev": "wrangler dev",
+    "workers:deploy": "wrangler deploy"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.7",
@@ -27,7 +31,8 @@
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "~5.6.2",
     "vite": "^6.0.1",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "wrangler": "^4.47.0"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

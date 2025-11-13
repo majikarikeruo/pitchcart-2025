@@ -567,8 +567,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 
-  // 内部APIとして /api へのPOSTリクエストをストリーム処理のエントリポイントとする
-  if (req.method === "POST" && (pathname === "/api" || pathname === "/api/index")) {
+  // 内部APIとして /api/analyze/stream へのPOSTリクエストをストリーム処理のエントリポイントとする
+  if (req.method === "POST" && (pathname === "/api/analyze/stream" || pathname === "/api" || pathname === "/api/index")) {
     try {
       sseHeaders(res);
 
