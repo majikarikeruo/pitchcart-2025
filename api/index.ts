@@ -12,6 +12,7 @@ import { PersonaOutputSchema } from "./schema.js";
 import { llmEvaluatePersonaWithOpts, llmMergeConsensusWithOpts, llmSimulateStructure, llmAnalyzeEmotionalArc } from "./llm.js";
 import { mastraEvaluatePersonas, mastraMergeConsensus } from "./mastra.js";
 import formidable from "formidable";
+import { verifyRequest } from "./auth.js";
 import AdmZip from "adm-zip";
 import { XMLParser } from "fast-xml-parser";
 
@@ -563,6 +564,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === "POST" && pathname === "/api/analyze/stream") {
+    // Require Firebase ID token
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
     try {
       sseHeaders(res);
 
@@ -622,6 +630,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // analyze エンドポイントも残しておく
   if (req.method === "POST" && pathname === "/api/analyze") {
+    // Require Firebase ID token
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
     try {
       if (String(req.headers["content-type"] || "").startsWith("multipart/form-data")) {
         const form = formidable({ multiples: true });

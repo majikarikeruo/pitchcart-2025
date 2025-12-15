@@ -1,4 +1,5 @@
 import type { AnalysisResponse, StreamEvent, PersonaOutput } from "@/types/analysis";
+import { auth } from "@/config/firebase";
 
 // APIベースURLの解決を共通化（失敗時は'/api'へフォールバック）
 // .env には通常、オリジン（例: http://localhost:8787）を入れる想定。
@@ -18,9 +19,13 @@ async function fetchWithFallback(input: RequestInfo | URL, init?: RequestInit): 
 }
 
 export async function postAnalyze(input: any): Promise<AnalysisResponse> {
+  const token = await auth.currentUser?.getIdToken().catch(() => undefined);
   const res = await fetchWithFallback(`${PRIMARY_BASE}/analyze`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify(input ?? {}),
   });
   if (!res.ok) throw new Error(`analyze failed: ${res.status}`);
@@ -29,9 +34,13 @@ export async function postAnalyze(input: any): Promise<AnalysisResponse> {
 
 // フォームデータ（ファイル含む）での送信
 export async function postAnalyzeForm(form: FormData): Promise<AnalysisResponse & { imageUrls?: string[] }> {
+  const token = await auth.currentUser?.getIdToken().catch(() => undefined);
   const res = await fetchWithFallback(`${PRIMARY_BASE}/analyze`, {
     method: "POST",
     body: form,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
   if (!res.ok) {
     // 可能ならエラーメッセージを取り出す
@@ -64,9 +73,14 @@ export async function checkApiHealth(): Promise<boolean> {
 export async function streamAnalyze(input: any, onEvent: StreamHandler, signal?: AbortSignal): Promise<void> {
   const controller = new AbortController();
   const combined = mergeAbortSignals(signal, controller.signal);
+  const token = await auth.currentUser?.getIdToken().catch(() => undefined);
   const res = await fetchWithFallback(`${PRIMARY_BASE}/analyze/stream`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify(input ?? {}),
     signal: combined,
   });
@@ -102,9 +116,13 @@ export async function streamAnalyzeForm(
   onComplete: (fullResponse: AnalysisResponse) => void
 ): Promise<void> {
   // ストリーミング用のエンドポイントを正しく呼び出すように修正
+  const token = await auth.currentUser?.getIdToken().catch(() => undefined);
   const response = await fetch(`${API_BASE}/analyze/stream`, {
     method: "POST",
     body: form,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
 
   if (!response.ok || !response.body) {

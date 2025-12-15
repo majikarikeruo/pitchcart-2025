@@ -53,6 +53,7 @@
     "embla-carousel-react": "^7.1.0",
     "fast-xml-parser": "^5.2.5",
     "firebase": "^12.1.0",
+    "firebase-admin": "^12.6.0",
     "formidable": "^3.5.4",
     "jszip": "^3.10.1",
     "lucide-react": "^0.464.0",
