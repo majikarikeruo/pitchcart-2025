@@ -17,44 +17,7 @@ interface Goal {
   completed: boolean;
 }
 
-const sampleGoals: Goal[] = [
-  {
-    id: "1",
-    title: "総合スコア90点達成",
-    description: "プレゼンテーションの総合スコアで90点以上を獲得する",
-    category: "score",
-    targetValue: 90,
-    currentValue: 82,
-    unit: "点",
-    dueDate: new Date("2024-12-31"),
-    createdAt: new Date("2024-08-01"),
-    completed: false,
-  },
-  {
-    id: "2",
-    title: "月3回のプレゼン実施",
-    description: "継続的な実践を通じてスキル向上を図る",
-    category: "presentation",
-    targetValue: 3,
-    currentValue: 2,
-    unit: "回",
-    dueDate: new Date("2024-09-30"),
-    createdAt: new Date("2024-08-01"),
-    completed: false,
-  },
-  {
-    id: "3",
-    title: "想定外質問率20%以下",
-    description: "質問対応力の向上により、想定外質問を20%以下に抑える",
-    category: "skill",
-    targetValue: 20,
-    currentValue: 35,
-    unit: "%",
-    dueDate: new Date("2024-11-30"),
-    createdAt: new Date("2024-08-01"),
-    completed: false,
-  },
-];
+const sampleGoals: Goal[] = [];
 
 export const GoalTracker: React.FC = () => {
   const [goals, setGoals] = useState<Goal[]>(sampleGoals);
@@ -169,6 +132,7 @@ export const GoalTracker: React.FC = () => {
 
   const completedGoals = goals.filter((g) => g.completed).length;
   const totalGoals = goals.length;
+  const progressPct = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
 
   return (
     <Paper p="xl" withBorder>
@@ -191,11 +155,9 @@ export const GoalTracker: React.FC = () => {
             <Text fw={600} size="sm">
               全体進捗
             </Text>
-            <Text size="sm" c="dimmed">
-              {Math.round((completedGoals / totalGoals) * 100)}%
-            </Text>
+            <Text size="sm" c="dimmed">{Math.round(progressPct)}%</Text>
           </Group>
-          <Progress value={(completedGoals / totalGoals) * 100} color="teal" size="lg" />
+          <Progress value={progressPct} color="teal" size="lg" />
         </Card>
 
         {/* 目標一覧 */}

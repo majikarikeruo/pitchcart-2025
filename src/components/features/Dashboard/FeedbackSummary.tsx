@@ -3,7 +3,6 @@ import { Paper, Title, Stack, Text, Group, Badge, Progress, SimpleGrid, Card, Ti
 import { IconMoodHappy, IconTarget, IconCalendar, IconUsers } from "@tabler/icons-react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { analysisService } from "../../../services/analysis.service";
-import { generateDummyAnalysisHistory, generateDummyFeedback } from "../../../services/dummy.service";
 
 interface FeedbackSummaryProps {
   timeRange: string;
@@ -26,121 +25,58 @@ export const FeedbackSummary: React.FC<FeedbackSummaryProps> = ({ timeRange }) =
     try {
       setLoading(true);
 
-      // 匿名ユーザーの場合はダミーデータを使用
-      if (user.isAnonymous) {
-        const dummyHistory = generateDummyAnalysisHistory(user.uid);
-        const allFeedbacks = [];
+      const history = await analysisService.getAnalysisHistory(user.uid);
 
-        for (const analysis of dummyHistory.slice(0, 3)) {
-          const dummyFeedbacks = generateDummyFeedback(analysis.id, user.uid);
-          allFeedbacks.push(...dummyFeedbacks);
-        }
-
-        if (allFeedbacks.length === 0) {
-          setSummary({ noFeedback: true });
-          return;
-        }
-
-        // サマリー統計を計算（ダミーデータ用）
-        const avgRatings = {
-          overall: 0,
-          engagement: 0,
-          clarity: 0,
-        };
-
-        let totalQuestions = 0;
-        let unanticipatedQuestions = 0;
-        const audienceTypes = new Map();
-        const recentFeedbacks = allFeedbacks.slice(0, 3);
-
-        allFeedbacks.forEach((fb) => {
-          avgRatings.overall += fb.outcomes.overallSuccess;
-          avgRatings.engagement += fb.outcomes.audienceEngagement;
-          avgRatings.clarity += fb.outcomes.clarityOfMessage;
-
-          totalQuestions += fb.questionsReceived.length;
-          unanticipatedQuestions += fb.questionsReceived.filter((q) => !q.wasAnticipated).length;
-
-          const type = fb.audience.type;
-          audienceTypes.set(type, (audienceTypes.get(type) || 0) + 1);
-        });
-
-        // 平均を計算
-        (Object.keys(avgRatings) as (keyof typeof avgRatings)[]).forEach((key) => {
-          avgRatings[key] = avgRatings[key] / allFeedbacks.length;
-        });
-
-        const mostCommonAudience = Array.from(audienceTypes.entries()).sort((a, b) => b[1] - a[1])[0];
-
-        setSummary({
-          totalFeedbacks: allFeedbacks.length,
-          avgRatings,
-          totalQuestions,
-          unanticipatedRate: totalQuestions > 0 ? (unanticipatedQuestions / totalQuestions) * 100 : 0,
-          mostCommonAudience: mostCommonAudience ? mostCommonAudience[0] : null,
-          recentFeedbacks,
-        });
-      } else {
-        // 通常ユーザーの処理
-        const history = await analysisService.getAnalysisHistory(user.uid);
-
-        if (history.length === 0) {
-          setSummary(null);
-          return;
-        }
-
-        // 全てのフィードバックを取得
-        const allFeedbacks = [];
-        for (const analysis of history.slice(0, 10)) {
-          const feedbacks = await analysisService.getFeedback(analysis.id);
-          allFeedbacks.push(...feedbacks.map((fb) => ({ ...fb, analysisId: analysis.id })));
-        }
-
-        if (allFeedbacks.length === 0) {
-          setSummary({ noFeedback: true });
-          return;
-        }
-
-        // サマリー統計を計算
-        const avgRatings = {
-          overall: 0,
-          engagement: 0,
-          clarity: 0,
-        };
-
-        let totalQuestions = 0;
-        let unanticipatedQuestions = 0;
-        const audienceTypes = new Map();
-        const recentFeedbacks = allFeedbacks.slice(0, 3);
-
-        allFeedbacks.forEach((fb) => {
-          avgRatings.overall += fb.outcomes.overallSuccess;
-          avgRatings.engagement += fb.outcomes.audienceEngagement;
-          avgRatings.clarity += fb.outcomes.clarityOfMessage;
-
-          totalQuestions += fb.questionsReceived.length;
-          unanticipatedQuestions += fb.questionsReceived.filter((q) => !q.wasAnticipated).length;
-
-          const type = fb.audience.type;
-          audienceTypes.set(type, (audienceTypes.get(type) || 0) + 1);
-        });
-
-        // 平均を計算
-        (Object.keys(avgRatings) as (keyof typeof avgRatings)[]).forEach((key) => {
-          avgRatings[key] = avgRatings[key] / allFeedbacks.length;
-        });
-
-        const mostCommonAudience = Array.from(audienceTypes.entries()).sort((a, b) => b[1] - a[1])[0];
-
-        setSummary({
-          totalFeedbacks: allFeedbacks.length,
-          avgRatings,
-          totalQuestions,
-          unanticipatedRate: totalQuestions > 0 ? (unanticipatedQuestions / totalQuestions) * 100 : 0,
-          mostCommonAudience: mostCommonAudience ? mostCommonAudience[0] : null,
-          recentFeedbacks,
-        });
+      if (history.length === 0) {
+        setSummary(null);
+        return;
       }
+
+      // 全てのフィードバックを取得
+      const allFeedbacks = [] as any[];
+      for (const analysis of history.slice(0, 10)) {
+        const feedbacks = await analysisService.getFeedback(analysis.id);
+        allFeedbacks.push(...feedbacks.map((fb) => ({ ...fb, analysisId: analysis.id })));
+      }
+
+      if (allFeedbacks.length === 0) {
+        setSummary({ noFeedback: true });
+        return;
+      }
+
+      // サマリー統計を計算
+      const avgRatings = { overall: 0, engagement: 0, clarity: 0 };
+      let totalQuestions = 0;
+      let unanticipatedQuestions = 0;
+      const audienceTypes = new Map<string, number>();
+      const recentFeedbacks = allFeedbacks.slice(0, 3);
+
+      allFeedbacks.forEach((fb) => {
+        avgRatings.overall += fb.outcomes.overallSuccess;
+        avgRatings.engagement += fb.outcomes.audienceEngagement;
+        avgRatings.clarity += fb.outcomes.clarityOfMessage;
+
+        totalQuestions += fb.questionsReceived.length;
+        unanticipatedQuestions += fb.questionsReceived.filter((q: any) => !q.wasAnticipated).length;
+
+        const type = fb.audience.type;
+        audienceTypes.set(type, (audienceTypes.get(type) || 0) + 1);
+      });
+
+      (Object.keys(avgRatings) as (keyof typeof avgRatings)[]).forEach((key) => {
+        avgRatings[key] = avgRatings[key] / allFeedbacks.length;
+      });
+
+      const mostCommonAudience = Array.from(audienceTypes.entries()).sort((a, b) => b[1] - a[1])[0];
+
+      setSummary({
+        totalFeedbacks: allFeedbacks.length,
+        avgRatings,
+        totalQuestions,
+        unanticipatedRate: totalQuestions > 0 ? (unanticipatedQuestions / totalQuestions) * 100 : 0,
+        mostCommonAudience: mostCommonAudience ? mostCommonAudience[0] : null,
+        recentFeedbacks,
+      });
     } catch (error) {
       console.error("Failed to load feedback summary:", error);
     } finally {
