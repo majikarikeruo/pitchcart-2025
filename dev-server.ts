@@ -41,8 +41,15 @@ function createVercelResponse(res: ServerResponse): any {
 
 const server = createServer(async (req, res) => {
   try {
-    // CORSヘッダーを設定
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // CORSヘッダーを設定（ALLOWED_ORIGIN があれば限定）
+    const configured = String(process.env.ALLOWED_ORIGIN || '*').trim();
+    const origin = (req.headers as any)['origin'] as string | undefined;
+    let allowOrigin = '*';
+    if (configured !== '*') {
+      const list = configured.split(',').map((s) => s.trim()).filter(Boolean);
+      allowOrigin = origin && list.includes(origin) ? origin : (list[0] || '');
+    }
+    if (allowOrigin) res.setHeader('Access-Control-Allow-Origin', allowOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
 

@@ -63,13 +63,19 @@ export class AuthService {
   async signUpWithEmail(email: string, password: string, displayName?: string): Promise<User> {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // 表示名を更新
-      if (displayName) {
-        await updateProfile(result.user, { displayName });
+      // 表示名の更新とプロフィール作成は失敗しても認証は通す
+      try {
+        if (displayName) {
+          await updateProfile(result.user, { displayName });
+        }
+      } catch (e) {
+        console.warn('updateProfile failed (non-fatal):', e);
       }
-      
-      await this.createOrUpdateUserProfile(result.user);
+      try {
+        await this.createOrUpdateUserProfile(result.user);
+      } catch (e) {
+        console.warn('createOrUpdateUserProfile failed (non-fatal):', e);
+      }
       return result.user;
     } catch (error) {
       console.error('Email sign up error:', error);

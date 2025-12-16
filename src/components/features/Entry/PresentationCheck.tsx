@@ -9,6 +9,7 @@ import { notifications } from "@mantine/notifications";
 import { postAnalyzeForm, streamAnalyzeForm, checkApiHealth } from "@/services/analyze";
 import type { PersonaOutput, AnalysisResponse } from "@/types/analysis";
 import type { ResultData } from "@/types/Result";
+import { analysisService } from "@/services/analysis.service";
 
 interface PresentationData {
   target_person: string;
@@ -58,6 +59,8 @@ export const PresentationCheck = () => {
       form.append("goal", presentationData.goal);
       form.append("industry", presentationData.industry);
       form.append("use_llm", useEnhancedAnalysis ? "true" : "false");
+      // Mastra を明示的に有効化（サーバ側はUSE_MASTRA環境変数と併せて判定）
+      form.append("use_mastra", useEnhancedAnalysis ? "true" : "false");
       if (useEnhancedAnalysis) {
         form.append("detail", "high");
         form.append("evidence_max", "5");
@@ -92,6 +95,14 @@ export const PresentationCheck = () => {
         localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
         setLatestResult(resultToStore);
         setCanViewResult(true);
+        // ログインユーザー（匿名含む）はFirestoreに履歴保存
+        if (user && presentationId) {
+          try {
+            await analysisService.saveAnalysis(user.uid, presentationId, presentationData.goal || "Untitled", finalResult);
+          } catch (e) {
+            console.warn("saveAnalysis failed (non-fatal):", e);
+          }
+        }
         notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
       } else {
         notifications.show({ title: "ストリーミング失敗", message: "通常の分析モードにフォールバックします。", color: "yellow" });
@@ -101,6 +112,13 @@ export const PresentationCheck = () => {
           localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
           setLatestResult(resultToStore);
           setCanViewResult(true);
+          if (user && presentationId) {
+            try {
+              await analysisService.saveAnalysis(user.uid, presentationId, presentationData.goal || "Untitled", fallbackResult);
+            } catch (e) {
+              console.warn("saveAnalysis failed (non-fatal):", e);
+            }
+          }
           notifications.show({ title: "分析完了", message: "結果を見るボタンから確認できます", color: "teal" });
         } else {
           notifications.show({ title: "エラー", message: "分析に失敗しました。", color: "red" });

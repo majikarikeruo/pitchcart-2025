@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDoc, getDocs, query, where, limit, serverTimestamp, Timestamp, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, query, where, limit, serverTimestamp, Timestamp, updateDoc, increment } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { AnalysisResponse } from "@/types/analysis";
 
@@ -290,15 +290,15 @@ export class AnalysisService {
 
       if (userDoc.exists()) {
         await updateDoc(userRef, {
-          "usage.analysisCount": serverTimestamp(),
+          "usage.analysisCount": increment(1),
           "usage.lastAnalysisAt": serverTimestamp(),
-        });
+        } as any);
       } else {
         // ユーザードキュメントが存在しない場合は作成
         await setDoc(userRef, {
           userId,
           usage: {
-            analysisCount: serverTimestamp(),
+            analysisCount: 1,
             lastAnalysisAt: serverTimestamp(),
           },
           createdAt: serverTimestamp(),

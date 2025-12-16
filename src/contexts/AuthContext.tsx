@@ -91,33 +91,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
         setUserProfile(convertedProfile);
       } else {
-        setUserProfile(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch user profile:", err);
-
-      // エラー時も匿名ユーザーならダミーデータを設定
-      if (user.isAnonymous) {
-        const dummyProfile: UserProfile = {
+        // Firestoreにプロフィールが無くても最低限の表示用データを合成
+        const fallback: UserProfile = {
           uid: user.uid,
-          email: user.email || "anonymous@example.com",
-          displayName: user.displayName || "ゲストユーザー",
+          email: user.email,
+          displayName: user.displayName || user.email || 'ユーザー',
           photoURL: user.photoURL,
           createdAt: new Date(),
           lastLoginAt: new Date(),
-          subscription: {
-            plan: "free",
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          },
-          usage: {
-            analysisCount: 3,
-            lastAnalysisAt: new Date(),
-          },
+          subscription: { plan: 'free' },
+          usage: { analysisCount: 0 },
         };
-        setUserProfile(dummyProfile);
-      } else {
-        setError(err as Error);
+        setUserProfile(fallback);
       }
+    } catch (err) {
+      console.error("Failed to fetch user profile:", err);
+      // Firestore取得に失敗しても、最低限のプロフィールをセットしてUIを継続
+      const fallback: UserProfile = {
+        uid: user.uid,
+        email: user.email || (user.isAnonymous ? 'anonymous@example.com' : null),
+        displayName: user.displayName || (user.isAnonymous ? 'ゲストユーザー' : user.email || 'ユーザー'),
+        photoURL: user.photoURL,
+        createdAt: new Date(),
+        lastLoginAt: new Date(),
+        subscription: user.isAnonymous
+          ? { plan: 'free', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }
+          : { plan: 'free' },
+        usage: { analysisCount: 0 },
+      };
+      setUserProfile(fallback);
     }
   };
 
@@ -189,18 +191,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const user = await authService.signUpWithEmail(email, password, displayName);
       await fetchUserProfile(user);
-      notifications.show({
-        title: "登録成功",
-        message: "アカウントを作成しました",
-        color: "teal",
-      });
-    } catch (err) {
+      notifications.show({ title: "登録成功", message: "アカウントを作成しました", color: "teal" });
+    } catch (err: any) {
       setError(err as Error);
-      notifications.show({
-        title: "登録エラー",
-        message: "アカウントの作成に失敗しました",
-        color: "red",
-      });
+      const code = err?.code || err?.message || "unknown";
+      notifications.show({ title: "登録エラー", message: String(code), color: "red" });
       throw err;
     }
   };

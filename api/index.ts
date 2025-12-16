@@ -1,10 +1,9 @@
 import "dotenv/config";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { parse as parseUrl } from "url";
-// Use specific imports to avoid conflicts
-import { readFileSync, existsSync, createReadStream } from "fs";
-import { promises as fsPromises } from "fs";
-import { join } from "path";
+import { readFileSync, existsSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 import type { AnalysisResponse, PersonaOutput, Consensus, SlideStruct } from "./schema.js";
 import { fallbackPersona, makeResponse, validateAndRepairJson } from "./schema.js";
@@ -12,8 +11,13 @@ import { PersonaOutputSchema } from "./schema.js";
 import { llmEvaluatePersonaWithOpts, llmMergeConsensusWithOpts, llmSimulateStructure, llmAnalyzeEmotionalArc } from "./llm.js";
 import { mastraEvaluatePersonas, mastraMergeConsensus } from "./mastra.js";
 import formidable from "formidable";
+import { verifyRequest } from "./auth.js";
 import AdmZip from "adm-zip";
 import { XMLParser } from "fast-xml-parser";
+
+// ESM fix for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Function to parse basic slide structure
 const parseSlides = (zip: AdmZip): SlideStruct[] => {
@@ -109,8 +113,12 @@ process.on("unhandledRejection", (reason) => {
 
 // Vercel環境では、apiディレクトリからの相対パスで静的ファイルを解決
 function loadPersonas(): PersonaConfig[] {
-  const path = join(__dirname, "..", "..", "config", "personas.json");
-  if (!existsSync(path)) return [];
+  // Use resolved __dirname. We are in api/index.ts. Config is in ../config relative to api/
+  const path = join(__dirname, "..", "config", "personas.json");
+  if (!existsSync(path)) {
+      console.warn(`[server] personas.json not found at ${path}`);
+      return [];
+  }
   const text = readFileSync(path, "utf-8");
   return JSON.parse(text);
 }
@@ -452,104 +460,19 @@ async function analyze(input: any, runtime: RuntimeOpts) {
   return response;
 }
 
-// Vercelのレスポンス関数
-function sendJson(res: VercelResponse, code: number, data: any) {
-  res.status(code).json(data);
-}
-
-function sseHeaders(res: VercelResponse) {
-  res.setHeader("Content-Type", "text/event-stream;charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache, no-transform");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-}
-
-function writeSse(res: VercelResponse, event: string, data: any) {
-  res.write(`event: ${event}\n`);
-  res.write(`data: ${JSON.stringify(data)}\n\n`);
-}
-
-function handleOptions(res: VercelResponse) {
-  res.status(204).send("");
-}
-
-// formidableの設定をVercel用に調整
-const form = formidable({
-  multiples: true,
-  keepExtensions: true,
-  maxFileSize: Number(process.env.MAX_UPLOAD_BYTES || 25 * 1024 * 1024),
-  allowEmptyFiles: false,
-});
-
-// legacy: merged into extractPptxAll
-
-async function extractPptxAll(filePath: string): Promise<{ text: string; slides: any[] }> {
-  try {
-    const zip = new AdmZip(filePath);
-    const parser = new XMLParser({ ignoreAttributes: false, ignoreDeclaration: true, trimValues: true });
-    const entries = zip.getEntries();
-    const slides: any[] = [];
-    const textChunks: string[] = [];
-
-    const slideXmls = entries.filter((e) => /ppt\/slides\/slide\d+\.xml$/.test(e.entryName));
-    for (const e of slideXmls) {
-      const xml = e.getData().toString("utf-8");
-      const doc = parser.parse(xml);
-      const slideIdxMatch = e.entryName.match(/slide(\d+)\.xml$/);
-      const index = slideIdxMatch ? Number(slideIdxMatch[1]) : slides.length + 1;
-
-      const collectTexts = (node: any, out: string[]) => {
-        if (!node || typeof node !== "object") return;
-        for (const k of Object.keys(node)) {
-          const v = node[k];
-          if (k.endsWith(":t") || k === "a:t") {
-            if (typeof v === "string") out.push(v);
-          } else if (Array.isArray(v)) {
-            v.forEach((x) => collectTexts(x, out));
-          } else if (typeof v === "object") {
-            collectTexts(v, out);
-          }
-        }
-      };
-      const texts: string[] = [];
-      collectTexts(doc, texts);
-
-      const countByKey = (node: any, matcher: (k: string) => boolean): number => {
-        let c = 0;
-        const walk = (n: any) => {
-          if (!n || typeof n !== "object") return;
-          for (const k of Object.keys(n)) {
-            const v = n[k];
-            if (matcher(k)) c += 1;
-            if (Array.isArray(v)) v.forEach(walk);
-            else if (typeof v === "object") walk(v);
-          }
-        };
-        walk(node);
-        return c;
-      };
-
-      const imageCount = countByKey(doc, (k) => k.endsWith(":pic") || k === "p:pic");
-      const chartCount = countByKey(doc, (k) => k.endsWith(":chart") || k === "c:chart");
-      const shapeCount = countByKey(doc, (k) => k.endsWith(":sp") || k === "p:sp");
-
-      const titleGuess = texts[0]?.slice(0, 100) || "";
-      const wordCount = texts.join(" ").split(/\s+/).filter(Boolean).length;
-      slides.push({ index, title: titleGuess, wordCount, imageCount, chartCount, shapeCount, texts: texts.slice(0, 30) });
-      textChunks.push(`Slide ${index}: ${texts.join(" ")}`);
-    }
-
-    return { text: textChunks.join("\n"), slides };
-  } catch (e) {
-    return { text: "", slides: [] };
-  }
-}
-
 // メインのサーバーレス関数
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { pathname } = parseUrl(req.url || "/", true);
 
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // CORS: allow only configured origins if provided
+  const configured = String(process.env.ALLOWED_ORIGIN || "*").trim();
+  const originHeader = String((req.headers as any)["origin"] || "");
+  let allowOrigin = "*";
+  if (configured !== "*") {
+    const allowedList = configured.split(',').map((s) => s.trim()).filter(Boolean);
+    allowOrigin = allowedList.includes(originHeader) ? originHeader : allowedList[0] || "";
+  }
+  if (allowOrigin) res.setHeader("Access-Control-Allow-Origin", allowOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
 
@@ -562,7 +485,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 
+  if (req.method === "POST" && pathname === "/api/analyze/emotional_arc") {
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
+    try {
+      const body = req.body;
+      const slides = Array.isArray(body) ? body : (body?.slides_struct || []);
+      const result = await llmAnalyzeEmotionalArc(slides, { provider: LLM_PROVIDER_DEFAULT });
+      return sendJson(res, 200, result);
+    } catch (e) {
+      console.error("[serverless] /api/analyze/emotional_arc error:", e);
+      return sendJson(res, 500, { error: "Internal Server Error" });
+    }
+  }
+
+  if (req.method === "POST" && pathname === "/api/simulate/structure") {
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
+    try {
+      const body = req.body;
+      const slides = Array.isArray(body) ? body : (body?.slides_struct || []);
+      const result = await llmSimulateStructure(slides, { provider: LLM_PROVIDER_DEFAULT });
+      return sendJson(res, 200, result);
+    } catch (e) {
+      console.error("[serverless] /api/simulate/structure error:", e);
+      return sendJson(res, 500, { error: "Internal Server Error" });
+    }
+  }
+
   if (req.method === "POST" && pathname === "/api/analyze/stream") {
+    // Require Firebase ID token
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
     try {
       sseHeaders(res);
 
@@ -574,7 +540,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       });
 
-      // ... (ファイル処理と分析ロジック) ...
+      // Added: Process file to get slides_struct
+      let slides_struct: SlideStruct[] = [];
+      const uploadedFile = (files.file as formidable.File[])?.[0];
+      if (uploadedFile) {
+        try {
+           const zip = new AdmZip(uploadedFile.filepath);
+           slides_struct = parseSlides(zip);
+        } catch(e) {
+           console.error("Failed to parse slides from zip:", e);
+        }
+      }
+
       const body = {
         summary: `${fields.target_person || ""} ${fields.goal || ""} ${fields.industry || ""}`.trim(),
         slides_text: slides_struct.map((s) => `Slide ${s.index}: ${s.title}\n${s.texts.join(" ")}`).join("\n\n"),
@@ -583,6 +560,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
       const runtime = getRuntimeOptsFromBody(fields);
       const personasCfg = loadPersonas();
+      console.log(`[server] Loaded ${personasCfg.length} personas.`);
 
       const ac = new AbortController();
       req.on("close", () => ac.abort());
@@ -603,10 +581,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       let consensus = createConsensus(personaOutputs);
-      // ... (LLM/Mastraによるconsensusのマージ処理) ...
+      
+      if (runtime.useMastra) {
+        try {
+          consensus = await mastraMergeConsensus(personaOutputs, {
+            provider: runtime.provider,
+            model: runtime.mergeModel,
+            timeoutMs: runtime.mergeTimeoutMs,
+          });
+        } catch(e) {
+            console.error("Mastra consensus failed, falling back", e);
+        }
+      } else if (runtime.useLLM) {
+        try {
+          consensus = await llmMergeConsensusWithOpts(personaOutputs, {
+            provider: runtime.provider,
+            model: runtime.mergeModel,
+            timeoutMs: runtime.mergeTimeoutMs,
+          });
+        } catch(e) {
+             console.error("LLM consensus failed", e);
+        }
+      }
 
       writeSse(res, "message", { type: "consensus", data: consensus });
-      writeSse(res, "done", {});
+      writeSse(res, "done", { slides_struct }); // Send back struct for client visualization
 
       return res.end();
     } catch (e: any) {
@@ -622,6 +621,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // analyze エンドポイントも残しておく
   if (req.method === "POST" && pathname === "/api/analyze") {
+    // Require Firebase ID token
+    try {
+      await verifyRequest(req);
+    } catch (e: any) {
+      const code = e?.message === 'missing_bearer' ? 401 : 401;
+      return sendJson(res, code, { error: 'Unauthorized' });
+    }
     try {
       if (String(req.headers["content-type"] || "").startsWith("multipart/form-data")) {
         const form = formidable({ multiples: true });
@@ -662,3 +668,95 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   res.status(404).json({ error: "Not Found" });
 }
+
+// Vercelのレスポンス関数
+function sendJson(res: VercelResponse, code: number, data: any) {
+  res.status(code).json(data);
+}
+
+function sseHeaders(res: VercelResponse) {
+  res.setHeader("Content-Type", "text/event-stream;charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+}
+
+function writeSse(res: VercelResponse, event: string, data: any) {
+  res.write(`event: ${event}\n`);
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+
+function handleOptions(res: VercelResponse) {
+  res.status(204).send("");
+}
+
+// formidableの設定をVercel用に調整
+const form = formidable({
+  multiples: true,
+  keepExtensions: true,
+  maxFileSize: Number(process.env.MAX_UPLOAD_BYTES || 25 * 1024 * 1024),
+  allowEmptyFiles: false,
+});
+
+// legacy: merged into extractPptxAll
+async function extractPptxAll(filePath: string): Promise<{ text: string; slides: any[] }> {
+    try {
+      const zip = new AdmZip(filePath);
+      const parser = new XMLParser({ ignoreAttributes: false, ignoreDeclaration: true, trimValues: true });
+      const entries = zip.getEntries();
+      const slides: any[] = [];
+      const textChunks: string[] = [];
+  
+      const slideXmls = entries.filter((e) => /ppt\/slides\/slide\d+\.xml$/.test(e.entryName));
+      for (const e of slideXmls) {
+        const xml = e.getData().toString("utf-8");
+        const doc = parser.parse(xml);
+        const slideIdxMatch = e.entryName.match(/slide(\d+)\.xml$/);
+        const index = slideIdxMatch ? Number(slideIdxMatch[1]) : slides.length + 1;
+  
+        const collectTexts = (node: any, out: string[]) => {
+          if (!node || typeof node !== "object") return;
+          for (const k of Object.keys(node)) {
+            const v = node[k];
+            if (k.endsWith(":t") || k === "a:t") {
+              if (typeof v === "string") out.push(v);
+            } else if (Array.isArray(v)) {
+              v.forEach((x) => collectTexts(x, out));
+            } else if (typeof v === "object") {
+              collectTexts(v, out);
+            }
+          }
+        };
+        const texts: string[] = [];
+        collectTexts(doc, texts);
+  
+        const countByKey = (node: any, matcher: (k: string) => boolean): number => {
+          let c = 0;
+          const walk = (n: any) => {
+            if (!n || typeof n !== "object") return;
+            for (const k of Object.keys(n)) {
+              const v = n[k];
+              if (matcher(k)) c += 1;
+              if (Array.isArray(v)) v.forEach(walk);
+              else if (typeof v === "object") walk(v);
+            }
+          };
+          walk(node);
+          return c;
+        };
+  
+        const imageCount = countByKey(doc, (k) => k.endsWith(":pic") || k === "p:pic");
+        const chartCount = countByKey(doc, (k) => k.endsWith(":chart") || k === "c:chart");
+        const shapeCount = countByKey(doc, (k) => k.endsWith(":sp") || k === "p:sp");
+  
+        const titleGuess = texts[0]?.slice(0, 100) || "";
+        const wordCount = texts.join(" ").split(/\s+/).filter(Boolean).length;
+        slides.push({ index, title: titleGuess, wordCount, imageCount, chartCount, shapeCount, texts: texts.slice(0, 30) });
+        textChunks.push(`Slide ${index}: ${texts.join(" ")}`);
+      }
+  
+      return { text: textChunks.join("\n"), slides };
+    } catch (e) {
+      return { text: "", slides: [] };
+    }
+  }
