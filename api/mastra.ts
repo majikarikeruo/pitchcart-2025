@@ -2,7 +2,7 @@ import type { PersonaOutput, Consensus } from './schema.js';
 import { fallbackPersona, validateAndRepairJson, PersonaOutputSchema, ConsensusSchema } from './schema.js';
 import { llmEvaluatePersonaWithOpts, llmMergeConsensusWithOpts, type LlmPersonaOpts, type LlmMergeOpts } from './llm.js';
 // Import actual Mastra agents
-import { evaluateAgent, mergeAgent } from '../src/lib/mastra/agents/index';
+import { evaluateAgent, mergeAgent } from './mastra_core/agents/index';
 
 type PersonaConfig = {
   persona_id: string;
