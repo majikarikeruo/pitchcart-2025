@@ -1,59 +1,52 @@
-import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, Stack, NavLink, Button, Group, Avatar, Text, Divider } from "@mantine/core";
+import { Link, useLocation } from "react-router-dom";
+import { Stack, NavLink, ThemeIcon, Group, Divider, Button } from "@mantine/core";
+import { IconHome, IconPresentation, IconHistory, IconBulb, IconLogout } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { NAV_ITEMS } from "@/config/navigation";
 
 export function LeftNav() {
-  const { user, signOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
-  const visibleItems = NAV_ITEMS.filter((i) => {
-    if (!i.visibility || i.visibility === 'any') return true;
-    if (i.visibility === 'auth') return !!user;
-    if (i.visibility === 'guest') return !user;
-    return true;
-  });
+  const links = [
+    { icon: IconHome, label: "ホーム", to: "/" },
+    { icon: IconPresentation, label: "分析", to: "/analysis" },
+    { icon: IconHistory, label: "履歴", to: "/history" },
+    { icon: IconBulb, label: "実践", to: "/practice" },
+  ];
 
   return (
-    <Box style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Stack gap={4}>
-        {visibleItems.map((item) => (
-          <NavLink
-            key={item.to}
-            component={Link}
-            to={item.to}
-            label={item.label}
-            active={location.pathname === item.to}
-            variant="filled"
-          />
-        ))}
-      </Stack>
+    <Stack gap="xs" h="100%">
+      {links.map((link) => (
+        <NavLink
+          key={link.to}
+          component={Link}
+          to={link.to}
+          label={link.label}
+          leftSection={
+            <ThemeIcon variant="light" size="sm" color={location.pathname === link.to ? "blue" : "gray"}>
+              <link.icon size="1rem" />
+            </ThemeIcon>
+          }
+          active={location.pathname === link.to}
+          variant="light"
+        />
+      ))}
 
-      <Box style={{ flex: 1 }} />
+      <div style={{ flex: 1 }} />
+      <Divider />
 
-      <Divider my="xs" />
-      {user ? (
-        <Group justify="space-between">
-          <Group gap="xs">
-            <Avatar radius="xl" size={24} src={user.photoURL || undefined}>
-              {(user.displayName?.[0] || user.email?.[0] || 'U').toUpperCase()}
-            </Avatar>
-            <Text size="sm" c="dimmed" lineClamp={1}>
-              {user.displayName || user.email || 'アカウント'}
-            </Text>
-          </Group>
-          <Button size="compact-sm" variant="light" color="red" onClick={async () => { await signOut(); navigate('/login'); }}>
-            ログアウト
-          </Button>
-        </Group>
-      ) : (
-        <Button component={Link} to="/login" fullWidth>
-          ログイン
+      <Group justify="center" p="xs">
+        <Button 
+          variant="subtle" 
+          color="gray" 
+          size="sm" 
+          fullWidth 
+          leftSection={<IconLogout size="1rem" />}
+          onClick={() => signOut()}
+        >
+          ログアウト
         </Button>
-      )}
-    </Box>
+      </Group>
+    </Stack>
   );
 }
-

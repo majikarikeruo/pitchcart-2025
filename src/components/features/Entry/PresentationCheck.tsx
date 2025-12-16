@@ -59,6 +59,8 @@ export const PresentationCheck = () => {
       form.append("goal", presentationData.goal);
       form.append("industry", presentationData.industry);
       form.append("use_llm", useEnhancedAnalysis ? "true" : "false");
+      // Mastra を明示的に有効化（サーバ側はUSE_MASTRA環境変数と併せて判定）
+      form.append("use_mastra", useEnhancedAnalysis ? "true" : "false");
       if (useEnhancedAnalysis) {
         form.append("detail", "high");
         form.append("evidence_max", "5");
