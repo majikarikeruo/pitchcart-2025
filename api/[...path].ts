@@ -466,6 +466,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // On Vercel catch-all functions, req.url may be "/analyze/stream" (without "/api").
   // Normalize to always compare against "/api/..." style paths.
   const pathname = rawPathname && rawPathname.startsWith("/api") ? rawPathname : ("/api" + (rawPathname || "/"));
+  
+  // Debug logging
+  console.log("[API] req.url:", req.url);
+  console.log("[API] rawPathname:", rawPathname);
+  console.log("[API] pathname:", pathname);
+  console.log("[API] method:", req.method);
 
   // CORS: allow only configured origins if provided
   const configured = String(process.env.ALLOWED_ORIGIN || "*").trim();
@@ -671,7 +677,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  res.status(404).json({ error: "Not Found" });
+  console.log("[API] 404 - No route matched. pathname:", pathname, "method:", req.method);
+  res.status(404).json({ error: "Not Found", pathname, method: req.method });
 }
 
 // Vercelのレスポンス関数
