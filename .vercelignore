@@ -1,0 +1,8 @@
+api/mastra_core/
+api/tests/
+dist-server/
+venv/
+node_modules/
+*.test.ts
+*.test.js
+

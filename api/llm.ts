@@ -66,7 +66,6 @@ export type LlmPersonaOpts = {
   detail?: string;
   evidenceMax?: number;
   slidesTextLimit?: number;
-  slidesStruct?: any; // Add for compatibility
 };
 
 export type LlmMergeOpts = { provider?: string; model?: string; timeoutMs?: number; log?: boolean; };
@@ -225,13 +224,6 @@ export async function llmSimulateStructure(
   opts: LlmMergeOpts
 ): Promise<StructureSimulation> {
   const client = getLlmClient(opts.provider);
-  
-  // Safe guard: check if slidesStruct is valid
-  if (!Array.isArray(slidesStruct)) {
-      console.warn("[llm] slidesStruct is invalid. Using empty array.");
-      slidesStruct = [];
-  }
-
   if (!client) {
     log(`[llm] simulateStructure DUMMY MODE (no api key)`);
     return new Promise((resolve) => {
@@ -324,13 +316,6 @@ export async function llmAnalyzeEmotionalArc(
   const isLoggingEnabled = opts.log ?? true;
   const client = getLlmClient(opts.provider);
   
-  // Safe guard: check if slidesStruct is valid
-  if (!Array.isArray(slides_struct)) {
-      console.warn("[llm] slides_struct is not an array (likely undefined or invalid input). Falling back to dummy.");
-      if (isLoggingEnabled) console.warn("Invalid input:", slides_struct);
-      return DUMMY_EMOTIONAL_ARC;
-  }
-  
   if (!client) {
     if (isLoggingEnabled) {
       console.log(`[llm] analyzeEmotionalArc DUMMY MODE (no api key)`);
@@ -401,6 +386,6 @@ ${slides_struct.map((s: SlideStruct) => `## スライド ${s.index}: ${s.title}\
         title: "分析例外",
         summary: `エラーが発生しました: ${e.message}`,
         points: []
-      };
+    };
   }
 }
