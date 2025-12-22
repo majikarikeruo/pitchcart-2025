@@ -26,3 +26,6 @@ dist-ssr
 node_modules
 .env
 .dev.vars
+
+# API - use [...path].ts instead of index.ts
+api/index.ts
