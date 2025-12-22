@@ -6,7 +6,7 @@
       "memory": 1024,
       "maxDuration": 60
     },
-    "api/[...path].ts": {
+    "api/[...slug].ts": {
       "memory": 1024,
       "maxDuration": 60
     }
