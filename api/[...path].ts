@@ -462,7 +462,10 @@ async function analyze(input: any, runtime: RuntimeOpts) {
 
 // メインのサーバーレス関数
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const { pathname } = parseUrl(req.url || "/", true);
+  const { pathname: rawPathname } = parseUrl(req.url || "/", true);
+  // On Vercel catch-all functions, req.url may be "/analyze/stream" (without "/api").
+  // Normalize to always compare against "/api/..." style paths.
+  const pathname = rawPathname && rawPathname.startsWith("/api") ? rawPathname : ("/api" + (rawPathname || "/"));
 
   // CORS: allow only configured origins if provided
   const configured = String(process.env.ALLOWED_ORIGIN || "*").trim();
@@ -481,7 +484,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // /api へのGETリクエストをヘルスチェックとして扱う
-  if (req.method === "GET" && (pathname === "/api" || pathname === "/api/index" || pathname === "/")) {
+  if (req.method === "GET" && (pathname === "/api" || pathname === "/api/index")) {
     return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 

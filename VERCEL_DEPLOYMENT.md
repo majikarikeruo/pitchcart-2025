@@ -13,7 +13,8 @@ imported from /var/task/api/mastra.js
 
 1. **ESモジュールのインポートパス**: TypeScriptファイルで相対インポートを使用する際、Vercelでは `.js` 拡張子が必要
 2. **不要なファイルのビルド**: `api/mastra_core/` フォルダは現在使用されていないが、Vercelがコンパイルしようとしていた
-3. **ルーティング設定**: `/api` へのリクエストが正しくルーティングされていなかった
+3. **ルーティング設定**: `/api/analyze/stream` などのサブパスが404エラーになっていた
+4. **Catch-allルート**: `api/index.ts` は `/api` のみに対応し、サブパスには対応していなかった
 
 ## 実施した修正
 
@@ -52,18 +53,27 @@ node_modules/
 *.test.js
 ```
 
-### 3. `vercel.json` の更新
+### 3. Catch-allルートの作成
+
+Vercelでは、`api/index.ts` は `/api` または `/api/index` にのみマッピングされます。
+`/api/analyze/stream` のようなサブパスに対応するため、catch-allルートを使用：
+
+```bash
+# api/index.ts を api/[...path].ts にコピー
+cp api/index.ts api/[...path].ts
+
+# 元の index.ts をバックアップに変更（競合を避けるため）
+mv api/index.ts api/_index.ts.backup
+```
+
+### 4. `vercel.json` の更新
 
 ```json
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
-    { "source": "/api", "destination": "/api/index" },
-    { "source": "/api/:path*", "destination": "/api/:path*" }
-  ],
   "functions": {
-    "api/index.ts": {
+    "api/[...path].ts": {
       "memory": 1024,
       "maxDuration": 60
     }
@@ -71,9 +81,17 @@ node_modules/
 }
 ```
 
-### 4. 不要なファイルの削除
+### 5. `.vercelignore` の更新
 
-- `api/[...slug].ts` を削除（シンプルなルーティングに変更）
+```
+api/mastra_core/
+api/tests/
+api/_*.backup
+dist-server/
+venv/
+*.test.ts
+*.test.js
+```
 
 ## Vercelでの環境変数設定
 
