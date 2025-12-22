@@ -560,7 +560,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
       const runtime = getRuntimeOptsFromBody(fields);
       const personasCfg = loadPersonas();
-      console.log(`[server] Loaded ${personasCfg.length} personas.`);
 
       const ac = new AbortController();
       req.on("close", () => ac.abort());

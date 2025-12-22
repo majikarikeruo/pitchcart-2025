@@ -1,6 +1,6 @@
 import { Workflow } from "@mastra/core";
 import { z } from "zod";
-import { evaluateAgent } from "../agents";
+import { evaluateAgent } from "../agents/index.js";
 
 // Define schemas for type safety in workflow steps
 const InputSchema = z.object({
