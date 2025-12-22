@@ -484,7 +484,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // /api へのGETリクエストをヘルスチェックとして扱う
-  if (req.method === "GET" && (pathname === "/api" || pathname === "/api/index")) {
+  if (
+    req.method === "GET" &&
+    (pathname === "/api" || pathname === "/api/" || pathname === "/api/index")
+  ) {
     return sendJson(res, 200, { ok: true, version: "v1.0-serverless" });
   }
 
