@@ -1,7 +1,6 @@
 api/mastra_core/
 api/tests/
 api/_*.backup
-api/index.ts
 dist-server/
 venv/
 *.test.ts
