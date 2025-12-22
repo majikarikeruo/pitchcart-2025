@@ -11,11 +11,6 @@ export function AppLayout({ children }: Props) {
   useAuth();
   const [opened, setOpened] = React.useState(false);
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/login");
-  };
-
   return (
     <AppShell
       header={{ height: 56 }}
