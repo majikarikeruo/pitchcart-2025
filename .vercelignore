@@ -1,5 +1,6 @@
 api/mastra_core/
 api/tests/
+api/_*.backup
 dist-server/
 venv/
 *.test.ts
