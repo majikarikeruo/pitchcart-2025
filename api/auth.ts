@@ -1,16 +1,12 @@
 import type { VercelRequest } from "@vercel/node";
 
-let admin: typeof import('firebase-admin') | null = null;
+import * as firebaseAdmin from 'firebase-admin';
+
+let admin: typeof firebaseAdmin | null = null;
 
 function getAdmin() {
   if (admin) return admin;
-  try {
-    // Lazy import to avoid bundling issues in client builds
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    admin = require('firebase-admin');
-  } catch (e) {
-    throw new Error('firebase-admin package is not installed. Install it to enable auth.');
-  }
+  admin = firebaseAdmin;
   if (admin!.apps.length === 0) {
     const svcJson = process.env.FIREBASE_SERVICE_ACCOUNT;
     const projectId = process.env.FIREBASE_PROJECT_ID;
