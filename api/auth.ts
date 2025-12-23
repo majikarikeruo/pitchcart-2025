@@ -3,7 +3,11 @@ import type { VercelRequest } from "@vercel/node";
 import * as firebaseAdmin from 'firebase-admin';
 
 function getAdmin() {
-  if (firebaseAdmin.apps.length === 0) {
+  console.log('[Auth] firebaseAdmin:', typeof firebaseAdmin);
+  console.log('[Auth] firebaseAdmin.apps:', firebaseAdmin.apps);
+  console.log('[Auth] firebaseAdmin.apps type:', typeof firebaseAdmin.apps);
+  
+  if (!firebaseAdmin.apps || firebaseAdmin.apps.length === 0) {
     const svcJson = process.env.FIREBASE_SERVICE_ACCOUNT;
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
