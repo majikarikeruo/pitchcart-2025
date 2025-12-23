@@ -13,7 +13,12 @@ function getAdmin() {
   }
   if (admin!.apps.length === 0) {
     const svcJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    
     if (svcJson) {
+      // Use FIREBASE_SERVICE_ACCOUNT if provided (JSON format)
       const creds = JSON.parse(svcJson);
       admin!.initializeApp({
         credential: admin!.credential.cert({
@@ -22,10 +27,19 @@ function getAdmin() {
           privateKey: (creds.private_key || '').replace(/\\n/g, '\n'),
         }),
       });
+    } else if (projectId && clientEmail && privateKey) {
+      // Use individual environment variables
+      admin!.initializeApp({
+        credential: admin!.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey: privateKey.replace(/\\n/g, '\n'),
+        }),
+      });
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GOOGLE_CLOUD_PROJECT) {
       admin!.initializeApp();
     } else {
-      throw new Error('Firebase Admin is not configured. Set FIREBASE_SERVICE_ACCOUNT or ADC env.');
+      throw new Error('Firebase Admin is not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY or FIREBASE_SERVICE_ACCOUNT env.');
     }
   }
   return admin!;

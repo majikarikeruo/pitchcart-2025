@@ -537,9 +537,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Require Firebase ID token
     try {
       await verifyRequest(req);
+      console.log("[API] ✅ Auth verified successfully");
     } catch (e: any) {
+      console.error("[API] ❌ Auth failed:", e?.message || e);
+      console.error("[API] Authorization header:", req.headers.authorization ? "present" : "missing");
+      console.error("[API] Full error:", e);
       const code = e?.message === 'missing_bearer' ? 401 : 401;
-      return sendJson(res, code, { error: 'Unauthorized' });
+      return sendJson(res, code, { error: 'Unauthorized', details: e?.message });
     }
     try {
       sseHeaders(res);
