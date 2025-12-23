@@ -571,8 +571,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       for (const task of tasks) {
         const result = await task;
         const output = result.status === "fulfilled" ? result.value : fallbackPersona(result.persona_id);
-        const validated = validateAndRepairJson(output, PersonaOutputSchema, "persona") ?? fallbackPersona(result.persona_id);
-        personaOutputs.push(validated);
+        console.log(`[Stream] Before validation for ${output.persona_id}:`, JSON.stringify(output).slice(0, 150));
+        const validated = validateAndRepairJson(output, PersonaOutputSchema, "persona");
+        console.log(`[Stream] After validation for ${output.persona_id}: ${validated ? 'OK' : 'NULL'}`);
+        const final = validated ?? fallbackPersona(result.persona_id);
+        personaOutputs.push(final);
         writeSse(res, "message", { type: "persona", data: validated });
       }
 
