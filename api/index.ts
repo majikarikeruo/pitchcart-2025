@@ -274,8 +274,10 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
       }
     })();
 
-    const timeoutMs = Number(runtime.personaTimeoutMs || PERSONA_TIMEOUT_MS);
+    // Increase timeout to 30 seconds for LLM calls
+    const timeoutMs = Number(runtime.personaTimeoutMs || 30000);
     const timeoutId = setTimeout(() => {
+      console.error(`[LLM] ⏱️ Timeout for persona ${persona.persona_id} after ${timeoutMs}ms`);
       controller.abort();
       reject(new Error("timeout"));
       signal.removeEventListener("abort", onAbort);
