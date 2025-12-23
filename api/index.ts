@@ -206,9 +206,8 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
     const onAbort = () => reject(new Error("timeout"));
     signal.addEventListener("abort", onAbort, { once: true });
 
-    // Simulate async compute 100-500ms
-    const delay = Math.floor(100 + Math.random() * 400);
-    const timer = setTimeout(async () => {
+    // Call LLM immediately
+    (async () => {
       try {
         if (runtime.useLLM) {
           console.log(`[LLM] Calling LLM for persona ${persona.persona_id}, provider: ${runtime.provider || 'default'}`);
@@ -273,13 +272,12 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
         clearTimeout(timeoutId);
         signal.removeEventListener("abort", onAbort);
       }
-    }, delay);
+    })();
 
     const timeoutMs = Number(runtime.personaTimeoutMs || PERSONA_TIMEOUT_MS);
     const timeoutId = setTimeout(() => {
       controller.abort();
       reject(new Error("timeout"));
-      clearTimeout(timer);
       signal.removeEventListener("abort", onAbort);
     }, timeoutMs);
   });
