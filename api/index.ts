@@ -221,45 +221,8 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
             evidenceMax: runtime.evidenceMax,
           });
           console.log(`[LLM] ✅ Success for persona ${persona.persona_id}`);
-          // If LLM failed and returned generic fallback, synthesize heuristic result instead
-          const looksFallback =
-            !result ||
-            (result.scores.clarity === 50 && result.scores.uniqueness === 50 && result.scores.persuasiveness === 50) ||
-            /暫定値/.test(result.summary || "") ||
-            (result.confidence ?? 0) < 0.5;
-          if (looksFallback) {
-            const summaryText = typeof input?.summary === "string" ? input.summary : input?.slides_summary || "";
-            const slidesText = String(input?.slides_text || "");
-            const slidesStruct = Array.isArray(input?.slides_struct) ? input.slides_struct : undefined;
-            const scores = heuristicScoreFromSlides(summaryText, slidesText, slidesStruct, persona.weighting);
-            const evidences: { slide?: number; quote?: string }[] = [];
-            if (Array.isArray(slidesStruct) && slidesStruct.length > 0) {
-              const best = slidesStruct
-                .slice(0, 10)
-                .sort((a: any, b: any) => Number(b?.wordCount || 0) + Number(b?.chartCount || 0) - (Number(a?.wordCount || 0) + Number(a?.chartCount || 0)))[0];
-              if (best) {
-                evidences.push({ slide: Number(best.index || 1), quote: String(best.title || best.texts?.[0] || "").slice(0, 60) });
-              }
-            }
-            if (evidences.length === 0 && slidesText) {
-              const m = slidesText.match(/Slide\s+(\d+):\s*([^\n]{10,80})/);
-              if (m) evidences.push({ slide: Number(m[1]), quote: m[2] });
-            }
-            if (evidences.length === 0) {
-              evidences.push({ quote: (summaryText || "提案内容の要旨").slice(0, 60) });
-            }
-            const heuristic: PersonaOutput = {
-              persona_id: persona.persona_id,
-              summary: `${persona.role}視点: ${summaryText ? "初見評価を実施" : "資料テキストから推定"}`,
-              scores,
-              comment: `私は${persona.role}として評価します。${persona.tone}。自動代替（LLM失敗）としてヒューリスティック評価を提示します。`,
-              evidence: evidences.slice(0, 3),
-              confidence: summaryText || slidesText ? 0.6 : 0.45,
-            };
-            resolve(heuristic);
-          } else {
-            resolve(result);
-          }
+          // Use LLM result directly
+          resolve(result);
         } else {
           const summaryText = typeof input?.summary === "string" ? input.summary : input?.slides_summary || "";
           const slidesText = String(input?.slides_text || "");
