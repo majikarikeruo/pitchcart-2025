@@ -211,6 +211,7 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
     const timer = setTimeout(async () => {
       try {
         if (runtime.useLLM) {
+          console.log(`[LLM] Calling LLM for persona ${persona.persona_id}, provider: ${runtime.provider || 'default'}`);
           const result = await llmEvaluatePersonaWithOpts(input, persona, {
             provider: runtime.provider,
             model: runtime.personaModel,
@@ -219,6 +220,7 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
             slidesTextLimit: runtime.slidesTextLimit,
             evidenceMax: runtime.evidenceMax,
           });
+          console.log(`[LLM] ✅ Success for persona ${persona.persona_id}`);
           // If LLM failed and returned generic fallback, synthesize heuristic result instead
           const looksFallback =
             !result ||
@@ -301,7 +303,8 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
           };
           resolve(result);
         }
-      } catch (e) {
+      } catch (e: any) {
+        console.error(`[LLM] ❌ Error for persona ${persona.persona_id}:`, e?.message || e);
         reject(e);
       } finally {
         clearTimeout(timeoutId);
