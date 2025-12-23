@@ -1,6 +1,9 @@
 import "dotenv/config";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { parse as parseUrl } from "url";
+
+// Vercel function configuration
+export const maxDuration = 60; // Maximum allowed by Vercel Hobby plan
 import { readFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -274,8 +277,8 @@ function personaEvaluate(input: any, persona: PersonaConfig, signal: AbortSignal
       }
     })();
 
-    // Increase timeout to 30 seconds for LLM calls
-    const timeoutMs = Number(runtime.personaTimeoutMs || 30000);
+    // Force 30 seconds timeout for LLM calls
+    const timeoutMs = 30000;
     const timeoutId = setTimeout(() => {
       console.error(`[LLM] ⏱️ Timeout for persona ${persona.persona_id} after ${timeoutMs}ms`);
       controller.abort();
@@ -576,7 +579,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log(`[Stream] After validation for ${output.persona_id}: ${validated ? 'OK' : 'NULL'}`);
         const final = validated ?? fallbackPersona(result.persona_id);
         personaOutputs.push(final);
-        writeSse(res, "message", { type: "persona", data: validated });
+        console.log(`[Stream] Sending SSE for ${final.persona_id}`);
+        writeSse(res, "message", { type: "persona", data: final });
       }
 
       let consensus = createConsensus(personaOutputs);
