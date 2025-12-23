@@ -99,6 +99,12 @@ const LLM_PROVIDER_DEFAULT = (process.env.LLM_PROVIDER || "").toLowerCase();
 const PERSONA_MODEL_DEFAULT = process.env.PERSONA_MODEL || "";
 const MERGE_MODEL_DEFAULT = process.env.MERGE_MODEL || "";
 
+// Debug: Log environment variables on startup
+console.log("[ENV] LLM_PROVIDER:", LLM_PROVIDER_DEFAULT || "NOT SET");
+console.log("[ENV] OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "SET (length: " + process.env.OPENAI_API_KEY.length + ")" : "NOT SET");
+console.log("[ENV] GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY ? "SET" : "NOT SET");
+console.log("[ENV] USE_LLM:", USE_LLM_DEFAULT);
+
 // Harden server: log and keep process alive on unexpected errors
 process.on("uncaughtException", (err) => {
   try {
