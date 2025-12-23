@@ -1,17 +1,28 @@
 import type { VercelRequest } from "@vercel/node";
+import type * as AdminType from 'firebase-admin';
 
-import * as firebaseAdmin from 'firebase-admin';
+let firebaseAdmin: typeof AdminType | null = null;
 
-function getAdmin() {
-  console.log('[Auth] firebaseAdmin:', typeof firebaseAdmin);
+async function getAdmin() {
+  if (!firebaseAdmin) {
+    firebaseAdmin = await import('firebase-admin');
+  }
+  
+  console.log('[Auth] firebaseAdmin loaded:', !!firebaseAdmin);
   console.log('[Auth] firebaseAdmin.apps:', firebaseAdmin.apps);
   console.log('[Auth] firebaseAdmin.apps type:', typeof firebaseAdmin.apps);
   
+  // Always try to initialize (workaround for undefined apps)
+  const svcJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  
+  console.log('[Auth] ENV Check - projectId:', projectId ? 'SET' : 'NOT SET');
+  console.log('[Auth] ENV Check - clientEmail:', clientEmail ? 'SET' : 'NOT SET');
+  console.log('[Auth] ENV Check - privateKey:', privateKey ? 'SET (length: ' + (privateKey?.length || 0) + ')' : 'NOT SET');
+  
   if (!firebaseAdmin.apps || firebaseAdmin.apps.length === 0) {
-    const svcJson = process.env.FIREBASE_SERVICE_ACCOUNT;
-    const projectId = process.env.FIREBASE_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
     
     if (svcJson) {
       // Use FIREBASE_SERVICE_ACCOUNT if provided (JSON format)
@@ -48,7 +59,7 @@ export async function verifyRequest(req: VercelRequest): Promise<AuthContext> {
   const m = header.match(/^Bearer\s+(.+)$/i);
   if (!m) throw new Error('missing_bearer');
   const token = m[1];
-  const a = getAdmin();
+  const a = await getAdmin();
   const decoded = await a.auth().verifyIdToken(token);
   return { uid: decoded.uid, token, decoded };
 }
