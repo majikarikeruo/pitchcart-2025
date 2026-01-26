@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Paper, Stack, Title, Group, Select, Text, Grid, Card, Progress, List, ThemeIcon, Divider, Center, Loader } from "@mantine/core";
 import { IconTrendingUp, IconTrendingDown, IconEqual, IconChevronRight, IconCheck, IconX, IconArrowsHorizontal } from "@tabler/icons-react";
 import { AnalysisHistory, analysisService } from "../../../services/analysis.service";
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface VersionComparisonProps {
   presentationId: string;
@@ -17,6 +18,7 @@ interface ScoreComparison {
 }
 
 export const VersionComparison: React.FC<VersionComparisonProps> = ({ presentationId }) => {
+  const { user } = useAuth();
   const [history, setHistory] = useState<AnalysisHistory[]>([]);
   const [version1, setVersion1] = useState<string>("");
   const [version2, setVersion2] = useState<string>("");
@@ -26,12 +28,16 @@ export const VersionComparison: React.FC<VersionComparisonProps> = ({ presentati
 
   useEffect(() => {
     loadHistory();
-  }, [presentationId]);
+  }, [presentationId, user?.uid]);
 
   const loadHistory = async () => {
     try {
       setLoading(true);
-      const data = await analysisService.getAnalysisHistory("", presentationId);
+      if (!user?.uid) {
+        setHistory([]);
+        return;
+      }
+      const data = await analysisService.getAnalysisHistory(user.uid, presentationId);
       setHistory(data);
 
       if (data.length >= 2) {

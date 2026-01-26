@@ -1,6 +1,6 @@
 import { Container, Alert, Loader, Button, Title, Stack, Tabs, Group } from "@mantine/core";
 import { IconAlertCircle, IconMessageQuestion } from "@tabler/icons-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useResults } from "@/hooks/useResults";
 import { ConsensusMvp } from "@/components/features/Result/ConsensusMvp";
 import { HistorySelector } from "@/components/features/Result/HistorySelector";
@@ -9,7 +9,7 @@ import { FeedbackForm } from "@/components/features/Result/FeedbackForm";
 import { analysisService } from "@/services/analysis.service";
 import type { ResultData } from "@/types/Result";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { notifications } from "@mantine/notifications";
 
 function Result() {
@@ -17,15 +17,43 @@ function Result() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { result, loading, error } = useResults(location.state?.result as ResultData | null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [isSaving, setIsSaving] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<string | undefined>(undefined);
   const [feedbackFormOpened, setFeedbackFormOpened] = useState(false);
   const [savedAnalysisId, setSavedAnalysisId] = useState<string | undefined>(undefined);
+  const [activeTab, setActiveTab] = useState<string>("current");
 
   // location.stateからpresentationIdとpresentationTitleを取得
-  const presentationId = location.state?.presentationId || `presentation_${Date.now()}`;
-  const presentationTitle = location.state?.presentationTitle || "無題のプレゼンテーション";
+  const fallbackIdRef = useRef(`presentation_${Date.now()}`);
+  const fallbackTitleRef = useRef("無題のプレゼンテーション");
+  const presentationIdFromState = location.state?.presentationId as string | undefined;
+  const presentationTitleFromState = location.state?.presentationTitle as string | undefined;
+  const presentationId = presentationIdFromState ?? result?.presentationId ?? fallbackIdRef.current;
+  const presentationTitle = presentationTitleFromState ?? result?.presentationTitle ?? fallbackTitleRef.current;
+  const hasKnownPresentationId = Boolean(presentationIdFromState || result?.presentationId);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "history" || tab === "comparison" || tab === "current") {
+      setActiveTab(tab);
+      return;
+    }
+    setActiveTab("current");
+  }, [searchParams]);
+
+  const handleTabChange = (value: string | null) => {
+    if (!value) return;
+    setActiveTab(value);
+    const next = new URLSearchParams(searchParams);
+    if (value === "current") {
+      next.delete("tab");
+    } else {
+      next.set("tab", value);
+    }
+    setSearchParams(next, { replace: true });
+  };
 
   const handleVersionChange = async (versionId: string) => {
     try {
@@ -116,7 +144,7 @@ function Result() {
         分析結果
       </Title>
 
-      <Tabs defaultValue="current">
+      <Tabs value={activeTab} onChange={handleTabChange}>
         <Tabs.List mb="md">
           <Tabs.Tab value="current">📊 今回の分析</Tabs.Tab>
           <Tabs.Tab value="history">📜 履歴</Tabs.Tab>
@@ -125,10 +153,10 @@ function Result() {
 
         <Tabs.Panel value="current">
           <Stack gap="lg">
-            {user && presentationId && (
+            {user && (
               <HistorySelector
                 currentAnalysisId={selectedVersionId}
-                presentationId={presentationId}
+                presentationId={hasKnownPresentationId ? presentationId : undefined}
                 onVersionChange={handleVersionChange}
               />
             )}
@@ -154,10 +182,10 @@ function Result() {
         </Tabs.Panel>
 
         <Tabs.Panel value="history">
-          {user && presentationId ? (
+          {user ? (
             <HistorySelector
               currentAnalysisId={selectedVersionId}
-              presentationId={presentationId}
+              presentationId={hasKnownPresentationId ? presentationId : undefined}
               onVersionChange={handleVersionChange}
             />
           ) : (
@@ -168,12 +196,16 @@ function Result() {
         </Tabs.Panel>
 
         <Tabs.Panel value="comparison">
-          {user && presentationId ? (
-            <VersionComparison presentationId={presentationId} currentVersionId={selectedVersionId} />
-          ) : (
+          {!user ? (
             <Alert color="blue" title="ログインが必要です">
               バージョン比較機能を使用するにはログインしてください
             </Alert>
+          ) : !hasKnownPresentationId ? (
+            <Alert color="blue" title="比較に必要な情報がありません">
+              比較には同じプレゼンの履歴が必要です。結果画面を開いた状態で履歴を確認してください。
+            </Alert>
+          ) : (
+            <VersionComparison presentationId={presentationId} currentVersionId={selectedVersionId} />
           )}
         </Tabs.Panel>
       </Tabs>

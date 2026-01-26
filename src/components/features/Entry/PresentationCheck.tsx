@@ -91,7 +91,11 @@ export const PresentationCheck = () => {
       );
 
       if (finalResult) {
-        const resultToStore: ResultData = { consensusMvp: finalResult };
+        const resultToStore: ResultData = {
+          consensusMvp: finalResult,
+          presentationId: presentationId || undefined,
+          presentationTitle: presentationData.goal || "Untitled",
+        };
         localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
         setLatestResult(resultToStore);
         setCanViewResult(true);
@@ -108,7 +112,11 @@ export const PresentationCheck = () => {
         notifications.show({ title: "ストリーミング失敗", message: "通常の分析モードにフォールバックします。", color: "yellow" });
         const fallbackResult = await postAnalyzeForm(form);
         if (fallbackResult) {
-          const resultToStore: ResultData = { consensusMvp: fallbackResult };
+          const resultToStore: ResultData = {
+            consensusMvp: fallbackResult,
+            presentationId: presentationId || undefined,
+            presentationTitle: presentationData.goal || "Untitled",
+          };
           localStorage.setItem("analysisResult", JSON.stringify(resultToStore));
           setLatestResult(resultToStore);
           setCanViewResult(true);
