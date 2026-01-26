@@ -51,6 +51,8 @@ export type StructureSimulation = {
 };
 
 export interface ResultData {
+  presentationId?: string;
+  presentationTitle?: string;
   // Legacy fields for older analysis format
   input?: UserInputProps;
   analysisWithScore?: analysisWithScoreProps;

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/core/styles.css";
@@ -36,6 +36,9 @@ function App() {
                 path="/result"
                 element={(<AuthGuard><Result /></AuthGuard>)}
               />
+              <Route path="/history" element={<Navigate to="/result?tab=history" replace />} />
+              <Route path="/analysis" element={<Navigate to="/entry" replace />} />
+              <Route path="/practice" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </AppLayout>

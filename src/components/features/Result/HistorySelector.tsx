@@ -6,7 +6,7 @@ import { AnalysisHistory } from "../../../services/analysis.service";
 
 interface HistorySelectorProps {
   currentAnalysisId?: string;
-  presentationId: string;
+  presentationId?: string;
   onVersionChange: (analysisId: string) => void;
 }
 
