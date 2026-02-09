@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Paper, Title, Stack, Group, Button, Progress, Text, Badge, Modal, TextInput, Textarea, Select, ActionIcon, Card, ThemeIcon } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconTarget, IconPlus, IconEdit, IconTrash, IconCalendar, IconTrendingUp } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { collection, doc, setDoc, deleteDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Goal {
   id: string;
@@ -17,12 +20,12 @@ interface Goal {
   completed: boolean;
 }
 
-const sampleGoals: Goal[] = [];
-
 export const GoalTracker: React.FC = () => {
-  const [goals, setGoals] = useState<Goal[]>(sampleGoals);
+  const { user } = useAuth();
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const form = useForm<{
     title: string;
@@ -41,6 +44,30 @@ export const GoalTracker: React.FC = () => {
       dueDate: new Date(),
     },
   });
+
+  // Firestoreから目標を読み込む
+  useEffect(() => {
+    if (!user) return;
+    const loadGoals = async () => {
+      try {
+        const q = query(collection(db, "goals"), where("userId", "==", user.uid));
+        const snapshot = await getDocs(q);
+        const loaded = snapshot.docs.map((d) => {
+          const data = d.data();
+          return {
+            ...data,
+            id: d.id,
+            dueDate: data.dueDate?.toDate?.() ?? new Date(data.dueDate),
+            createdAt: data.createdAt?.toDate?.() ?? new Date(data.createdAt),
+          } as Goal;
+        });
+        setGoals(loaded.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
+      } catch (e) {
+        console.error("Failed to load goals:", e);
+      }
+    };
+    loadGoals();
+  }, [user]);
 
   const categoryOptions = [
     { value: "score", label: "スコア向上" },
@@ -69,37 +96,44 @@ export const GoalTracker: React.FC = () => {
     return icons[category];
   };
 
-  const handleSubmit = (values: typeof form.values) => {
-    const newGoal: Goal = {
-      id: editingGoal?.id || Date.now().toString(),
-      title: values.title,
-      description: values.description,
-      category: values.category,
-      targetValue: values.targetValue,
-      currentValue: editingGoal?.currentValue || 0,
-      unit: values.unit,
-      dueDate: values.dueDate,
-      createdAt: editingGoal?.createdAt || new Date(),
-      completed: false,
-    };
+  const handleSubmit = async (values: typeof form.values) => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const goalId = editingGoal?.id || `goal_${Date.now()}`;
+      const goalData: Goal = {
+        id: goalId,
+        title: values.title,
+        description: values.description,
+        category: values.category,
+        targetValue: values.targetValue,
+        currentValue: editingGoal?.currentValue || 0,
+        unit: values.unit,
+        dueDate: values.dueDate,
+        createdAt: editingGoal?.createdAt || new Date(),
+        completed: false,
+      };
 
-    if (editingGoal) {
-      setGoals(goals.map((g) => (g.id === editingGoal.id ? newGoal : g)));
-      notifications.show({
-        title: "更新完了",
-        message: "目標を更新しました",
-        color: "teal",
+      await setDoc(doc(db, "goals", goalId), {
+        ...goalData,
+        userId: user.uid,
+        updatedAt: serverTimestamp(),
       });
-    } else {
-      setGoals([...goals, newGoal]);
-      notifications.show({
-        title: "追加完了",
-        message: "新しい目標を追加しました",
-        color: "teal",
-      });
+
+      if (editingGoal) {
+        setGoals(goals.map((g) => (g.id === goalId ? goalData : g)));
+        notifications.show({ title: "更新完了", message: "目標を更新しました", color: "teal" });
+      } else {
+        setGoals([goalData, ...goals]);
+        notifications.show({ title: "追加完了", message: "新しい目標を追加しました", color: "teal" });
+      }
+      handleCloseModal();
+    } catch (e) {
+      console.error("Failed to save goal:", e);
+      notifications.show({ title: "エラー", message: "目標の保存に失敗しました", color: "red" });
+    } finally {
+      setSaving(false);
     }
-
-    handleCloseModal();
   };
 
   const handleEdit = (goal: Goal) => {
@@ -115,13 +149,15 @@ export const GoalTracker: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (goalId: string) => {
-    setGoals(goals.filter((g) => g.id !== goalId));
-    notifications.show({
-      title: "削除完了",
-      message: "目標を削除しました",
-      color: "red",
-    });
+  const handleDelete = async (goalId: string) => {
+    try {
+      await deleteDoc(doc(db, "goals", goalId));
+      setGoals(goals.filter((g) => g.id !== goalId));
+      notifications.show({ title: "削除完了", message: "目標を削除しました", color: "red" });
+    } catch (e) {
+      console.error("Failed to delete goal:", e);
+      notifications.show({ title: "エラー", message: "目標の削除に失敗しました", color: "red" });
+    }
   };
 
   const handleCloseModal = () => {
@@ -144,7 +180,7 @@ export const GoalTracker: React.FC = () => {
               {completedGoals}/{totalGoals} 目標達成
             </Text>
           </div>
-          <Button leftSection={<IconPlus size={16} />} onClick={() => setShowModal(true)} size="sm">
+          <Button leftSection={<IconPlus size={16} />} onClick={() => setShowModal(true)} size="sm" disabled={!user}>
             目標を追加
           </Button>
         </Group>
@@ -278,7 +314,7 @@ export const GoalTracker: React.FC = () => {
                 <Button variant="light" onClick={handleCloseModal}>
                   キャンセル
                 </Button>
-                <Button type="submit">{editingGoal ? "更新" : "追加"}</Button>
+                <Button type="submit" loading={saving}>{editingGoal ? "更新" : "追加"}</Button>
               </Group>
             </Stack>
           </form>

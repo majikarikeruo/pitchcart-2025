@@ -10,6 +10,7 @@ import { postAnalyzeForm, streamAnalyzeForm, checkApiHealth } from "@/services/a
 import type { PersonaOutput, AnalysisResponse } from "@/types/analysis";
 import type { ResultData } from "@/types/Result";
 import { analysisService } from "@/services/analysis.service";
+import { promptService } from "@/services/prompt.service";
 
 interface PresentationData {
   target_person: string;
@@ -64,6 +65,24 @@ export const PresentationCheck = () => {
       if (useEnhancedAnalysis) {
         form.append("detail", "high");
         form.append("evidence_max", "5");
+      }
+
+      // 過去のフィードバックをLLMプロンプトに反映
+      if (user) {
+        try {
+          const history = await analysisService.getAnalysisHistory(user.uid);
+          if (history.length > 0) {
+            const feedbacks = await analysisService.getFeedback(history[0].id);
+            if (feedbacks.length > 0) {
+              const feedbackContext = promptService.generateFeedbackBasedPrompt(feedbacks);
+              if (feedbackContext) {
+                form.append("feedback_context", feedbackContext);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to load feedback context (non-fatal):", e);
+        }
       }
 
       setStreaming(true);

@@ -241,14 +241,20 @@ export class AnalysisService {
       categoryScores.persuasiveness /= numPersonas;
     }
 
-    // 従来のカテゴリにマッピングする（仮）
+    // ペルソナ3軸 → 従来4カテゴリへのマッピング
+    // content: clarity をベースに persuasiveness を加味（内容の質 = 明確さ + 説得力）
+    // design: uniqueness をそのまま（独自性 ≒ 構成・デザインの工夫）
+    // persuasiveness: そのまま
+    // technicalQuality: 3軸の平均（技術的品質は全体的な完成度を反映）
     return {
       total,
       categories: {
-        content: categoryScores.clarity,
-        design: categoryScores.uniqueness, // 仮のマッピング
-        persuasiveness: categoryScores.persuasiveness,
-        technicalQuality: 50, // 仮の値
+        content: Math.round(categoryScores.clarity * 0.7 + categoryScores.persuasiveness * 0.3),
+        design: Math.round(categoryScores.uniqueness),
+        persuasiveness: Math.round(categoryScores.persuasiveness),
+        technicalQuality: Math.round(
+          (categoryScores.clarity + categoryScores.uniqueness + categoryScores.persuasiveness) / 3
+        ),
       },
     };
   }
