@@ -40,7 +40,9 @@ export const PresentationCheck = () => {
 
   useEffect(() => {
     if (user && presentationData.goal) {
-      const id = `${user.uid}_${presentationData.goal.slice(0, 20)}_${Date.now()}`;
+      // goal ベースの決定的IDにすることで、同じ目的のプレゼンはバージョンが積み上がる
+      const normalized = presentationData.goal.trim().slice(0, 30).replace(/\s+/g, "_");
+      const id = `${user.uid}_${normalized}`;
       setPresentationId(id);
     }
   }, [user, presentationData.goal]);
