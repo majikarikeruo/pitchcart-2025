@@ -552,11 +552,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
+      const rawFeedbackCtx = fields.feedback_context;
+      const feedbackContext = typeof rawFeedbackCtx === 'string'
+        ? rawFeedbackCtx
+        : Array.isArray(rawFeedbackCtx) ? rawFeedbackCtx[0] : "";
+
       const body = {
         summary: `${fields.target_person || ""} ${fields.goal || ""} ${fields.industry || ""}`.trim(),
         slides_text: slides_struct.map((s) => `Slide ${s.index}: ${s.title}\n${s.texts.join(" ")}`).join("\n\n"),
         slides_struct: slides_struct,
         speech_text: "",
+        feedback_context: feedbackContext,
       };
       const runtime = getRuntimeOptsFromBody(fields);
       const personasCfg = loadPersonas();

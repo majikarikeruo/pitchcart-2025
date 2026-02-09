@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Container, Title, Stack, Grid, Card, Text, Group, Badge, Select, Tabs, Paper, SimpleGrid, Loader } from "@mantine/core";
+import { Container, Title, Stack, Grid, Card, Text, Group, Badge, Select, Tabs, Paper, SimpleGrid, Loader, Progress } from "@mantine/core";
 import { IconTrendingUp, IconPresentationAnalytics, IconTarget, IconCalendar } from "@tabler/icons-react";
+import type { PracticeFeedback } from "@/services/analysis.service";
 import { useAuth } from "../contexts/AuthContext";
 import { analysisService, AnalysisHistory } from "@/services/analysis.service";
 import { ScoreProgressChart } from "@/components/features/Dashboard/ScoreProgressChart";
@@ -13,6 +14,7 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [timeRange, setTimeRange] = useState("3months");
   const [analysisHistory, setAnalysisHistory] = useState<AnalysisHistory[]>([]);
+  const [feedbacks, setFeedbacks] = useState<PracticeFeedback[]>([]);
   const [loading, setLoading] = useState(true);
 
   const timeRangeOptions = [
@@ -29,6 +31,15 @@ export const Dashboard: React.FC = () => {
         try {
           const history = await analysisService.getAnalysisHistory(user.uid);
           setAnalysisHistory(history);
+          // 全分析のフィードバックを取得
+          const allFeedbacks: PracticeFeedback[] = [];
+          for (const h of history.slice(0, 10)) {
+            try {
+              const fb = await analysisService.getFeedback(h.id);
+              allFeedbacks.push(...fb);
+            } catch { /* skip */ }
+          }
+          setFeedbacks(allFeedbacks);
         } catch (error) {
           console.error("Failed to fetch analysis history:", error);
         } finally {
@@ -208,9 +219,62 @@ export const Dashboard: React.FC = () => {
                   <Title order={4} mb="md">
                     分析パターン
                   </Title>
-                  <Text size="sm" c="dimmed">
-                    開発中...
-                  </Text>
+                  {totalAnalysisCount === 0 ? (
+                    <Text size="sm" c="dimmed">分析データがありません</Text>
+                  ) : (
+                    <Stack gap="md">
+                      {(() => {
+                        const avgCategories = {
+                          content: analysisHistory.reduce((s, h) => s + h.metadata.categoryScores.content, 0) / totalAnalysisCount,
+                          design: analysisHistory.reduce((s, h) => s + h.metadata.categoryScores.design, 0) / totalAnalysisCount,
+                          persuasiveness: analysisHistory.reduce((s, h) => s + h.metadata.categoryScores.persuasiveness, 0) / totalAnalysisCount,
+                          technicalQuality: analysisHistory.reduce((s, h) => s + h.metadata.categoryScores.technicalQuality, 0) / totalAnalysisCount,
+                        };
+                        const categories = [
+                          { key: "content", label: "コンテンツ", color: "blue" },
+                          { key: "design", label: "デザイン・構成", color: "violet" },
+                          { key: "persuasiveness", label: "説得力", color: "orange" },
+                          { key: "technicalQuality", label: "技術的品質", color: "teal" },
+                        ] as const;
+                        const sorted = [...categories].sort(
+                          (a, b) => avgCategories[b.key] - avgCategories[a.key]
+                        );
+                        return sorted.map((cat) => (
+                          <div key={cat.key}>
+                            <Group justify="space-between" mb={4}>
+                              <Text size="sm">{cat.label}</Text>
+                              <Text size="sm" fw={600}>{avgCategories[cat.key].toFixed(1)}</Text>
+                            </Group>
+                            <Progress value={avgCategories[cat.key]} color={cat.color} size="md" />
+                          </div>
+                        ));
+                      })()}
+                      {recentAnalyses.length >= 2 && (
+                        <Card withBorder p="sm" mt="xs">
+                          <Text size="xs" fw={600} mb={4}>直近の傾向</Text>
+                          {(() => {
+                            const latest = recentAnalyses[0].metadata.categoryScores;
+                            const prev = recentAnalyses[1].metadata.categoryScores;
+                            const diffs = [
+                              { label: "コンテンツ", diff: latest.content - prev.content },
+                              { label: "デザイン", diff: latest.design - prev.design },
+                              { label: "説得力", diff: latest.persuasiveness - prev.persuasiveness },
+                              { label: "技術的品質", diff: latest.technicalQuality - prev.technicalQuality },
+                            ];
+                            return (
+                              <Group gap="xs">
+                                {diffs.map((d) => (
+                                  <Badge key={d.label} size="sm" variant="light" color={d.diff > 0 ? "teal" : d.diff < 0 ? "red" : "gray"}>
+                                    {d.label}: {d.diff > 0 ? "+" : ""}{d.diff.toFixed(0)}
+                                  </Badge>
+                                ))}
+                              </Group>
+                            );
+                          })()}
+                        </Card>
+                      )}
+                    </Stack>
+                  )}
                 </Paper>
               </Grid.Col>
               <Grid.Col span={{ base: 12, lg: 6 }}>
@@ -218,9 +282,67 @@ export const Dashboard: React.FC = () => {
                   <Title order={4} mb="md">
                     質問傾向分析
                   </Title>
-                  <Text size="sm" c="dimmed">
-                    開発中...
-                  </Text>
+                  {feedbacks.length === 0 ? (
+                    <Text size="sm" c="dimmed">フィードバックデータがありません。プレゼン実施後にフィードバックを記録すると表示されます。</Text>
+                  ) : (
+                    <Stack gap="md">
+                      {(() => {
+                        const categoryLabels: Record<string, string> = {
+                          content: "コンテンツ内容",
+                          data: "データ・根拠",
+                          feasibility: "実現可能性",
+                          impact: "インパクト",
+                          technical: "技術的詳細",
+                          business: "ビジネス面",
+                        };
+                        const catCount = new Map<string, { total: number; unanticipated: number }>();
+                        feedbacks.forEach((fb) =>
+                          fb.questionsReceived.forEach((q) => {
+                            const entry = catCount.get(q.category) || { total: 0, unanticipated: 0 };
+                            entry.total++;
+                            if (!q.wasAnticipated) entry.unanticipated++;
+                            catCount.set(q.category, entry);
+                          })
+                        );
+                        const sorted = Array.from(catCount.entries()).sort((a, b) => b[1].total - a[1].total);
+                        const maxCount = sorted[0]?.[1].total || 1;
+                        return (
+                          <>
+                            {sorted.map(([cat, counts]) => (
+                              <div key={cat}>
+                                <Group justify="space-between" mb={4}>
+                                  <Text size="sm">{categoryLabels[cat] || cat}</Text>
+                                  <Group gap={4}>
+                                    <Text size="sm" fw={600}>{counts.total}件</Text>
+                                    {counts.unanticipated > 0 && (
+                                      <Badge size="xs" color="red" variant="light">想定外{counts.unanticipated}</Badge>
+                                    )}
+                                  </Group>
+                                </Group>
+                                <Progress value={(counts.total / maxCount) * 100} color="blue" size="sm" />
+                              </div>
+                            ))}
+                            <Card withBorder p="sm" mt="xs">
+                              <Text size="xs" fw={600} mb={4}>想定外の質問率</Text>
+                              {(() => {
+                                const totalQ = feedbacks.reduce((s, fb) => s + fb.questionsReceived.length, 0);
+                                const unanticipatedQ = feedbacks.reduce(
+                                  (s, fb) => s + fb.questionsReceived.filter((q) => !q.wasAnticipated).length, 0
+                                );
+                                const rate = totalQ > 0 ? Math.round((unanticipatedQ / totalQ) * 100) : 0;
+                                return (
+                                  <Group gap="xs">
+                                    <Progress value={rate} color={rate > 50 ? "red" : rate > 30 ? "orange" : "teal"} size="lg" style={{ flex: 1 }} />
+                                    <Text size="sm" fw={600}>{rate}%</Text>
+                                  </Group>
+                                );
+                              })()}
+                            </Card>
+                          </>
+                        );
+                      })()}
+                    </Stack>
+                  )}
                 </Paper>
               </Grid.Col>
             </Grid>
